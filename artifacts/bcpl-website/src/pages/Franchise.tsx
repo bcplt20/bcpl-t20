@@ -62,6 +62,21 @@ export default function Franchise() {
           <a className="fr-cta" style={{ marginTop: 26 }} href={`mailto:${FR_EMAIL}?subject=Franchise Enquiry — BCPL`}>
             {t('ENQUIRE NOW', 'अभी संपर्क करें')} · {FR_EMAIL}
           </a>
+
+          {/* Headline commercial terms */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12, maxWidth: 720, margin: '30px auto 0' }}>
+            {[
+              ['₹3 Cr', t('Fixed fee / year — no increment', 'Fixed fee / वर्ष — कोई वृद्धि नहीं')],
+              ['40%', t('Sponsorship revenue share', 'Sponsorship revenue का हिस्सा')],
+              ['25%', t('Registration revenue share', 'Registration revenue का हिस्सा')],
+              ['10', t('Franchise teams', 'Franchise teams')],
+            ].map(([b, s]) => (
+              <div key={String(s)} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.16)', borderRadius: 14, padding: '16px 12px' }}>
+                <div style={{ fontFamily: "'Barlow Condensed','Montserrat',sans-serif", fontWeight: 800, fontSize: 'clamp(24px,4vw,32px)', color: '#E8B23D', lineHeight: 1 }}>{b}</div>
+                <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.72)', fontFamily: 'Inter,sans-serif', marginTop: 6, lineHeight: 1.4 }}>{s}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -80,8 +95,8 @@ export default function Franchise() {
                   'Thousands of professionals register with the league every season. Franchises get aggregated, consent-based audience and engagement insights — which industries, cities and age groups follow the league — making sponsorship conversations with brands far easier.',
                   'हर season हज़ारों professionals league में register करते हैं। Franchises को मिलती हैं aggregated, consent-based audience और engagement insights — किन industries, शहरों और age groups से league जुड़ी है — जिससे brands के साथ sponsorship की बात करना बहुत आसान हो जाता है।'],
                 ['📈', 'rgba(232,178,61,0.16)', 'A league that grows every season', 'हर season बढ़ती league',
-                  'Season on season, BCPL\u2019s registrations, digital reach and on-ground footprint have grown. Your franchise revenue pools — 25% of registration revenue and 50% of sponsorship revenue — are tied directly to that growth.',
-                  'Season दर season BCPL के registrations, digital reach और on-ground presence बढ़ी है। आपकी franchise के revenue pools — registration revenue का 25% और sponsorship revenue का 50% — सीधे इसी growth से जुड़े हैं।'],
+                  'Season on season, BCPL\u2019s registrations, digital reach and on-ground footprint have grown. Your franchise revenue pools — 25% of registration revenue and 40% of sponsorship revenue — are tied directly to that growth.',
+                  'Season दर season BCPL के registrations, digital reach और on-ground presence बढ़ी है। आपकी franchise के revenue pools — registration revenue का 25% और sponsorship revenue का 40% — सीधे इसी growth से जुड़े हैं।'],
                 ['🛡️', 'rgba(244,114,182,0.14)', 'League-run, professionally operated', 'League-run, professional संचालन',
                   'Grounds, umpires, live scoring, broadcast, the digital platform, player registrations and payments are all run centrally by the league with full transparency. You invest in the team — the league runs the machinery.',
                   'Grounds, umpires, live scoring, broadcast, digital platform, player registrations और payments — सब league centrally और पूरी transparency से चलाती है। आप team में invest करते हैं — machinery league चलाती है।'],
@@ -102,8 +117,8 @@ export default function Franchise() {
               <div className="fr-card" style={{ textAlign: 'center' }}>
                 <div className="fr-num" style={{ color: '#FFD873' }}>₹3 {t('Cr', 'करोड़')}</div>
                 <div className="fr-label" style={{ margin: '10px 0 8px' }}>{t('League Franchise Fee', 'League Franchise Fee')}</div>
-                <p className="fr-p">{t('Fixed annual fee paid to the league for franchise rights, league operations and central branding.',
-                  'Franchise rights, league operations और central branding के लिए league को दी जाने वाली fixed सालाना fee।')}</p>
+                <p className="fr-p">{t('Fixed annual fee paid to the league for franchise rights, league operations and central branding — ₹3 Cr per year, with no yearly increment.',
+                  'Franchise rights, league operations और central branding के लिए league को दी जाने वाली fixed सालाना fee — ₹3 करोड़ प्रति वर्ष, कोई सालाना वृद्धि नहीं।')}</p>
               </div>
               <div className="fr-card" style={{ textAlign: 'center' }}>
                 <div className="fr-num" style={{ color: '#93C5FD' }}>₹2 {t('Cr', 'करोड़')}</div>
@@ -119,8 +134,8 @@ export default function Franchise() {
               </div>
             </div>
             <p className="fr-p" style={{ marginTop: 14, fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
-              {t('Note: the league franchise fee increases by 10% every season (e.g. ₹3 Cr this season → ₹3.3 Cr next season). Locking in early locks in the lower base.',
-                 'नोट: league franchise fee हर season 10% बढ़ती है (जैसे इस season ₹3 करोड़ → अगले season ₹3.3 करोड़)। जल्दी जुड़ने पर कम base fee lock हो जाती है।')}
+              {t('Note: the league franchise fee is fixed at ₹3 Cr per year — there is no yearly increment.',
+                 'नोट: league franchise fee ₹3 करोड़ प्रति वर्ष पर fixed है — कोई सालाना वृद्धि नहीं है।')}
             </p>
           </div>
 
@@ -135,10 +150,10 @@ export default function Franchise() {
                   'पूरे India से players BCPL trials और league से जुड़ने के लिए registration fee देते हैं। इस registration revenue pool का 25% हर season franchises में बाँटा जाता है। जैसे-जैसे league का registration base बढ़ता है — और आपकी team का brand ज़्यादा players खींचता है — pool भी उतना बड़ा होता जाता है।')}</p>
               </div>
               <div className="fr-card">
-                <div className="fr-num" style={{ color: '#31C56B' }}>50%</div>
+                <div className="fr-num" style={{ color: '#31C56B' }}>40%</div>
                 <div className="fr-label" style={{ margin: '10px 0 8px' }}>{t('Of Sponsorship Revenue', 'Sponsorship revenue का')}</div>
-                <p className="fr-p">{t('Brands sponsor the league to reach its corporate-professional audience — title sponsors, ground branding, digital and broadcast partners. 50% of the league\u2019s sponsorship revenue is distributed among the franchises every season: a direct share in the league\u2019s commercial growth.',
-                  'Brands league को sponsor करते हैं ताकि corporate-professional audience तक पहुँचें — title sponsors, ground branding, digital और broadcast partners। League की sponsorship revenue का 50% हर season franchises में बाँटा जाता है — commercial growth में सीधी हिस्सेदारी।')}</p>
+                <p className="fr-p">{t('Brands sponsor the league to reach its corporate-professional audience — title sponsors, ground branding, digital and broadcast partners. 40% of the league\u2019s sponsorship revenue is distributed among the franchises every season: a direct share in the league\u2019s commercial growth.',
+                  'Brands league को sponsor करते हैं ताकि corporate-professional audience तक पहुँचें — title sponsors, ground branding, digital और broadcast partners। League की sponsorship revenue का 40% हर season franchises में बाँटा जाता है — commercial growth में सीधी हिस्सेदारी।')}</p>
               </div>
             </div>
             <div className="fr-card" style={{ marginTop: 18 }}>
@@ -148,7 +163,7 @@ export default function Franchise() {
                 <span className="fr-flow-arrow">→</span>
                 <div className="fr-flow-box" style={{ border: '1px solid rgba(232,178,61,0.55)' }}>{t('Shared franchise pool', 'साझा franchise pool')}<br /><span style={{ color: '#FFD873', fontSize: 12 }}>{t('divided among all teams', 'सभी teams में बँटता है')}</span></div>
                 <span className="fr-flow-arrow">←</span>
-                <div className="fr-flow-box">{t('League sponsorships', 'League sponsorships')}<br /><span style={{ color: '#31C56B', fontSize: 12 }}>{t('50% to franchises', '50% franchises को')}</span></div>
+                <div className="fr-flow-box">{t('League sponsorships', 'League sponsorships')}<br /><span style={{ color: '#31C56B', fontSize: 12 }}>{t('40% to franchises', '40% franchises को')}</span></div>
               </div>
             </div>
             <p className="fr-p" style={{ marginTop: 14, fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
@@ -253,11 +268,11 @@ export default function Franchise() {
           <div>
             <h2 className="fr-sec-h">{t('Key terms & conditions', 'मुख्य नियम व शर्तें')}</h2>
             <div className="fr-card">
-              <div className="fr-fine">{t('The league franchise fee (₹3 Cr in the current season) increases by 10% every season.', 'League franchise fee (मौजूदा season में ₹3 करोड़) हर season 10% बढ़ती है।')}</div>
+              <div className="fr-fine">{t('The league franchise fee is fixed at ₹3 Cr per year, with no yearly increment.', 'League franchise fee ₹3 करोड़ प्रति वर्ष पर fixed है, कोई सालाना वृद्धि नहीं।')}</div>
               <div className="fr-fine">{t('The ₹2 lakh bid registration fee is non-refundable, whether or not a franchise is allotted.', '₹2 लाख की bid registration fee non-refundable है — franchise allot हो या न हो।')}</div>
               <div className="fr-fine">{t('If interested applicants exceed available slots (10+), allotment is via the league\u2019s bid & auction process.', 'उपलब्ध slots से ज़्यादा (10+) इच्छुक आवेदक होने पर allotment league की bid व auction process से होता है।')}</div>
               <div className="fr-fine">{t('Every applicant undergoes KYC, background and source-of-funds verification; the league\u2019s decision on approval is final.', 'हर आवेदक की KYC, background और source-of-funds verification होती है; approval पर league का निर्णय अंतिम है।')}</div>
-              <div className="fr-fine">{t('Revenue shares (25% of registration revenue, 50% of sponsorship revenue) depend on actual league revenues each season — they describe a sharing structure, not an assured or guaranteed return.', 'Revenue share (registration revenue का 25%, sponsorship revenue का 50%) हर season की असली league revenue पर निर्भर है — यह sharing structure है, कोई assured या guaranteed return नहीं।')}</div>
+              <div className="fr-fine">{t('Revenue shares (25% of registration revenue, 40% of sponsorship revenue) depend on actual league revenues each season — they describe a sharing structure, not an assured or guaranteed return.', 'Revenue share (registration revenue का 25%, sponsorship revenue का 40%) हर season की असली league revenue पर निर्भर है — यह sharing structure है, कोई assured या guaranteed return नहीं।')}</div>
               <div className="fr-fine">{t('Detailed terms are set out in the franchise agreement shared during the enquiry process.', 'विस्तृत शर्तें franchise agreement में होंगी, जो enquiry process के दौरान साझा की जाती है।')}</div>
             </div>
           </div>

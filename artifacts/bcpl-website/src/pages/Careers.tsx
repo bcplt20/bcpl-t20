@@ -35,6 +35,34 @@ body { background:#1C2B47; }
 .perk .ic { font-size:22px; }
 .perk h4 { font-family:'Montserrat',Inter,sans-serif; font-weight:800; font-size:14.5px; color:#fff; margin:8px 0 6px; }
 .perk p { font-size:13px; line-height:1.65; color:rgba(255,255,255,0.72); font-family:Inter,sans-serif; margin:0; }
+/* League-in-numbers stat strip */
+.cr-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:760px; margin:28px auto 0; }
+@media(min-width:640px){ .cr-stats{grid-template-columns:repeat(3,1fr);} }
+.cr-stat { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.16); border-radius:14px; padding:16px 14px; text-align:center; }
+.cr-stat b { display:block; font-family:'Barlow Condensed','Montserrat',sans-serif; font-weight:800; font-size:clamp(22px,4vw,30px); color:#E8B23D; line-height:1; letter-spacing:.01em; }
+.cr-stat span { display:block; font-size:11.5px; color:rgba(255,255,255,0.72); font-family:Inter,sans-serif; margin-top:6px; line-height:1.4; }
+/* Section heading */
+.cr-sec-kick { font-family:Inter,sans-serif; font-weight:700; font-size:11.5px; letter-spacing:.2em; color:#FF7A29; text-transform:uppercase; }
+.cr-sec-h { font-family:'Barlow Condensed','Montserrat',sans-serif; font-weight:800; font-size:clamp(26px,4vw,40px); color:#fff; text-transform:uppercase; letter-spacing:.02em; margin:6px 0 0; line-height:1; }
+.cr-sec-sub { font-size:14.5px; line-height:1.7; color:rgba(255,255,255,0.72); font-family:Inter,sans-serif; max-width:640px; margin:14px 0 0; }
+/* Value / role cards */
+.cr-cards { display:grid; grid-template-columns:1fr; gap:16px; margin-top:26px; }
+@media(min-width:640px){ .cr-cards.two{grid-template-columns:1fr 1fr;} }
+@media(min-width:820px){ .cr-cards.three{grid-template-columns:1fr 1fr 1fr;} }
+.cr-card { background:linear-gradient(135deg,rgba(30,55,105,0.9),rgba(23,43,81,0.86)); border:1px solid rgba(255,255,255,0.16); border-radius:16px; padding:22px; box-shadow:0 12px 34px rgba(0,0,0,0.3); }
+.cr-card .cic { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; background:rgba(255,122,41,0.14); border:1px solid rgba(255,122,41,0.4); }
+.cr-card h4 { font-family:'Montserrat',Inter,sans-serif; font-weight:800; font-size:16px; color:#fff; margin:14px 0 7px; }
+.cr-card p { font-size:13.5px; line-height:1.68; color:rgba(255,255,255,0.78); font-family:Inter,sans-serif; margin:0; }
+.cr-card .rtags { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+.cr-card .rtag { font-size:11px; font-weight:700; font-family:Inter,sans-serif; color:rgba(255,255,255,0.82); background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.16); border-radius:100px; padding:4px 11px; }
+/* Hiring steps */
+.cr-steps { display:grid; grid-template-columns:1fr; gap:14px; margin-top:26px; counter-reset:crstep; }
+@media(min-width:760px){ .cr-steps{grid-template-columns:repeat(2,1fr);} }
+@media(min-width:1000px){ .cr-steps{grid-template-columns:repeat(4,1fr);} }
+.cr-step { position:relative; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.16); border-radius:14px; padding:22px 18px 18px; }
+.cr-step .num { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed','Montserrat',sans-serif; font-weight:800; font-size:18px; color:#0E1A33; background:linear-gradient(135deg,#FF7A29,#FFB347); }
+.cr-step h4 { font-family:'Montserrat',Inter,sans-serif; font-weight:800; font-size:14.5px; color:#fff; margin:12px 0 6px; }
+.cr-step p { font-size:12.5px; line-height:1.6; color:rgba(255,255,255,0.72); font-family:Inter,sans-serif; margin:0; }
 `;
 
 type Job = {
@@ -190,13 +218,35 @@ export default function Careers() {
           <a className="apply-btn" style={{ marginTop: 26 }} href={`mailto:${APPLY_EMAIL}?subject=Job Application — BCPL`}>
             {t('APPLY NOW', 'अभी APPLY करें')} · {APPLY_EMAIL}
           </a>
+
+          {/* League in numbers — why this is a place worth joining */}
+          <div className="cr-stats">
+            {[
+              ['4', t('Seasons completed', 'Seasons पूरे')],
+              ['48+', t('Trial cities', 'Trial शहर')],
+              ['2.4 lakh+', t('Working professionals reached', 'Working professionals तक पहुँच')],
+              ['10', t('Franchise teams', 'Franchise teams')],
+              ['385+', t('Players auctioned', 'Players auction हुए')],
+              ['Season 5', t('Now building the in-house team', 'अब in-house team बन रही है')],
+            ].map(([b, s]) => (
+              <div key={String(s)} className="cr-stat"><b>{b}</b><span>{s}</span></div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Why BCPL */}
-      <section style={{ padding: '10px 0 clamp(30px,4vw,44px)' }}>
+      {/* Why work at BCPL */}
+      <section style={{ padding: 'clamp(24px,4vw,40px) 0 clamp(30px,4vw,44px)' }}>
         <div className="wrap">
-          <div className="perk-grid">
+          <div style={{ marginBottom: 8 }}>
+            <div className="cr-sec-kick">{t('Why work here', 'यहाँ क्यों काम करें')}</div>
+            <h2 className="cr-sec-h">{t('A GROWING LEAGUE, REAL OWNERSHIP', 'बढ़ती हुई league, असली ownership')}</h2>
+            <p className="cr-sec-sub">
+              {t('BCPL is a corporate T20 cricket league built for India\u2019s working professionals — across 48+ trial cities and a community of 2.4 lakh+ people. You join early, own your area and see your work on the ground the same season.',
+                 'BCPL working professionals के लिए बनी एक corporate T20 cricket league है — 48+ trial शहरों और 2.4 लाख+ लोगों की community के साथ। आप जल्दी जुड़ते हैं, अपना area own करते हैं और अपना काम उसी season मैदान पर देखते हैं।')}
+            </p>
+          </div>
+          <div className="perk-grid" style={{ marginTop: 22 }}>
             {[
               ['🏏', 'Work in sport, for real', 'खेल में असली काम', 'Match days, players, live scores — your work shows up on the ground and on screen the same week.', 'Match days, players, live scores — आपका काम उसी हफ़्ते मैदान और screen पर दिखता है।'],
               ['🚀', 'Day-one ownership', 'पहले दिन से ownership', 'You are the first hires. No layers, no hand-offs — you own your area and build it your way.', 'आप पहली hires हैं। कोई layers नहीं — अपना area खुद own कीजिए, अपने तरीके से बनाइए।'],
@@ -209,6 +259,107 @@ export default function Careers() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Culture & Values */}
+      <section style={{ padding: 'clamp(20px,3vw,32px) 0' }}>
+        <div className="wrap">
+          <div className="cr-sec-kick">{t('Culture & values', 'Culture और values')}</div>
+          <h2 className="cr-sec-h">{t('HOW WE WORK', 'हम कैसे काम करते हैं')}</h2>
+          <div className="cr-cards three">
+            {[
+              ['🎯', 'Ownership over titles', 'Title से ज़्यादा ownership', 'You run your area end to end. Fewer approvals, faster decisions, clear accountability.', 'आप अपना area पूरी तरह चलाते हैं। कम approvals, तेज़ decisions, साफ़ ज़िम्मेदारी।'],
+              ['⚡', 'Ship in season time', 'Season की रफ़्तार में काम', 'Match days set the pace. We plan carefully and move quickly when it matters.', 'Match days rफ़्तार तय करते हैं। हम सोच-समझकर plan करते हैं और ज़रूरत पर तेज़ चलते हैं।'],
+              ['🤝', 'Small team, straight talk', 'छोटी team, सीधी बात', 'Direct access to the founder, honest feedback and credit where it is due.', 'Founder तक सीधी पहुँच, ईमानदार feedback और सही श्रेय।'],
+              ['🌱', 'Learn on real problems', 'असली problems पर सीखें', 'You build a live product used by thousands — not slides. Growth comes from doing.', 'आप हज़ारों लोगों द्वारा इस्तेमाल होने वाला live product बनाते हैं — slides नहीं। सीख काम से आती है।'],
+              ['🇮🇳', 'Built in India, for India', 'भारत में, भारत के लिए', 'A bilingual, city-first product for working professionals across the country.', 'देश भर के working professionals के लिए एक bilingual, city-first product।'],
+              ['📊', 'Numbers we can see', 'ऐसे numbers जो दिखें', 'Registrations, engagement, delivery — we track what matters and share it openly.', 'Registrations, engagement, delivery — हम ज़रूरी चीज़ें track करते हैं और खुलकर साझा करते हैं।'],
+            ].map(([ic, en, hi, pEn, pHi]) => (
+              <div key={en} className="cr-card">
+                <div className="cic">{ic}</div>
+                <h4>{t(en, hi)}</h4>
+                <p>{t(pEn, pHi)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Where you can work — role areas */}
+      <section style={{ padding: 'clamp(20px,3vw,32px) 0' }}>
+        <div className="wrap">
+          <div className="cr-sec-kick">{t('Where you fit', 'आप कहाँ fit होते हैं')}</div>
+          <h2 className="cr-sec-h">{t('ROLE AREAS ACROSS THE LEAGUE', 'League के अलग-अलग role areas')}</h2>
+          <p className="cr-sec-sub">{t('From the platform to the pitch — here is where people build BCPL.', 'Platform से लेकर pitch तक — लोग यहाँ BCPL बनाते हैं।')}</p>
+          <div className="cr-cards three">
+            {[
+              ['⚙️', 'Operations', 'Operations', 'Season calendar, registrations, trials, auction and match-day delivery.', 'Season calendar, registrations, trials, auction और match-day delivery।', ['Planning', 'Delivery', 'Match days']],
+              ['📣', 'Marketing', 'Marketing', 'Registration campaigns, corporate outreach and on-ground activations.', 'Registration campaigns, corporate outreach और on-ground activations।', ['Campaigns', 'Corporate', 'Performance']],
+              ['💻', 'Technology', 'Technology', 'The website, app, payments, live scoring and the admin platform.', 'Website, app, payments, live scoring और admin platform।', ['React', 'Node', 'Design']],
+              ['🎬', 'Content', 'Content', 'Highlights, reels, posters and the day-to-day story of the league.', 'Highlights, reels, posters और league की रोज़ की कहानी।', ['Video', 'Social', 'Graphics']],
+              ['🥅', 'Ground staff', 'Ground staff', 'Trial-day and match-day ground operations, kit and logistics.', 'Trial-day व match-day की ground operations, kit और logistics।', ['On-ground', 'Kit', 'Logistics']],
+              ['📍', 'City coordinators', 'City coordinators', 'Local point of contact across trial cities — venues, players and turnout.', 'Trial शहरों में local संपर्क — venues, players और turnout।', ['48+ cities', 'Local', 'Community']],
+            ].map(([ic, en, hi, pEn, pHi, tags]) => (
+              <div key={en as string} className="cr-card">
+                <div className="cic">{ic as string}</div>
+                <h4>{t(en as string, hi as string)}</h4>
+                <p>{t(pEn as string, pHi as string)}</p>
+                <div className="rtags">
+                  {(tags as string[]).map(tg => <span key={tg} className="rtag">{tg}</span>)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Growth & Learning + Perks */}
+      <section style={{ padding: 'clamp(20px,3vw,32px) 0' }}>
+        <div className="wrap">
+          <div className="cr-sec-kick">{t('Growth & benefits', 'Growth और फ़ायदे')}</div>
+          <h2 className="cr-sec-h">{t('GROW WITH THE LEAGUE', 'League के साथ आगे बढ़ें')}</h2>
+          <div className="cr-cards three">
+            {[
+              ['📈', 'Learn by building', 'बनाते हुए सीखें', 'Take on real responsibility early and pick up skills across the season.', 'जल्दी असली ज़िम्मेदारी लें और पूरे season नई skills सीखें।'],
+              ['🧭', 'Mentorship & direct access', 'Mentorship और सीधी पहुँच', 'Work closely with the founder and experienced hires — feedback that helps you improve.', 'Founder और अनुभवी hires के साथ करीब से काम — ऐसा feedback जो आपको बेहतर बनाए।'],
+              ['🚀', 'Room to lead', 'Lead करने का मौका', 'As the league grows across seasons and cities, early team members can step into leadership.', 'जैसे league seasons और शहरों में बढ़ेगी, शुरुआती team के लोग leadership में जा सकते हैं।'],
+              ['💰', 'Market-aligned pay', 'Market के अनुसार pay', 'Salary bands set by role and experience, reviewed as you grow.', 'Role और experience के अनुसार salary bands, growth के साथ review।'],
+              ['🗓️', 'Flexible where the role allows', 'जहाँ role की इजाज़त हो, flexibility', 'Several roles are hybrid or remote-friendly; on-ground roles are in the field.', 'कई roles hybrid या remote-friendly हैं; on-ground roles मैदान पर होते हैं।'],
+              ['🏏', 'Match-day energy', 'Match-day की energy', 'Be part of live events, players and the atmosphere of a cricket season.', 'Live events, players और cricket season के माहौल का हिस्सा बनें।'],
+            ].map(([ic, en, hi, pEn, pHi]) => (
+              <div key={en} className="cr-card">
+                <div className="cic">{ic}</div>
+                <h4>{t(en, hi)}</h4>
+                <p>{t(pEn, pHi)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Hiring process */}
+      <section style={{ padding: 'clamp(20px,3vw,32px) 0' }}>
+        <div className="wrap">
+          <div className="cr-sec-kick">{t('Hiring process', 'Hiring process')}</div>
+          <h2 className="cr-sec-h">{t('HOW HIRING WORKS', 'Hiring कैसे होती है')}</h2>
+          <div className="cr-steps">
+            {[
+              ['Apply', 'Apply करें', 'Email your resume (and portfolio, if any) with the role in the subject line.', 'Resume (और portfolio, अगर हो) email करें — subject में role लिखें।'],
+              ['Screening', 'Screening', 'We review applications and reach out to shortlisted candidates.', 'हम applications देखते हैं और shortlist हुए candidates से संपर्क करते हैं।'],
+              ['Conversation', 'बातचीत', 'A call or two about your experience, the role and how you work.', 'आपके experience, role और काम के तरीके पर एक-दो calls।'],
+              ['Offer & onboarding', 'Offer और onboarding', 'A clear offer, then a hands-on start on real work from week one.', 'साफ़ offer, फिर पहले हफ़्ते से असली काम पर hands-on शुरुआत।'],
+            ].map(([en, hi, pEn, pHi], i) => (
+              <div key={en} className="cr-step">
+                <div className="num">{i + 1}</div>
+                <h4>{t(en, hi)}</h4>
+                <p>{t(pEn, pHi)}</p>
+              </div>
+            ))}
+          </div>
+          <p className="cr-sec-sub" style={{ marginTop: 16 }}>
+            {t('Shortlisted candidates typically hear from us within 10 working days.', 'Shortlist हुए candidates को आम तौर पर 10 working days में जवाब मिलता है।')}
+          </p>
         </div>
       </section>
 

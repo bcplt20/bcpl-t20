@@ -14,7 +14,7 @@ const SOCIAL = [
 
 /* Categorized mega-footer — every page of the site reachable from here */
 const COLS: { title: string; links: [string, string][] }[] = [
-  { title: "League",  links: [["About BCPL","/about"],["Teams","/teams"],["Players","/players"],["Match Center","/match-center"],["Schedule","/schedule"],["Points Table","/points-table"],["Sponsors","/sponsors"],["Jobs @ BCPL","/careers"],["Own a Franchise","/franchise"]] },
+  { title: "League",  links: [["About BCPL","/about"],["Teams","/teams"],["Players","/players"],["Match Center","/match-center"],["Schedule","/schedule"],["Points Table","/points-table"],["MVP Race","/mvp"],["Fan Voting","/vote"],["Sponsors","/sponsors"],["Become a Sponsor","/become-a-sponsor"],["Jobs @ BCPL","/careers"],["Own a Franchise","/franchise"]] },
   { title: "Players", links: [["Register — Phase 1","/register"],["Player Login","__login"],["How Selection Works","/trust"],["Eligibility Criteria","/eligibility"],["Physical Trial Rules","/trial-rules"],["Cricket Rulebook","/cricket-rulebook"],["Code of Conduct","/code-of-conduct"],["FAQ","/faq"]] },
   { title: "Media",   links: [["News","/news"],["Photo Gallery","/photos"],["Videos","/videos"],["Contact Us","/contact"]] },
   { title: "Guides",  links: [["Corporate Cricket in India","/corporate-cricket"],["Corporate Cricket Tournament Delhi","/corporate-cricket-tournament-delhi"],["How to Join","/how-to-join"],["Office Cricket Team","/office-cricket-team"]] },

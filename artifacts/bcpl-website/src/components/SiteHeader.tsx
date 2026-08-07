@@ -31,6 +31,7 @@ const LINKS: NavItem[] = [
   { key: "MVP",       en: "MVP",       hi: "MVP",        href: "/mvp" },
   { key: "Auction",   en: "Auction",   hi: "ऑक्शन",      href: "/auction/live" },
   { key: "Media",     en: "Media",     hi: "मीडिया",     href: "/photos" },
+  { key: "Sponsor",   en: "Sponsor",   hi: "स्पॉन्सर",   href: "/become-a-sponsor" },
   { key: "About",     en: "About",     hi: "परिचय",      href: "/about" },
 ];
 
@@ -48,6 +49,7 @@ const MOB_LINKS: NavItem[] = [
   { key: "News",      en: "News",         hi: "न्यूज़",          href: "/news" },
   { key: "Photos",    en: "Photos",       hi: "फ़ोटो",          href: "/photos" },
   { key: "Videos",    en: "Videos",       hi: "वीडियो",         href: "/videos" },
+  { key: "Sponsor",   en: "Become a Sponsor", hi: "स्पॉन्सर बनें", href: "/become-a-sponsor" },
   { key: "About",     en: "About BCPL",   hi: "BCPL परिचय",     href: "/about" },
   { key: "Contact",   en: "Contact",      hi: "संपर्क",         href: "/contact" },
 ];
@@ -59,7 +61,7 @@ const ACTIVE_MAP: Record<string, string> = {
   "Photos": "Media", "Videos": "Media", "Media": "Media", "News": "Media",
   "Trust": "Trials", "Trials": "Trials",
   "About": "About", "Contact": "Contact", "Auction": "Auction",
-  "Vote": "Vote", "MVP": "MVP",
+  "Vote": "Vote", "MVP": "MVP", "Sponsor": "Sponsor",
 };
 
 const WHATSAPP_URL = "https://wa.me/919151346555";

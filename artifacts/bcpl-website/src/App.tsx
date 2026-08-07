@@ -15,6 +15,7 @@ import { Photos }              from '@/pages/Photos';
 import News                    from '@/pages/News';
 import Careers                 from '@/pages/Careers';
 import Franchise               from '@/pages/Franchise';
+import BecomeASponsor          from '@/pages/BecomeASponsor';
 import { Videos }              from '@/pages/Videos';
 import { About }               from '@/pages/About';
 import { FAQ }                 from '@/pages/FAQ';
@@ -99,6 +100,7 @@ function Router() {
         <Route path="/news"        component={News} />
         <Route path="/careers"     component={Careers} />
         <Route path="/franchise"   component={Franchise} />
+        <Route path="/become-a-sponsor" component={BecomeASponsor} />
         <Route path="/photos"      component={Photos} />
         <Route path="/videos"      component={Videos} />
         <Route path="/about"       component={About} />
