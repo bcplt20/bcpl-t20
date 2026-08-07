@@ -76,6 +76,7 @@ export default function ScoringScreen() {
   
   const [queuedBowlerPrompt, setQueuedBowlerPrompt] = useState(false);
   const historyRef = React.useRef<{ striker: string; strikerId?: string; nonStriker: string; nonStrikerId?: string; bowler: string; bowlerId?: string }[]>([]);
+  const actionInFlightRef = React.useRef(false);
 
   // Verification & Officials state
   const [officialsModal, setOfficialsModal] = useState(false);
@@ -187,8 +188,19 @@ export default function ScoringScreen() {
     },
     onError: (err: any) => {
       alert(err.message || 'Error scoring ball');
+    },
+    onSettled: async () => {
+      // Force sync from server state before unlocking the UI
+      await queryClient.refetchQueries({ queryKey: ['community-scorecard', matchId] });
+      actionInFlightRef.current = false;
     }
   });
+
+  const handleUndo = async () => {
+    if (isPadDisabled || actionInFlightRef.current) return;
+    actionInFlightRef.current = true;
+    undoMut.mutate();
+  };
 
   const undoMut = useMutation({
     mutationFn: () => communityUndo(token as string, matchId),
@@ -204,6 +216,10 @@ export default function ScoringScreen() {
         setBowlerId(last.bowlerId);
       }
     },
+    onSettled: async () => {
+      await queryClient.refetchQueries({ queryKey: ['community-scorecard', matchId] });
+      actionInFlightRef.current = false;
+    }
   });
 
   const inningsEndMut = useMutation({
@@ -264,7 +280,31 @@ export default function ScoringScreen() {
     }
   });
 
-  const handleScore = (type: string, runs: number, extraData?: any) => {
+  const isAnyScoringMutPending = ballMut.isPending || undoMut.isPending || inningsEndMut.isPending || finishMut.isPending;
+
+  const isOwner = token ? mineQ.data?.matches.some(m => m.id === matchId) : false;
+  const isOfficial = token ? officialsQ.data?.officials.some(o => o.userId === user?.id && o.role === 'scorer') : false;
+  const canScore = isOwner || isOfficial;
+
+  const match = q.data?.match;
+  const innings = q.data?.innings || [];
+  
+  const activeInnings = innings.length > 0 ? innings[innings.length - 1] : undefined;
+  const isMatchComplete = match?.status === 'completed';
+  const needsVerification = canScore && !!match?.teamAId && !!match?.teamBId && (!match?.teamAVerified || !match?.teamBVerified);
+  const showPad = canScore && activeInnings?.status === 'live' && !needsVerification;
+
+  const needsSetup = showPad && activeInnings && activeInnings.balls === 0 && activeInnings.totalRuns === 0 && activeInnings.totalWickets === 0 && setupInnings !== activeInnings.inningsNumber;
+
+  const isPadDisabled = isAnyScoringMutPending || needsSetup || !canScore || isMatchComplete;
+
+  const handleScore = async (type: string, runs: number, extraData?: any) => {
+    if (isPadDisabled) return;
+    
+    // Safety ref check to prevent immediate re-entry before React updates the `isPending` state
+    if (actionInFlightRef.current) return;
+    actionInFlightRef.current = true;
+    
     ballMut.mutate({
       type,
       runs,
@@ -276,10 +316,6 @@ export default function ScoringScreen() {
     });
   };
 
-  const isOwner = token ? mineQ.data?.matches.some(m => m.id === matchId) : false;
-  const isOfficial = token ? officialsQ.data?.officials.some(o => o.userId === user?.id && o.role === 'scorer') : false;
-  const canScore = isOwner || isOfficial;
-
   if (!ready || q.isLoading || (token && (mineQ.isLoading || officialsQ.isLoading))) {
     return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Scorer', 'स्कोरर')} back={true} /><LoadingView /></View>;
   }
@@ -287,16 +323,6 @@ export default function ScoringScreen() {
   if (q.isError) {
     return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Scorer', 'स्कोरर')} back={true} /><ErrorView onRetry={() => q.refetch()} /></View>;
   }
-
-  const match = q.data?.match;
-  const innings = q.data?.innings || [];
-  
-  const activeInnings = innings.length > 0 ? innings[innings.length - 1] : undefined;
-  const isMatchComplete = match?.status === 'completed';
-  const needsVerification = canScore && !!match?.teamAId && !!match?.teamBId && (!match?.teamAVerified || !match?.teamBVerified);
-  const showPad = canScore && activeInnings?.status === 'live' && !needsVerification;
-
-  const needsSetup = showPad && activeInnings && activeInnings.balls === 0 && activeInnings.totalRuns === 0 && activeInnings.totalWickets === 0 && setupInnings !== activeInnings.inningsNumber;
 
   const canStartInnings2 = canScore && (
     (match?.status === 'innings2' && innings.length === 1) ||
@@ -569,8 +595,8 @@ export default function ScoringScreen() {
         {/* INNINGS TRANSITION */}
         {canStartInnings2 && (
           <View style={{ paddingHorizontal: 16, marginBottom: 16 }}>
-            <Pressable onPress={() => inningsEndMut.mutate()} style={({pressed}) => [{ opacity: pressed ? 0.8 : 1 }]}>
-              <LinearGradient colors={['#00DCF5', '#5B2BF0']} style={{ padding: 16, borderRadius: 16, alignItems: 'center' }}>
+            <Pressable disabled={isPadDisabled} onPress={() => inningsEndMut.mutate()} style={({pressed}) => [{ opacity: pressed ? 0.8 : 1 }]}>
+              <LinearGradient colors={['#00DCF5', '#5B2BF0']} style={{ padding: 16, borderRadius: 16, alignItems: 'center', opacity: isPadDisabled ? 0.5 : 1 }}>
                 <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>
                   {inningsEndMut.isPending ? t('Starting...', 'शुरू कर रहे हैं...') : t('Start 2nd innings', 'दूसरी innings शुरू करें')}
                 </Text>
@@ -696,15 +722,15 @@ export default function ScoringScreen() {
         {isOwner && !isMatchComplete && (
           <View style={{ paddingHorizontal: 16, marginBottom: 16, gap: 12 }}>
             {canFinishMatch && (
-              <Pressable onPress={() => finishMut.mutate({})} style={({pressed}) => [{ opacity: pressed ? 0.8 : 1 }]}>
-                <LinearGradient colors={['#FF3DA6', '#FF1A75']} style={{ padding: 16, borderRadius: 16, alignItems: 'center' }}>
+              <Pressable disabled={isPadDisabled} onPress={() => finishMut.mutate({})} style={({pressed}) => [{ opacity: pressed ? 0.8 : 1 }]}>
+                <LinearGradient colors={['#FF3DA6', '#FF1A75']} style={{ padding: 16, borderRadius: 16, alignItems: 'center', opacity: isPadDisabled ? 0.5 : 1 }}>
                   <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>
                     {finishMut.isPending ? t('Finishing...', 'ख़त्म कर रहे हैं...') : t('Finish Match', 'Match ख़त्म करें')}
                   </Text>
                 </LinearGradient>
               </Pressable>
             )}
-            <Pressable onPress={() => finishMut.mutate({ abandon: true })} style={({pressed}) => [{ opacity: pressed ? 0.8 : 1, backgroundColor: c.card2, padding: 16, borderRadius: 16, alignItems: 'center', borderWidth: 1, borderColor: c.line }]}>
+            <Pressable disabled={isPadDisabled} onPress={() => finishMut.mutate({ abandon: true })} style={({pressed}) => [{ opacity: pressed || isPadDisabled ? 0.5 : 1, backgroundColor: c.card2, padding: 16, borderRadius: 16, alignItems: 'center', borderWidth: 1, borderColor: c.line }]}>
               <Text style={{ color: c.coral, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>
                 {t('Abandon Match', 'मैच रद्द करें')}
               </Text>
