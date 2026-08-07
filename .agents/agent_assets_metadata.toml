@@ -263,3 +263,59 @@ uri = "file://screenshots/app-home-logos.jpg"
 type = "image"
 title = "App — बड़े logos वाला match card"
 description = "App में भी logos बड़े, बिना किसी backing के; VS के नीचे timer।"
+
+[[outputs]]
+id = "eTshW_bOSTrh1PLroCfPC"
+uri = "file://screenshots/demo-web-points.jpg"
+type = "image"
+title = "Website — Points Table (Group A / Group B)"
+description = "Demo matches के साथ — दोनों groups अलग-अलग tables में, NRR और form के साथ।"
+
+[[outputs]]
+id = "2sz5jVnjhPemrrjOtpq0E"
+uri = "file://screenshots/demo-web-mvp.jpg"
+type = "image"
+title = "Website — MVP leaderboard (असली players जैसा)"
+description = "6 demo matches के ball-by-ball data से अपने आप बना leaderboard; final तय होते ही finalists ऊपर + FINALIST tag।"
+
+[[outputs]]
+id = "NtvgCmWMzr7eURk74qTYs"
+uri = "file://screenshots/demo-web-vote2.jpg"
+type = "image"
+title = "Website — Fan Voting (चलता हुआ poll)"
+description = "Man of the Series poll, 81 votes के साथ percentages।"
+
+[[outputs]]
+id = "FavTFg1OQZ4CYoJmwC8-x"
+uri = "file://screenshots/demo-web-matchcenter.jpg"
+type = "image"
+title = "Website — Match Center (LIVE match के साथ)"
+description = "सबसे ऊपर चलता हुआ LIVE match (scorecard link), नीचे upcoming matches countdown के साथ।"
+
+[[outputs]]
+id = "zfU7dTQ23_jN5dqB_zU5q"
+uri = "file://screenshots/demo-app-points.jpg"
+type = "image"
+title = "App — Points Table (Group A / Group B)"
+description = "App में भी groups अलग, qualified zone हरे रंग में।"
+
+[[outputs]]
+id = "qJCQMqq6uh3UuepGa4r5P"
+uri = "file://screenshots/demo-app-mvp.jpg"
+type = "image"
+title = "App — MVP Race (players और points के साथ)"
+description = "Rank, team, M/R/W/C stats और points — final बनने पर finalists ऊपर।"
+
+[[outputs]]
+id = "19PbbDsuF49KhZCOGIsmF"
+uri = "file://screenshots/demo-app-live-match.jpg"
+type = "image"
+title = "App — LIVE match screen"
+description = "चलते match का live score, overs और recent balls; Scorecard tab भी है।"
+
+[[outputs]]
+id = "sDzuHJ0wXVPQ4xgin7WwU"
+uri = "file://screenshots/demo-app-vote2.jpg"
+type = "image"
+title = "App — Fan Voting"
+description = "बिना login सीधे vote — एक phone एक vote।"
