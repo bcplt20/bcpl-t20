@@ -490,7 +490,7 @@ export interface CommunityTeamMember {
   id: string;
   teamId: string;
   userId?: string | null;
-  phone?: string | null;
+  phoneMasked?: string | null;
   name: string;
   role: string;
   addedAt: string;
@@ -548,6 +548,8 @@ export interface CommunityMatch {
   resultDesc?: string | null;
   teamAId?: string | null;
   teamBId?: string | null;
+  teamAVerified?: boolean;
+  teamBVerified?: boolean;
   createdAt: string;
 }
 
@@ -623,6 +625,32 @@ export function communityInningsEnd(token: string, id: string): Promise<{ target
 
 export function communityFinish(token: string, id: string, data?: { abandon?: boolean }): Promise<{ resultDesc: string }> {
   return apiFetch(`/community/matches/${id}/finish`, { method: 'POST', body: data || {}, token });
+}
+
+export interface CommunityOfficial {
+  userId: string;
+  name: string;
+  role: string;
+}
+
+export function communityGetOfficials(token: string, matchId: string): Promise<{ officials: CommunityOfficial[] }> {
+  return apiFetch(`/community/matches/${matchId}/officials`, { token });
+}
+
+export function communityAddOfficial(token: string, matchId: string, data: { phone: string; role: string }): Promise<{ success: boolean; message: string }> {
+  return apiFetch(`/community/matches/${matchId}/officials`, { method: 'POST', body: data, token });
+}
+
+export function communityRemoveOfficial(token: string, matchId: string, userId: string): Promise<{ success: boolean }> {
+  return apiFetch(`/community/matches/${matchId}/officials/${userId}`, { method: 'DELETE', token });
+}
+
+export function communityVerifyTeamStart(token: string, matchId: string, data: { teamId: string; memberId: string }): Promise<{ success: boolean; phoneMasked: string }> {
+  return apiFetch(`/community/matches/${matchId}/verify-team/start`, { method: 'POST', body: data, token });
+}
+
+export function communityVerifyTeamConfirm(token: string, matchId: string, data: { teamId: string; last4: string; code: string }): Promise<{ success: boolean }> {
+  return apiFetch(`/community/matches/${matchId}/verify-team/confirm`, { method: 'POST', body: data, token });
 }
 
 // ── Match center ─────────────────────────────────────────────────────────────

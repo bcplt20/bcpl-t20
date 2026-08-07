@@ -18,7 +18,7 @@ import { randomUUID } from "node:crypto";
 const { default: app } = await import("../src/app");
 const { db } = await import("@workspace/db");
 const { usersTable } = await import("@workspace/db/schema");
-const { eq } = await import("drizzle-orm");
+const { eq, sql } = await import("drizzle-orm");
 
 const SECRET = process.env.JWT_SECRET || "bcpl-dev-secret-CHANGE-IN-PROD";
 
@@ -370,40 +370,51 @@ describe("roster-linked match, ball with member ids, and stats", () => {
 });
 
 // ── 4. PII: phone exposure ──────────────────────────────────────────────────────
-describe("member phone PII", () => {
-  it("public team GET omits phone; owner GET includes it", async () => {
+describe("member phone PII (absolute — raw phone never returned)", () => {
+  it("owner sees phoneMasked only (never raw); non-owner/public see nothing", async () => {
     const { token: owner } = await makeUser();
     const teamId = await createTeam(owner);
     const phone = freshPhone();
+    const masked = "*".repeat(phone.length - 4) + phone.slice(-4);
+
     const add = await request(app).post(`/api/community/teams/${teamId}/members`).set(auth(owner))
       .send({ name: "WithPhone", phone });
     expect(add.status).toBe(200);
-    // owner-only add endpoint echoes phone
-    expect(add.body.member.phone).toBe(phone);
+    // owner-only add endpoint returns MASKED phone, never raw
+    expect(add.body.member).not.toHaveProperty("phone");
+    expect(add.body.member.phoneMasked).toBe(masked);
+    expect(JSON.stringify(add.body)).not.toContain(phone);
 
-    // public (no auth) → no phone field at all
+    // public (no auth) → no phone info at all
     const pub = await request(app).get(`/api/community/teams/${teamId}`);
     expect(pub.status).toBe(200);
     expect(pub.body.members[0]).not.toHaveProperty("phone");
+    expect(pub.body.members[0]).not.toHaveProperty("phoneMasked");
+    expect(JSON.stringify(pub.body)).not.toContain(phone);
 
-    // a non-owner authed requester → still no phone
+    // non-owner authed → still nothing
     const { token: other } = await makeUser();
     const asOther = await request(app).get(`/api/community/teams/${teamId}`).set(auth(other));
     expect(asOther.body.members[0]).not.toHaveProperty("phone");
+    expect(asOther.body.members[0]).not.toHaveProperty("phoneMasked");
+    expect(JSON.stringify(asOther.body)).not.toContain(phone);
 
-    // owner authed → phone present
+    // owner authed → masked only, never raw
     const asOwner = await request(app).get(`/api/community/teams/${teamId}`).set(auth(owner));
-    expect(asOwner.body.members[0].phone).toBe(phone);
+    expect(asOwner.body.members[0]).not.toHaveProperty("phone");
+    expect(asOwner.body.members[0].phoneMasked).toBe(masked);
+    expect(JSON.stringify(asOwner.body)).not.toContain(phone);
   });
 
-  it("match GET rosters never include phone", async () => {
+  it("match GET rosters never include phone or phoneMasked", async () => {
     const { token: owner } = await makeUser();
     const teamA = await createTeam(owner, { name: "PhA", shortName: "PHA" });
     const teamB = await createTeam(owner, { name: "PhB", shortName: "PHB" });
+    const pA = freshPhone(), pB = freshPhone();
     await request(app).post(`/api/community/teams/${teamA}/members`).set(auth(owner))
-      .send({ name: "RA", phone: freshPhone() });
+      .send({ name: "RA", phone: pA });
     await request(app).post(`/api/community/teams/${teamB}/members`).set(auth(owner))
-      .send({ name: "RB", phone: freshPhone() });
+      .send({ name: "RB", phone: pB });
     const mk = await request(app).post("/api/community/matches").set(auth(owner))
       .send({ oversLimit: 2, teamAId: teamA, teamBId: teamB });
 
@@ -411,11 +422,279 @@ describe("member phone PII", () => {
     const sc = await request(app).get(`/api/community/matches/${mk.body.match.id}`).set(auth(owner));
     expect(sc.status).toBe(200);
     expect(sc.body.rosters.teamA[0]).not.toHaveProperty("phone");
+    expect(sc.body.rosters.teamA[0]).not.toHaveProperty("phoneMasked");
     expect(sc.body.rosters.teamB[0]).not.toHaveProperty("phone");
+    expect(JSON.stringify(sc.body)).not.toContain(pA);
+    expect(JSON.stringify(sc.body)).not.toContain(pB);
   });
 });
 
-// ── 5. auth guards ──────────────────────────────────────────────────────────────
+// ── 5. match officials (scorer role) ────────────────────────────────────────────
+describe("match officials", () => {
+  it("owner appoints a scorer by phone; that scorer can post balls, a non-official cannot", async () => {
+    const { token: owner } = await makeUser();
+    const scorer = await makeUser();
+    const stranger = await makeUser();
+
+    const mk = await request(app).post("/api/community/matches").set(auth(owner))
+      .send({ team1: "A", team2: "B", oversLimit: 2 });
+    const matchId = mk.body.match.id;
+
+    // appoint by phone → response shows name + phoneMasked, never raw phone
+    const appoint = await request(app).post(`/api/community/matches/${matchId}/officials`).set(auth(owner))
+      .send({ phone: scorer.phone, role: "scorer" });
+    expect(appoint.status).toBe(200);
+    expect(appoint.body.official.userId).toBe(scorer.userId);
+    expect(appoint.body.official).not.toHaveProperty("phone");
+    expect(appoint.body.official.phoneMasked).toBe("*".repeat(scorer.phone.length - 4) + scorer.phone.slice(-4));
+    expect(JSON.stringify(appoint.body)).not.toContain(scorer.phone);
+
+    // scorer can post a ball
+    const ok = await request(app).post(`/api/community/matches/${matchId}/ball`).set(auth(scorer.token))
+      .send({ type: "run", runs: 1, batterName: "X", bowlerName: "Y" });
+    expect(ok.status).toBe(200);
+
+    // a stranger cannot
+    const no = await request(app).post(`/api/community/matches/${matchId}/ball`).set(auth(stranger.token))
+      .send({ type: "run", runs: 1, batterName: "X", bowlerName: "Y" });
+    expect(no.status).toBe(403);
+
+    // officials list visible to owner (with masked phone) and the official
+    const listOwner = await request(app).get(`/api/community/matches/${matchId}/officials`).set(auth(owner));
+    expect(listOwner.status).toBe(200);
+    expect(listOwner.body.officials[0].phoneMasked).toBeTruthy();
+    const listScorer = await request(app).get(`/api/community/matches/${matchId}/officials`).set(auth(scorer.token));
+    expect(listScorer.status).toBe(200);
+    expect(listScorer.body.officials[0]).not.toHaveProperty("phoneMasked");
+    const listStranger = await request(app).get(`/api/community/matches/${matchId}/officials`).set(auth(stranger.token));
+    expect(listStranger.status).toBe(403);
+
+    // owner removes the scorer → scoring blocked again
+    const del = await request(app).delete(`/api/community/matches/${matchId}/officials/${scorer.userId}`).set(auth(owner));
+    expect(del.status).toBe(200);
+    const blocked = await request(app).post(`/api/community/matches/${matchId}/ball`).set(auth(scorer.token))
+      .send({ type: "run", runs: 1, batterName: "X", bowlerName: "Y" });
+    expect(blocked.status).toBe(403);
+
+    // non-owner cannot appoint / remove
+    const badAdd = await request(app).post(`/api/community/matches/${matchId}/officials`).set(auth(stranger.token))
+      .send({ phone: scorer.phone });
+    expect(badAdd.status).toBe(403);
+  });
+
+  it("appointing an unknown phone → 404 no_account", async () => {
+    const { token: owner } = await makeUser();
+    const mk = await request(app).post("/api/community/matches").set(auth(owner))
+      .send({ team1: "A", team2: "B", oversLimit: 2 });
+    const r = await request(app).post(`/api/community/matches/${mk.body.match.id}/officials`).set(auth(owner))
+      .send({ phone: freshPhone() });
+    expect(r.status).toBe(404);
+    expect(r.body.error).toBe("no_account");
+  });
+});
+
+// ── 6. team-verification OTP ─────────────────────────────────────────────────────
+describe("team verification OTP", () => {
+  // Helper: owner picks their OWN team (auto-verified) as A and another user's
+  // team as B (needs verification), then scoring is gated until B is verified.
+  async function setupUnverifiedMatch() {
+    const { token: owner, userId: ownerId } = await makeUser();
+
+    // Owner's own team (auto-verified).
+    const teamA = await createTeam(owner, { name: "Home", shortName: "HOM" });
+    await request(app).post(`/api/community/teams/${teamA}/members`).set(auth(owner)).send({ name: "H1" });
+
+    // Opponent team owned by a DIFFERENT user, with a member who has a phone.
+    const opp = await makeUser();
+    const teamB = await createTeam(opp.token, { name: "Away", shortName: "AWY" });
+    const oppMemberPhone = freshPhone();
+    const addB = await request(app).post(`/api/community/teams/${teamB}/members`).set(auth(opp.token))
+      .send({ name: "Captain", phone: oppMemberPhone });
+    const memberId = addB.body.member.id;
+
+    const mk = await request(app).post("/api/community/matches").set(auth(owner))
+      .send({ oversLimit: 2, teamAId: teamA, teamBId: teamB });
+    return { owner, ownerId, teamA, teamB, memberId, oppMemberPhone, matchId: mk.body.match.id };
+  }
+
+  it("owner's own team auto-verified; scoring blocked until opponent verified; happy path unlocks", async () => {
+    const s = await setupUnverifiedMatch();
+
+    // match GET shows teamA verified, teamB not
+    const sc0 = await request(app).get(`/api/community/matches/${s.matchId}`);
+    expect(sc0.body.match.teamAVerified).toBe(true);
+    expect(sc0.body.match.teamBVerified).toBe(false);
+
+    // scoring blocked until BOTH verified
+    const blocked = await request(app).post(`/api/community/matches/${s.matchId}/ball`).set(auth(s.owner))
+      .send({ type: "run", runs: 1, batterName: "X", bowlerName: "Y" });
+    expect(blocked.status).toBe(400);
+    expect(blocked.body.code).toBe("team_unverified");
+
+    // start verification → masked phone only, dev code exposed in test env
+    const start = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/start`).set(auth(s.owner))
+      .send({ teamId: s.teamB, memberId: s.memberId });
+    expect(start.status).toBe(200);
+    expect(start.body).not.toHaveProperty("phone");
+    expect(start.body.phoneMasked).toBe("*".repeat(s.oppMemberPhone.length - 4) + s.oppMemberPhone.slice(-4));
+    expect(JSON.stringify(start.body)).not.toContain(s.oppMemberPhone);
+    const code = start.body.devCode;
+    expect(code).toMatch(/^[0-9]{6}$/);
+    const last4 = s.oppMemberPhone.slice(-4);
+
+    // confirm with last4 + code
+    const confirm = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/confirm`).set(auth(s.owner))
+      .send({ teamId: s.teamB, last4, code });
+    expect(confirm.status).toBe(200);
+    expect(confirm.body.verified).toBe(true);
+
+    // now scoring works
+    const ok = await request(app).post(`/api/community/matches/${s.matchId}/ball`).set(auth(s.owner))
+      .send({ type: "run", runs: 1, batterName: "X", bowlerName: "Y" });
+    expect(ok.status).toBe(200);
+  });
+
+  it("wrong last4 and wrong code are rejected (400)", async () => {
+    const s = await setupUnverifiedMatch();
+    const start = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/start`).set(auth(s.owner))
+      .send({ teamId: s.teamB, memberId: s.memberId });
+    const code = start.body.devCode;
+    const last4 = s.oppMemberPhone.slice(-4);
+    const wrongLast4 = last4 === "0000" ? "1111" : "0000";
+
+    const bad1 = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/confirm`).set(auth(s.owner))
+      .send({ teamId: s.teamB, last4: wrongLast4, code });
+    expect(bad1.status).toBe(400);
+
+    const bad2 = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/confirm`).set(auth(s.owner))
+      .send({ teamId: s.teamB, last4, code: code === "000000" ? "111111" : "000000" });
+    expect(bad2.status).toBe(400);
+  });
+
+  it("attempts cap: 5 wrong tries then blocked (429)", async () => {
+    const s = await setupUnverifiedMatch();
+    const start = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/start`).set(auth(s.owner))
+      .send({ teamId: s.teamB, memberId: s.memberId });
+    const last4 = s.oppMemberPhone.slice(-4);
+    const realCode = start.body.devCode;
+    const wrongCode = realCode === "000000" ? "111111" : "000000";
+
+    for (let i = 0; i < 5; i++) {
+      const r = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/confirm`).set(auth(s.owner))
+        .send({ teamId: s.teamB, last4, code: wrongCode });
+      expect(r.status).toBe(400);
+    }
+    // 6th attempt (even with the correct code) is capped
+    const capped = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/confirm`).set(auth(s.owner))
+      .send({ teamId: s.teamB, last4, code: realCode });
+    expect(capped.status).toBe(429);
+  });
+
+  it("expired code rejected", async () => {
+    const s = await setupUnverifiedMatch();
+    const start = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/start`).set(auth(s.owner))
+      .send({ teamId: s.teamB, memberId: s.memberId });
+    const code = start.body.devCode;
+    const last4 = s.oppMemberPhone.slice(-4);
+
+    // force-expire the verification row directly
+    await db.execute(
+      sql`UPDATE community_team_verifications SET expires_at = now() - interval '1 minute' WHERE match_id = ${s.matchId} AND team_id = ${s.teamB}`,
+    );
+    const r = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/confirm`).set(auth(s.owner))
+      .send({ teamId: s.teamB, last4, code });
+    expect(r.status).toBe(400);
+  });
+
+  it("only the owner can start/confirm verification", async () => {
+    const s = await setupUnverifiedMatch();
+    const { token: intruder } = await makeUser();
+    const start = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/start`).set(auth(intruder))
+      .send({ teamId: s.teamB, memberId: s.memberId });
+    expect(start.status).toBe(403);
+  });
+
+  // Verify the SAME gate applies to undo / innings-end / finish (incl. abandon),
+  // for both the owner and an appointed scorer, and lifts after verification.
+  async function verifyTeamB(s: Awaited<ReturnType<typeof setupUnverifiedMatch>>) {
+    const start = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/start`).set(auth(s.owner))
+      .send({ teamId: s.teamB, memberId: s.memberId });
+    const confirm = await request(app).post(`/api/community/matches/${s.matchId}/verify-team/confirm`).set(auth(s.owner))
+      .send({ teamId: s.teamB, last4: s.oppMemberPhone.slice(-4), code: start.body.devCode });
+    expect(confirm.status).toBe(200);
+  }
+
+  it("undo (DELETE /ball) is gated by team verification, then works", async () => {
+    const s = await setupUnverifiedMatch();
+    const before = await request(app).delete(`/api/community/matches/${s.matchId}/ball`).set(auth(s.owner));
+    expect(before.status).toBe(400);
+    expect(before.body.code).toBe("team_unverified");
+
+    await verifyTeamB(s);
+    // now the gate is lifted: undo proceeds and fails only for the real reason
+    // (nothing to undo yet), NOT with team_unverified
+    const after = await request(app).delete(`/api/community/matches/${s.matchId}/ball`).set(auth(s.owner));
+    expect(after.body.code).not.toBe("team_unverified");
+    // after scoring a ball, undo actually succeeds
+    await request(app).post(`/api/community/matches/${s.matchId}/ball`).set(auth(s.owner))
+      .send({ type: "run", runs: 1, batterName: "X", bowlerName: "Y" });
+    const undo = await request(app).delete(`/api/community/matches/${s.matchId}/ball`).set(auth(s.owner));
+    expect(undo.status).toBe(200);
+  });
+
+  it("innings-end is gated by team verification, then works", async () => {
+    const s = await setupUnverifiedMatch();
+    const before = await request(app).post(`/api/community/matches/${s.matchId}/innings-end`).set(auth(s.owner)).send({});
+    expect(before.status).toBe(400);
+    expect(before.body.code).toBe("team_unverified");
+
+    await verifyTeamB(s);
+    const after = await request(app).post(`/api/community/matches/${s.matchId}/innings-end`).set(auth(s.owner)).send({});
+    expect(after.status).toBe(200);
+  });
+
+  it("finish (incl. abandon:true) is gated by team verification, then works", async () => {
+    const s = await setupUnverifiedMatch();
+    const before = await request(app).post(`/api/community/matches/${s.matchId}/finish`).set(auth(s.owner))
+      .send({ abandon: true });
+    expect(before.status).toBe(400);
+    expect(before.body.code).toBe("team_unverified");
+
+    await verifyTeamB(s);
+    const after = await request(app).post(`/api/community/matches/${s.matchId}/finish`).set(auth(s.owner))
+      .send({ abandon: true });
+    expect(after.status).toBe(200);
+    expect(after.body.resultDesc).toBe("Match abandoned");
+  });
+
+  it("an appointed scorer also hits the gate before verification, and works after", async () => {
+    const s = await setupUnverifiedMatch();
+    // owner appoints a scorer
+    const scorer = await makeUser();
+    const appoint = await request(app).post(`/api/community/matches/${s.matchId}/officials`).set(auth(s.owner))
+      .send({ phone: scorer.phone, role: "scorer" });
+    expect(appoint.status).toBe(200);
+
+    // scorer blocked by the verification gate (not by authz)
+    const blockedBall = await request(app).post(`/api/community/matches/${s.matchId}/ball`).set(auth(scorer.token))
+      .send({ type: "run", runs: 1, batterName: "X", bowlerName: "Y" });
+    expect(blockedBall.status).toBe(400);
+    expect(blockedBall.body.code).toBe("team_unverified");
+    const blockedInnings = await request(app).post(`/api/community/matches/${s.matchId}/innings-end`).set(auth(scorer.token)).send({});
+    expect(blockedInnings.body.code).toBe("team_unverified");
+    const blockedFinish = await request(app).post(`/api/community/matches/${s.matchId}/finish`).set(auth(scorer.token))
+      .send({ abandon: true });
+    expect(blockedFinish.body.code).toBe("team_unverified");
+
+    await verifyTeamB(s);
+    // now the scorer can score
+    const ok = await request(app).post(`/api/community/matches/${s.matchId}/ball`).set(auth(scorer.token))
+      .send({ type: "run", runs: 1, batterName: "X", bowlerName: "Y" });
+    expect(ok.status).toBe(200);
+  });
+});
+
+// ── 7. auth guards ──────────────────────────────────────────────────────────────
 describe("auth guards", () => {
   it("unauthenticated profile/teams → 401", async () => {
     expect((await request(app).get("/api/community/profile")).status).toBe(401);

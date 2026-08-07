@@ -8,7 +8,7 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
 import { useColors } from '@/hooks/useColors';
-import { communityScorecard, communityBall, communityUndo, communityInningsEnd, communityFinish, communityMyMatches } from '@/lib/api';
+import { communityScorecard, communityBall, communityUndo, communityInningsEnd, communityFinish, communityMyMatches, communityGetOfficials, communityAddOfficial, communityRemoveOfficial, communityVerifyTeamStart, communityVerifyTeamConfirm } from '@/lib/api';
 import { GlassAppBar, ScreenBackground, Card, useAppBarHeight, useBottomNavHeight, ErrorView, LoadingView } from '@/components/ui';
 
 const DISMISSALS = [
@@ -26,7 +26,7 @@ export default function ScoringScreen() {
   const { id } = useLocalSearchParams();
   const matchId = id as string;
   const router = useRouter();
-  const { token, ready } = useAuth();
+  const { token, ready, user } = useAuth();
   const { t } = useLang();
   const c = useColors();
   const queryClient = useQueryClient();
@@ -76,6 +76,18 @@ export default function ScoringScreen() {
   const [queuedBowlerPrompt, setQueuedBowlerPrompt] = useState(false);
   const historyRef = React.useRef<{ striker: string; strikerId?: string; nonStriker: string; nonStrikerId?: string; bowler: string; bowlerId?: string }[]>([]);
 
+  // Verification & Officials state
+  const [officialsModal, setOfficialsModal] = useState(false);
+  const [addOfficialPhone, setAddOfficialPhone] = useState('');
+  const [addOfficialRole, setAddOfficialRole] = useState('scorer');
+
+  const [verifyModal, setVerifyModal] = useState<{ teamId: string, teamName: string } | null>(null);
+  const [verifyMemberId, setVerifyMemberId] = useState<string | undefined>(undefined);
+  const [verifyStep, setVerifyStep] = useState<'pick' | 'otp'>('pick');
+  const [verifyMasked, setVerifyMasked] = useState('');
+  const [verifyLast4, setVerifyLast4] = useState('');
+  const [verifyCode, setVerifyCode] = useState('');
+
   useEffect(() => {
     if (renameTarget === 'striker') { setRenameName(striker); setRenameMemberId(strikerId); }
     else if (renameTarget === 'nonStriker') { setRenameName(nonStriker); setRenameMemberId(nonStrikerId); }
@@ -86,6 +98,13 @@ export default function ScoringScreen() {
     queryKey: ['community-mine'],
     queryFn: () => communityMyMatches(token as string),
     enabled: !!token,
+  });
+
+  const officialsQ = useQuery({
+    queryKey: ['community-officials', matchId],
+    queryFn: () => communityGetOfficials(token as string, matchId),
+    enabled: !!token,
+    retry: false,
   });
 
   const q = useQuery({
@@ -196,6 +215,54 @@ export default function ScoringScreen() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['community-scorecard', matchId] }),
   });
 
+  const addOfficialMut = useMutation({
+    mutationFn: (data: { phone: string; role: string }) => communityAddOfficial(token as string, matchId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['community-officials', matchId] });
+      setAddOfficialPhone('');
+      alert(t('Official added', 'Official जोड़ दिया गया'));
+    },
+    onError: (err: any) => {
+      if (err.code === 'no_account') {
+        alert(t('No account found on this number — ask them to install the app first.', 'इस number पर account नहीं है — पहले app install करने को कहें।'));
+      } else {
+        alert(err.message || 'Error adding official');
+      }
+    }
+  });
+
+  const removeOfficialMut = useMutation({
+    mutationFn: (userId: string) => communityRemoveOfficial(token as string, matchId, userId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['community-officials', matchId] }),
+    onError: (err: any) => alert(err.message || 'Error removing official'),
+  });
+
+  const verifyStartMut = useMutation({
+    mutationFn: (data: { teamId: string, memberId: string }) => communityVerifyTeamStart(token as string, matchId, data),
+    onSuccess: (data) => {
+      setVerifyMasked(data.phoneMasked);
+      setVerifyStep('otp');
+    },
+    onError: (err: any) => alert(err.message || 'Error sending OTP'),
+  });
+
+  const verifyConfirmMut = useMutation({
+    mutationFn: (data: { teamId: string, last4: string, code: string }) => communityVerifyTeamConfirm(token as string, matchId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['community-scorecard', matchId] });
+      setVerifyModal(null);
+      alert(t('Team verified!', 'टीम verify हो गई!'));
+    },
+    onError: (err: any) => {
+      if (err.status === 429) {
+        alert(t('Too many failed attempts — send a new OTP.', 'बहुत बार गलत — नया OTP भेजें।'));
+        setVerifyStep('pick');
+      } else {
+        alert(err.message || 'Invalid code or last 4 digits');
+      }
+    }
+  });
+
   const handleScore = (type: string, runs: number, extraData?: any) => {
     ballMut.mutate({
       type,
@@ -209,8 +276,10 @@ export default function ScoringScreen() {
   };
 
   const isOwner = token ? mineQ.data?.matches.some(m => m.id === matchId) : false;
+  const isOfficial = token ? officialsQ.data?.officials.some(o => o.userId === user?.id && o.role === 'scorer') : false;
+  const canScore = isOwner || isOfficial;
 
-  if (!ready || q.isLoading || (token && mineQ.isLoading)) {
+  if (!ready || q.isLoading || (token && (mineQ.isLoading || officialsQ.isLoading))) {
     return <View style={{ flex: 1, backgroundColor: c.bg }}><ScreenBackground /><GlassAppBar title={t('Scorer', 'स्कोरर')} /><LoadingView /></View>;
   }
 
@@ -223,17 +292,18 @@ export default function ScoringScreen() {
   
   const activeInnings = innings.length > 0 ? innings[innings.length - 1] : undefined;
   const isMatchComplete = match?.status === 'completed';
-  const showPad = isOwner && activeInnings?.status === 'live';
+  const needsVerification = canScore && !!match?.teamAId && !!match?.teamBId && (!match?.teamAVerified || !match?.teamBVerified);
+  const showPad = canScore && activeInnings?.status === 'live' && !needsVerification;
 
   const needsSetup = showPad && activeInnings && activeInnings.balls === 0 && activeInnings.totalRuns === 0 && activeInnings.totalWickets === 0 && setupInnings !== activeInnings.inningsNumber;
 
-  const canStartInnings2 = isOwner && (
+  const canStartInnings2 = canScore && (
     (match?.status === 'innings2' && innings.length === 1) ||
     (activeInnings?.status === 'completed' && activeInnings?.inningsNumber === 1)
   );
 
   const hasSecondInningsBalls = innings.length === 2 && (innings[1].balls > 0 || innings[1].totalRuns > 0 || (innings[1].recentBalls && innings[1].recentBalls.length > 0));
-  const canFinishMatch = isOwner && hasSecondInningsBalls && !isMatchComplete;
+  const canFinishMatch = canScore && hasSecondInningsBalls && !isMatchComplete;
 
   const shareMatch = () => {
     const url = `https://bcplt20.com/scorecard/${matchId}`;
@@ -335,7 +405,14 @@ export default function ScoringScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar title={t('Scorer', 'स्कोरर')} />
+      <GlassAppBar
+        title={t('Scorer', 'स्कोरर')}
+        right={isOwner ? (
+          <Pressable onPress={() => setOfficialsModal(true)} style={{ padding: 8 }}>
+            <Feather name="settings" size={22} color={c.ink} />
+          </Pressable>
+        ) : undefined}
+      />
       
       <ScrollView contentContainerStyle={{ paddingBottom: bottomNavHeight + 40, paddingTop: appBarHeight }}>
         
@@ -384,8 +461,8 @@ export default function ScoringScreen() {
           </View>
         )}
 
-        {/* NOT OWNER BANNER */}
-        {!isOwner && (
+        {/* NOT SCORER BANNER */}
+        {!canScore && (
           <View style={{ paddingHorizontal: 16, marginBottom: 16 }}>
             <Card style={{ backgroundColor: `${c.cyan}20`, borderColor: c.cyan, padding: 12, alignItems: 'center' }}>
               <Text style={{ color: c.cyan, fontFamily: 'PlusJakartaSans_700Bold' }}>
@@ -422,6 +499,34 @@ export default function ScoringScreen() {
               </LinearGradient>
             </Pressable>
           </View>
+        )}
+
+        {/* VERIFICATION REQUIRED BANNER */}
+        {needsVerification && (
+          <Card style={{ marginHorizontal: 16, marginBottom: 16, padding: 20, backgroundColor: `${c.coral}10`, borderColor: c.coral }}>
+            <Feather name="shield" size={24} color={c.coral} style={{ marginBottom: 12 }} />
+            <Text style={{ color: c.coral, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginBottom: 8 }}>
+              {t('Team Verification Required', 'टीम verification ज़रूरी')}
+            </Text>
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_500Medium', marginBottom: 16 }}>
+              {t('Both linked teams must be verified before scoring can start.', 'स्कोरिंग शुरू करने से पहले दोनों टीमों का verify होना ज़रूरी है।')}
+            </Text>
+            
+            <View style={{ gap: 12 }}>
+              {!match.teamAVerified && (
+                <Pressable onPress={() => { setVerifyModal({ teamId: match.teamAId!, teamName: match.team1 }); setVerifyStep('pick'); }} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: c.card, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: c.coral }}>
+                  <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>{match.team1}</Text>
+                  <Text style={{ color: c.coral, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Verify Now', 'अभी verify करें')}</Text>
+                </Pressable>
+              )}
+              {!match.teamBVerified && (
+                <Pressable onPress={() => { setVerifyModal({ teamId: match.teamBId!, teamName: match.team2 }); setVerifyStep('pick'); }} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: c.card, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: c.coral }}>
+                  <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>{match.team2}</Text>
+                  <Text style={{ color: c.coral, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Verify Now', 'अभी verify करें')}</Text>
+                </Pressable>
+              )}
+            </View>
+          </Card>
         )}
 
         {/* INNINGS SETUP CARD */}
@@ -825,6 +930,164 @@ export default function ScoringScreen() {
             <Pressable onPress={() => setMoreModal(false)} style={{ marginTop: 24, padding: 12, alignItems: 'center' }}>
               <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Cancel', 'रद्द करें')}</Text>
             </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* VERIFY TEAM MODAL */}
+      <Modal visible={!!verifyModal} transparent animationType="slide">
+        <View style={styles.modalBg}>
+          <View style={[styles.modalCard, { backgroundColor: c.bg, borderColor: c.line, borderWidth: 1 }]}>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginBottom: 8 }}>
+              {t('Verify', 'Verify करें')} {verifyModal?.teamName}
+            </Text>
+            
+            {verifyStep === 'pick' ? (
+              <>
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', marginBottom: 16 }}>
+                  {t('Select a player from the roster to receive the OTP.', 'रोस्टर से किसी खिलाड़ी को चुनें जिसे OTP भेजा जाएगा।')}
+                </Text>
+                
+                <ScrollView style={{ maxHeight: 200, marginBottom: 16 }}>
+                  {q.data?.rosters?.[verifyModal?.teamId === match?.teamAId ? 'teamA' : 'teamB']?.map(m => (
+                    <Pressable
+                      key={m.id}
+                      onPress={() => setVerifyMemberId(m.id)}
+                      style={{ padding: 12, borderRadius: 12, backgroundColor: verifyMemberId === m.id ? c.cyan : c.card2, marginBottom: 8 }}
+                    >
+                      <Text style={{ color: verifyMemberId === m.id ? c.bg : c.ink, fontFamily: 'PlusJakartaSans_700Bold' }}>{m.name}</Text>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+
+                <View style={{ flexDirection: 'row', gap: 12 }}>
+                  <Pressable onPress={() => { setVerifyModal(null); setVerifyMemberId(undefined); }} style={[styles.modalBtn, { backgroundColor: c.card2 }]}>
+                    <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Cancel', 'रद्द करें')}</Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => {
+                      if (!verifyMemberId) return alert(t('Please select a player', 'कृपया खिलाड़ी चुनें'));
+                      verifyStartMut.mutate({ teamId: verifyModal!.teamId, memberId: verifyMemberId });
+                    }}
+                    disabled={verifyStartMut.isPending}
+                    style={[styles.modalBtn, { backgroundColor: verifyMemberId ? c.cyan : c.card2 }]}
+                  >
+                    <Text style={{ color: verifyMemberId ? c.bg : c.sub, fontFamily: 'PlusJakartaSans_700Bold' }}>
+                      {verifyStartMut.isPending ? t('Sending...', 'भेज रहे हैं...') : t('Send OTP', 'OTP भेजें')}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            ) : (
+              <>
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', marginBottom: 16 }}>
+                  {t('OTP sent to', 'OTP भेजा गया')} <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', color: c.ink }}>{verifyMasked}</Text>. {t('Enter last 4 digits of their phone number and the OTP.', 'उनके फ़ोन के आखिरी 4 अंक और OTP दर्ज करें।')}
+                </Text>
+
+                <TextInput
+                  value={verifyLast4}
+                  onChangeText={setVerifyLast4}
+                  placeholder={t('Last 4 digits', 'आखिरी 4 अंक')}
+                  keyboardType="number-pad"
+                  maxLength={4}
+                  style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 12, textAlign: 'left' }]}
+                />
+                <TextInput
+                  value={verifyCode}
+                  onChangeText={setVerifyCode}
+                  placeholder={t('6-digit OTP', '6-अंकों का OTP')}
+                  keyboardType="number-pad"
+                  maxLength={6}
+                  style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, marginBottom: 24, textAlign: 'left' }]}
+                />
+
+                <View style={{ flexDirection: 'row', gap: 12 }}>
+                  <Pressable onPress={() => { setVerifyStep('pick'); setVerifyLast4(''); setVerifyCode(''); }} style={[styles.modalBtn, { backgroundColor: c.card2 }]}>
+                    <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Back', 'वापस')}</Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => {
+                      if (verifyLast4.length !== 4) return alert(t('Enter last 4 digits', 'आखिरी 4 अंक दर्ज करें'));
+                      if (verifyCode.length !== 6) return alert(t('Enter 6-digit OTP', '6-अंकों का OTP दर्ज करें'));
+                      verifyConfirmMut.mutate({ teamId: verifyModal!.teamId, last4: verifyLast4, code: verifyCode });
+                    }}
+                    disabled={verifyConfirmMut.isPending}
+                    style={[styles.modalBtn, { backgroundColor: c.cyan }]}
+                  >
+                    <Text style={{ color: c.bg, fontFamily: 'PlusJakartaSans_700Bold' }}>
+                      {verifyConfirmMut.isPending ? t('Verifying...', 'जांच रहे हैं...') : t('Verify', 'Verify करें')}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      {/* OFFICIALS MODAL */}
+      <Modal visible={officialsModal} transparent animationType="slide">
+        <View style={styles.modalBg}>
+          <View style={[styles.modalCard, { backgroundColor: c.bg, borderColor: c.line, borderWidth: 1, maxHeight: '80%' }]}>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20, marginBottom: 16 }}>
+              {t('Match Officials', 'मैच Officials')}
+            </Text>
+
+            <ScrollView style={{ marginBottom: 16 }}>
+              {officialsQ.data?.officials?.length === 0 && (
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', textAlign: 'center', marginVertical: 12 }}>
+                  {t('No officials added yet.', 'अभी कोई official नहीं जोड़ा गया है।')}
+                </Text>
+              )}
+              {officialsQ.data?.officials?.map(o => (
+                <View key={o.userId} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: c.card2, padding: 12, borderRadius: 12, marginBottom: 8 }}>
+                  <View>
+                    <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold' }}>{o.name}</Text>
+                    <Text style={{ color: c.sub, fontSize: 12, fontFamily: 'PlusJakartaSans_600SemiBold', textTransform: 'capitalize' }}>{o.role}</Text>
+                  </View>
+                  <Pressable onPress={() => removeOfficialMut.mutate(o.userId)} style={{ padding: 8 }}>
+                    <Feather name="trash-2" size={16} color={c.coral} />
+                  </Pressable>
+                </View>
+              ))}
+            </ScrollView>
+
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', marginBottom: 8 }}>
+              {t('Add Official', 'Official जोड़ें')}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
+              <Pressable onPress={() => setAddOfficialRole('scorer')} style={[styles.chip, { flex: 1, backgroundColor: addOfficialRole === 'scorer' ? c.violet : c.card2, alignItems: 'center' }]}>
+                <Text style={{ color: addOfficialRole === 'scorer' ? '#fff' : c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>Scorer</Text>
+              </Pressable>
+              <Pressable onPress={() => setAddOfficialRole('umpire')} style={[styles.chip, { flex: 1, backgroundColor: addOfficialRole === 'umpire' ? c.violet : c.card2, alignItems: 'center' }]}>
+                <Text style={{ color: addOfficialRole === 'umpire' ? '#fff' : c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>Umpire</Text>
+              </Pressable>
+            </View>
+            <TextInput
+              value={addOfficialPhone}
+              onChangeText={setAddOfficialPhone}
+              placeholder={t('Phone number', 'फ़ोन नंबर')}
+              keyboardType="phone-pad"
+              style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, textAlign: 'left', marginBottom: 16 }]}
+            />
+
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              <Pressable onPress={() => setOfficialsModal(false)} style={[styles.modalBtn, { backgroundColor: c.card2 }]}>
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Close', 'बंद करें')}</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  if (addOfficialPhone.length < 10) return alert(t('Enter valid phone number', 'सही फ़ोन नंबर दर्ज करें'));
+                  addOfficialMut.mutate({ phone: addOfficialPhone, role: addOfficialRole });
+                }}
+                disabled={addOfficialMut.isPending}
+                style={[styles.modalBtn, { backgroundColor: c.violet }]}
+              >
+                <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold' }}>
+                  {addOfficialMut.isPending ? t('Adding...', 'जोड़ रहे हैं...') : t('Add', 'जोड़ें')}
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>

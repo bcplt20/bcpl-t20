@@ -179,7 +179,7 @@ export default function ScorerTeamDetailScreen() {
                       )}
                     </View>
                     <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 12, marginTop: 2 }}>
-                      {m.role || t('Player', 'खिलाड़ी')}
+                      {m.role || t('Player', 'खिलाड़ी')}{m.phoneMasked ? ` · ${m.phoneMasked}` : ''}
                     </Text>
                   </View>
                   {isOwner && (

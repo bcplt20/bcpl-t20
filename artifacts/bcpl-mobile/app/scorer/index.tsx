@@ -127,7 +127,7 @@ export default function ScorerHome() {
                       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                         <View style={{ flex: 1, paddingRight: 12 }}>
                           <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18 }}>
-                            {m.team1} vs {m.team2}
+                            {m.team1}{m.teamAVerified ? ' ✓' : ''} vs {m.team2}{m.teamBVerified ? ' ✓' : ''}
                           </Text>
                           {m.venue && (
                             <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, marginTop: 4 }}>
