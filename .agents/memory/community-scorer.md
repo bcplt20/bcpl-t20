@@ -13,3 +13,5 @@ Separate from official scoring: raw-SQL tables community_matches/innings/deliver
 **Web:** public page /scorecard/:id on website; SEO title via Express injector raw-sql lookup (community tables aren't in drizzle schema). finalizeResult runs INSIDE the locked tx (ball + finish) — never move it out.
 
 **Why:** two review rounds found concurrency data-loss, innings-2 flow bugs, undo identity corruption; these invariants were the fixes. Engine has 29 vitest tests (tests/communityScorer.test.ts).
+
+**Platform Phase 1 (Aug'26):** community_profiles/teams/team_members; member ids on deliveries power stats (names = display only). Invariants: ball member ids require BOTH teams linked + side-enforced vs active innings; phone visible only to team owner (never in match rosters); team cap uses per-owner advisory lock; typing a free-text name in the app must clear the stale roster member id. Missing yet: tournaments, join-requests, other-user public profiles.
