@@ -436,6 +436,20 @@ export async function putToPresignedUrl(url: string, blob: Blob, contentType: st
   if (!res.ok) throw new ApiError(`Upload failed (${res.status})`, res.status);
 }
 
+// ── Profile Backfill ──────────────────────────────────────────────────────────
+export interface ProfileCompletionRes {
+  needsBackfill: boolean;
+  missingFields: string[];
+}
+
+export function getProfileCompletion(token: string): Promise<ProfileCompletionRes> {
+  return apiFetch('/user/profile-completion', { token });
+}
+
+export function saveProfileBackfill(token: string, body: any): Promise<{ success: boolean }> {
+  return apiFetch('/user/profile-backfill', { method: 'POST', token, body });
+}
+
 // ── Gallery / media ──────────────────────────────────────────────────────────
 export interface GalleryItem {
   id: string;

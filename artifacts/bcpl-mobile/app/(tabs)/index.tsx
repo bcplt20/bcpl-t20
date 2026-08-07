@@ -20,6 +20,7 @@ import { useLang } from '@/context/LanguageContext';
 import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, type Match, type AppBanner, type Team } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
+import { ProfileBackfillCard } from '@/components/ProfileBackfillCard';
 import { teamLogoUri } from '@/app/teams';
 import { MatchCard } from '@/components/MatchCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
@@ -451,6 +452,7 @@ export default function HomeScreen() {
             onRefresh={() => {
               matchesQ.refetch();
               pointsQ.refetch();
+              bannersQ.refetch();
             }}
             tintColor={c.magenta}
             progressViewOffset={appBarHeight}
@@ -458,6 +460,8 @@ export default function HomeScreen() {
         }
       >
         <View style={{ height: appBarHeight }} />
+        
+        <ProfileBackfillCard />
 
         <BannerCarousel banners={bannersQ.data?.banners?.length ? bannersQ.data.banners : HARDCODED_BANNERS} />
 

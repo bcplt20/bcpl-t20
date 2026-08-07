@@ -31,6 +31,8 @@ import {
   ScreenBackground,
   useAppBarHeight,
 } from '@/components/ui';
+import { DobInput } from '@/components/DobInput';
+import { ProfileBackfillCard } from '@/components/ProfileBackfillCard';
 
 // Player details screen — mirrors the website profile: Name, Phone, Email,
 // Trial city, Registration number, Role, Age, Season. Data comes from the same
@@ -180,6 +182,7 @@ export default function ProfileDetailsScreen() {
           <ErrorView onRetry={() => dashQ.refetch()} />
         ) : (
           <>
+            <ProfileBackfillCard />
             {/* Header identity block */}
             <Card style={{ alignItems: 'center', paddingVertical: 28 }}>
               <Pressable onPress={() => setShowChooser(true)} testID="avatar-edit" style={{ alignItems: 'center' }}>
@@ -233,33 +236,8 @@ export default function ProfileDetailsScreen() {
                         </Text>
                       </Pressable>
                     ) : (
-                      <View>
-                        <TextInput
-                          value={dobInput}
-                          onChangeText={(v) => { setDobInput(v); if (dobError) setDobError(''); }}
-                          placeholder="YYYY-MM-DD"
-                          placeholderTextColor={c.sub}
-                          keyboardType="number-pad"
-                          maxLength={10}
-                          editable={!savingDob}
-                          testID="profile-dob-input"
-                          style={{
-                            color: c.ink,
-                            fontSize: 15,
-                            fontFamily: 'PlusJakartaSans_600SemiBold',
-                            borderWidth: 1,
-                            borderColor: dobError ? c.magenta : c.line,
-                            borderRadius: 10,
-                            paddingHorizontal: 12,
-                            paddingVertical: 10,
-                            backgroundColor: c.card2,
-                          }}
-                        />
-                        {dobError ? (
-                          <Text style={{ color: c.magenta, fontSize: 12, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
-                            {dobError}
-                          </Text>
-                        ) : null}
+                      <View style={{ marginTop: 4 }}>
+                        <DobInput value={dobInput} onChange={(v) => { setDobInput(v); if (dobError) setDobError(''); }} error={dobError} />
                         <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
                           <Pressable
                             onPress={onSaveDob}

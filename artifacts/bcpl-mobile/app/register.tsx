@@ -16,6 +16,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
+import { DobInput } from '@/components/DobInput';
 import {
   ApiError,
   createPhase1Payment,
@@ -475,9 +476,9 @@ export default function RegisterScreen() {
           <Text style={[styles.label, { color: c.ink, marginTop: 12 }]}>{t('Phone *', 'Phone *')}</Text>
           {input({ value: phone, onChange: (v) => setPhone(v.replace(/\D/g, '')), placeholder: '9876543210', keyboard: 'number-pad', maxLength: 10 })}
           <Text style={[styles.label, { color: c.ink, marginTop: 12 }]}>{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</Text>
-          {input({ value: dob, onChange: setDob, placeholder: 'YYYY-MM-DD', maxLength: 10, keyboard: 'number-pad' })}
+          <DobInput value={dob} onChange={setDob} error={!dob ? null : !/^\d{4}-\d{2}-\d{2}$/.test(dob) ? t('Enter date of birth as YYYY-MM-DD', 'जन्मतिथि YYYY-MM-DD में डालें') : null} />
           {dobAge != null ? (
-            <Text style={{ color: c.mint, fontSize: 12, marginTop: 6, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5 }}>
+            <Text style={{ color: c.mint, fontSize: 12, marginTop: 2, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5 }}>
               {t(`AGE ${dobAge} — ELIGIBLE`, `उम्र ${dobAge} — योग्य`)}
             </Text>
           ) : null}
@@ -576,7 +577,7 @@ export default function RegisterScreen() {
             {!/^\d{4}-\d{2}-\d{2}$/.test(dob) ? (
               <View style={{ marginTop: 16 }}>
                 <Text style={[styles.label, { color: c.ink }]}>{t('Date of Birth (18–45 yrs) *', 'जन्म तिथि (18–45 साल) *')}</Text>
-                {input({ value: dob, onChange: setDob, placeholder: 'YYYY-MM-DD', maxLength: 10, keyboard: 'number-pad' })}
+                <DobInput value={dob} onChange={setDob} error={!dob ? null : !/^\d{4}-\d{2}-\d{2}$/.test(dob) ? t('Enter date of birth as YYYY-MM-DD', 'जन्मतिथि YYYY-MM-DD में डालें') : null} />
               </View>
             ) : null}
             <View style={{ marginTop: 16 }}>
