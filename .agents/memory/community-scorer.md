@@ -8,4 +8,8 @@ Separate from official scoring: raw-SQL tables community_matches/innings/deliver
 
 **Mobile:** active innings = LAST element of scorecard innings array (API orders ascending); pad shown only if match id appears in the user's `mine` list (never trust nav params); scorecard GET is public → guest read-only view.
 
-**Why:** review found concurrency data-loss + innings-2 flow bugs on first pass; these invariants were the fixes.
+**Mobile UX:** striker/nonStriker/bowler is client-side only (server just stores names). Every ball push snapshots identity to a history stack; undo MUST pop/restore it. Over-end wicket = queued prompts (batter first, then bowler). bye/legbye picker starts at 1 (server coerces min 1).
+
+**Web:** public page /scorecard/:id on website; SEO title via Express injector raw-sql lookup (community tables aren't in drizzle schema). finalizeResult runs INSIDE the locked tx (ball + finish) — never move it out.
+
+**Why:** two review rounds found concurrency data-loss, innings-2 flow bugs, undo identity corruption; these invariants were the fixes. Engine has 29 vitest tests (tests/communityScorer.test.ts).
