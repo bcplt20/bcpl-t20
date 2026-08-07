@@ -480,6 +480,9 @@ function NextActionBanner({ step, d }: { step: JourneyStep; d: Dashboard }) {
     ctaColors?: readonly [string, string];
     /** Whether the CTA navigates in-app (arrow) vs. opens a browser (external-link). */
     inApp?: boolean;
+    /** Optional secondary text link (e.g. "View my Result / Scorecard"). */
+    secondaryCta?: string;
+    secondaryOnPress?: () => void;
   };
 
   const banners: Record<Exclude<JourneyStep, 'upload_video'>, Banner> = {
@@ -511,7 +514,11 @@ function NextActionBanner({ step, d }: { step: JourneyStep; d: Dashboard }) {
     rejected: {
       accent: c.getAccentText(c.amber), icon: 'flag',
       title: t('Phase 1 Assessment Complete', 'फेज 1 असेसमेंट पूरा'),
-      body: t('You completed the full Phase 1 assessment this season. You were not shortlisted for Phase 2 this time — your scorecard shows exactly where to improve. Season 6 registrations open soon.', 'आपने इस सीज़न का पूरा फेज 1 असेसमेंट पूरा किया। इस बार आप फेज 2 के लिए shortlist नहीं हुए — आपका स्कोरकार्ड बताता है कि कहाँ सुधार करना है। सीज़न 6 रजिस्ट्रेशन जल्द खुलेंगे।'),
+      body: t('You completed the full Phase 1 assessment this season. You were not shortlisted for Phase 2 this time — open your scorecard to see exactly where to improve. Season 6 registrations open soon.', 'आपने इस सीज़न का पूरा फेज 1 असेसमेंट पूरा किया। इस बार आप फेज 2 के लिए shortlist नहीं हुए — कहाँ सुधार करना है यह देखने के लिए अपना स्कोरकार्ड खोलें। सीज़न 6 रजिस्ट्रेशन जल्द खुलेंगे।'),
+      cta: t('View my Result / Scorecard', 'अपना Result / Scorecard देखें'),
+      onPress: () => router.push('/result'),
+      ctaColors: ['#7C5CFF', '#FF3DA6'],
+      inApp: true,
     },
     p2_register: {
       accent: c.mint, icon: 'star',
@@ -521,6 +528,8 @@ function NextActionBanner({ step, d }: { step: JourneyStep; d: Dashboard }) {
       onPress: () => router.push('/phase2-pay'),
       ctaColors: ['#16E0A3', '#00B8D9'],
       inApp: true,
+      secondaryCta: t('View my Result / Scorecard', 'अपना Result / Scorecard देखें'),
+      secondaryOnPress: () => router.push('/result'),
     },
     p2_kyc: {
       accent: c.cyan, icon: 'shield',
@@ -573,6 +582,12 @@ function NextActionBanner({ step, d }: { step: JourneyStep; d: Dashboard }) {
           <LinearGradient colors={b.ctaColors ?? (['#FF1A75', '#D10056'] as const)} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
           <Feather name={b.inApp ? 'arrow-right' : 'external-link'} size={16} color="#fff" />
           <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{b.cta}</Text>
+        </Pressable>
+      ) : null}
+      {b.secondaryCta && b.secondaryOnPress ? (
+        <Pressable onPress={b.secondaryOnPress} style={({ pressed }) => [styles.secondaryBtn, { borderColor: c.line, opacity: pressed ? 0.7 : 1 }]} testID={`journey-result-${step}`}>
+          <Feather name="file-text" size={15} color={c.violet} />
+          <Text style={{ color: c.violet, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13.5 }}>{b.secondaryCta}</Text>
         </Pressable>
       ) : null}
     </Card>
@@ -804,5 +819,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     marginTop: 20,
     overflow: 'hidden',
+  },
+  secondaryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 14,
+    paddingVertical: 12,
+    marginTop: 10,
+    borderWidth: 1,
   },
 });

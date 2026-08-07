@@ -312,6 +312,42 @@ export function getDashboard(token: string): Promise<Dashboard> {
   return apiFetch('/user/dashboard', { token });
 }
 
+// ── Phase 1 result (100-point scorecard) ────────────────────────────────────
+// Mirrors GET /api/results/me (api-server/src/routes/results.ts). Legacy
+// breakdown items may lack `label`, so the screen falls back to a prettified key.
+export interface Phase1BreakdownItem {
+  key: string;
+  label?: string;
+  score: number;
+  max: number;
+}
+
+export interface Phase1Result {
+  available: boolean;
+  /** Only meaningful when available:true. */
+  decision?: 'qualified' | 'not_shortlisted';
+  name?: string;
+  regNumber?: string | null;
+  role?: string | null;
+  trialCity?: string | null;
+  total?: number;
+  breakdown?: Phase1BreakdownItem[];
+  selectorNote?: string | null;
+  cityRank?: number | null;
+  cityCount?: number | null;
+  roleRank?: number | null;
+  roleCount?: number | null;
+  scoredAt?: string | null;
+  myFeedback?: { rating: string; comment?: string | null } | null;
+  /** Present when available:false — routes the pre-result / pending states. */
+  reason?: string;
+  phase1Status?: string | null;
+}
+
+export function getMyResult(token: string): Promise<Phase1Result> {
+  return apiFetch('/results/me', { token });
+}
+
 // ── Player classification (playing style) ───────────────────────────────────
 export interface ClassificationValue {
   battingHand?: 'right' | 'left';
