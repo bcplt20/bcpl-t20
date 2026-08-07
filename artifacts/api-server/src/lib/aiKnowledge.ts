@@ -45,13 +45,12 @@ export async function buildBcplKnowledge(): Promise<string> {
   const p2Std = FEES.bat.phase2, p2Ar = FEES.ar.phase2;
 
   // Live Phase-1 rules (self-healed for the promised 15-day / 30–90s windows).
-  let uploadDays = 15, vMin = 30, vMax = 90, resultHours = 48, minScore = 80;
+  let uploadDays = 15, vMin = 30, vMax = 90, minScore = 80;
   try {
     const cfg = await getPhase1Config();
     uploadDays = cfg.uploadWindowDays;
     vMin = cfg.videoMinSeconds;
     vMax = cfg.videoMaxSeconds;
-    resultHours = cfg.resultReleaseHours;
     minScore = cfg.minScore;
   } catch (e) {
     logger.warn({ err: e }, "aiKnowledge: phase1 config read failed; using promised defaults");
@@ -73,7 +72,7 @@ REGISTRATION & FEES (GST is ${gstPct}%, added on top; the exact GST-inclusive am
 THE JOURNEY (step by step)
 1. Register & pay Phase 1 fee.
 2. Upload a ${vMin}–${vMax} second cricket skills video in the app/website within ${uploadDays} days of registration.
-3. Phase 1 result & scorecard shared within ${uploadDays} days of your video submission (video review typically within ${resultHours} hours). Passing mark is ${minScore}/100.
+3. Phase 1 result & scorecard shared within ${uploadDays} days of your video submission — often much sooner. Passing mark is ${minScore}/100.
 4. If you qualify: proceed to Phase 2 — complete KYC and pay the Phase 2 fee.
 5. Attend the physical trial at your city venue (a QR "Trial Pass" appears in the app).
 6. Results announced after trials conclude.
@@ -81,7 +80,7 @@ THE JOURNEY (step by step)
 8. BCPL season matches (10 franchises), leading to the final.
 
 TRIAL VIDEO RULES
-- Length ${vMin}–${vMax} seconds; normal-speed, stable footage; show genuine, role-appropriate cricket actions (All-Rounders MUST show both batting and bowling). Avoid heavy edits/filters/slow-motion-only clips. Result within ${resultHours} hours of review, shared within the ${uploadDays}-day window.
+- Length ${vMin}–${vMax} seconds; normal-speed, stable footage; show genuine, role-appropriate cricket actions (All-Rounders MUST show both batting and bowling). Avoid heavy edits/filters/slow-motion-only clips. Result shared within the ${uploadDays}-day window — often much sooner.
 - You get a limited number of re-uploads if a video is invalid; see the app for your remaining attempts.
 
 KYC (Phase 2)

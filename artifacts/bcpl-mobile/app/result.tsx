@@ -150,8 +150,8 @@ export default function ResultScreen() {
     const pendingCopy: Record<string, [string, string]> = {
       not_registered: ['Register for Phase 1 to get your result here.', 'फेज 1 रजिस्ट्रेशन करने के बाद आपका रिज़ल्ट यहाँ दिखेगा।'],
       payment_pending: ['Complete your Phase 1 payment first — your result comes after your video is reviewed.', 'पहले फेज 1 का payment पूरा करें — वीडियो review होने के बाद रिज़ल्ट यहाँ आएगा।'],
-      video_pending: ['Upload your trial video first. Your result appears here after review (within 48 hours).', 'पहले अपना ट्रायल वीडियो अपलोड करें। Review के बाद (48 घंटे के अंदर) रिज़ल्ट यहाँ दिखेगा।'],
-      under_review: ['Your video is under review. Your result will appear here within 48 hours of submission.', 'आपका वीडियो review में है। Submit करने के 48 घंटे के अंदर रिज़ल्ट यहाँ दिखेगा।'],
+      video_pending: ['Upload your trial video first. Your result will appear here within 15 days of submission — usually much sooner.', 'पहले अपना ट्रायल वीडियो अपलोड करें। Submit के 15 दिनों के अंदर result यहाँ आ जाएगा — अक्सर काफ़ी पहले।'],
+      under_review: ['Your video is under review. Your result will appear here within 15 days of submission — usually much sooner.', 'आपका वीडियो review में है। Submit के 15 दिनों के अंदर result यहाँ आ जाएगा — अक्सर काफ़ी पहले।'],
       score_pending: ['Your Phase 1 decision has been announced via SMS and email. Your detailed 100-point scorecard will appear here shortly.', 'आपका फेज 1 निर्णय SMS और ईमेल से घोषित कर दिया गया है। आपका विस्तृत 100-पॉइंट स्कोरकार्ड जल्द ही यहाँ दिखाई देगा।'],
     };
     const isScorePending = reason === 'score_pending';

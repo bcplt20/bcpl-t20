@@ -196,7 +196,7 @@ export default function AssistantScreen() {
               BCPL AI
             </Text>
             <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, textAlign: 'center', marginTop: 4 }}>
-              {t('Powered by AI — instant answers 24/7', 'AI द्वारा संचालित — हर समय तुरंत जवाब')}
+              {t('Powered by AI — answers 24/7', 'AI द्वारा संचालित — 24/7 जवाब')}
             </Text>
           </View>
           <Bubble role="assistant" text={hello} />

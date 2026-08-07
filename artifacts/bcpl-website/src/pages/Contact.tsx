@@ -153,7 +153,7 @@ export function Contact() {
               <div style={{marginBottom:16,color:'#06B6D4',display:'flex'}}><IcoMail size={40}/></div>
               <div style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:20,color:'#fff',marginBottom:8}}>Email</div>
               <div style={{color:'#06B6D4',fontSize:15,fontWeight:700,marginBottom:4}}>support@bcplt20.com</div>
-              <div style={{color:'var(--ink-3)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("Response within 24 hours","24 घंटे में जवाब")}</div>
+              <div style={{color:'var(--ink-3)',fontSize:13,lineHeight:1.6,marginBottom:24}}>{t("We usually respond quickly","हम आम तौर पर जल्दी जवाब देते हैं")}</div>
               <a href="mailto:support@bcplt20.com" style={{textDecoration:'none'}}>
                 <button style={{width:'100%',height:48,borderRadius:14,background:'linear-gradient(135deg,#06B6D4,#0891B2)',border:'none',color:'#fff',fontFamily:'var(--font-head)',fontWeight:800,fontSize:15,cursor:'pointer',transition:'transform 0.15s'}}>
                   {t("Send Email →","Email भेजें →")}
@@ -195,7 +195,7 @@ export function Contact() {
             <div className="glass-card" style={{padding:'clamp(20px,5vw,40px)',animation:'fadeSlide 0.7s ease 0.2s both'}}>
               <div className="tag-pill" style={{marginBottom:20}}>{t("SEND A MESSAGE","संदेश भेजें")}</div>
               <h2 className="v3-h" style={{fontSize:30,color:'#fff',marginBottom:8}}>{t("Drop Us a Line","हमें लिखें")}</h2>
-              <p style={{color:'rgba(255,255,255,0.72)',fontSize:14,marginBottom:32,lineHeight:1.6}}>{t("Fill out the form and our team will get back to you within 24 hours.","Form भरें और हमारी team 24 घंटे में आपसे संपर्क करेगी।")}</p>
+              <p style={{color:'rgba(255,255,255,0.72)',fontSize:14,marginBottom:32,lineHeight:1.6}}>{t("Fill out the form and our team will get back to you as soon as possible.","Form भरें और हमारी team जल्द से जल्द आपसे संपर्क करेगी।")}</p>
 
               {sent ? (
                 <div style={{textAlign:'center',padding:'40px 20px'}}>

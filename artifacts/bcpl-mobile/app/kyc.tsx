@@ -361,7 +361,7 @@ export default function KycScreen() {
               {t('KYC submitted for review', 'KYC रिव्यू के लिए सबमिट हो गया')}
             </Text>
             <Text style={{ color: c.sub, fontSize: 13.5, marginTop: 10, textAlign: 'center', lineHeight: 21, fontFamily: 'PlusJakartaSans_500Medium' }}>
-              {kycMsg || t('Your documents are under review. You will receive an SMS + email when verified (usually within 24 hours).', 'आपके दस्तावेज़ रिव्यू में हैं। वेरिफाई होने पर आपको SMS + ईमेल मिलेगा (आमतौर पर 24 घंटे में)।')}
+              {kycMsg || t('Your documents are under review. You will receive an SMS and email once verified.', 'आपके दस्तावेज़ रिव्यू में हैं। वेरीफ़ाई होने पर आपको SMS और ईमेल मिलेगा।')}
             </Text>
           </Card>
         ) : aadhaarRefId ? (

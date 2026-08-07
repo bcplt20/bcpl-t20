@@ -116,9 +116,11 @@ export function Terms() {
       'Phase 1 fee: ₹299 plus applicable GST (Batsman/Bowler/Wicketkeeper) or ₹399 plus applicable GST (All-Rounder); the exact payable amount including GST is shown before payment',
       'Phase 2 fee — payable only if you are Phase 1 Qualified and choose to proceed: the applicable role-based fee plus applicable GST as displayed at the time of payment',
       'Payment of Phase 1 or Phase 2 fees does not guarantee Phase 1 Qualified status, Final Selection, Auction Pool entry, Player Auction purchase, Team Purchase, a player contract, remuneration or Tournament Participation',
-      'Payments are processed by a third-party payment gateway; BCPL does not store your card or UPI credentials',
-      'A GST invoice/receipt is issued for successful payments',
-      'Refunds — including duplicate-payment, debited-but-pending and BCPL-cancellation cases — are governed exclusively by the Refund & Cancellation Policy, which is incorporated into these Terms',
+      'Payments are processed online through our third-party payment gateway (Cashfree Payments) using UPI, cards, net-banking and other supported methods; BCPL does not accept cash and does not store your card or UPI credentials',
+      'All fees are quoted and charged in Indian Rupees (INR); any bank, card-network or foreign-exchange charges levied by your bank or card issuer are your responsibility',
+      'A fee is treated as paid only when the payment gateway confirms a successful transaction and your registration/order is created; an amount debited without a confirmed order is reconciled under the Refund & Cancellation Policy',
+      'A GST invoice/receipt is issued for successful payments to your registered contact details',
+      'Refunds — including duplicate-payment, debited-but-pending and BCPL-cancellation cases — are governed exclusively by the Refund & Cancellation Policy, which is incorporated into these Terms; fees are otherwise non-refundable once successfully paid',
     ]},
     {n:4,icon:<IcoVideo size={24}/>,titleEn:'Phase 1 — Video Trial & Assessment',titleHi:'फेज 1 — वीडियो ट्रायल और असेसमेंट',items:[
       'Phase 1 is a video-based cricket assessment; the fee provides participation in and access to the Phase 1 process for your selected playing role',
@@ -186,12 +188,14 @@ export function Terms() {
       'BCPL may change rules, formats, schedules, venues or dates for operational, safety or regulatory reasons; material changes are communicated through official channels',
     ]},
     {n:13,icon:<span style={{fontSize:24,lineHeight:1}}>§</span>,titleEn:'Governing Law, Grievance, Severability & Entire Agreement',titleHi:'कानून, शिकायत, विच्छेदनीयता और संपूर्ण अनुबंध',items:[
-      'These Terms are governed by the laws of the Republic of India',
-      'Disputes should first be submitted to BCPL\'s Grievance Redressal process — email support@bcplt20.com with your Registration ID',
-      'The dispute-resolution forum and jurisdiction are as set out in the approved BCPL legal wording. OWNER / COUNSEL DECISION REQUIRED: confirm the governing court/jurisdiction and any arbitration seat before publication.',
+      'These Terms are governed by and construed in accordance with the laws of the Republic of India',
+      'Disputes should first be submitted to BCPL\'s Grievance Redressal process — email support@bcplt20.com with your Registration ID and a description of the issue so we can attempt to resolve it',
+      'Subject to the Grievance Redressal process, any dispute arising out of or in connection with these Terms is subject to the exclusive jurisdiction of the courts of competent jurisdiction in India',
       'If any provision of these Terms is held invalid or unenforceable, the remaining provisions continue in full force (severability)',
       'A failure or delay by BCPL to enforce any provision is not a waiver of that provision (waiver)',
+      'You may not assign or transfer your rights or obligations under these Terms; BCPL may assign its rights and obligations to an affiliate or successor entity on notice',
       'These Terms, together with the Privacy Notice, Refund & Cancellation Policy, Eligibility Criteria, Code of Conduct and the published rules, form the entire agreement; where documents conflict, the specific rule for the relevant stage prevails (entire agreement / document hierarchy)',
+      'For any questions about these Terms you may contact BCPL at info@bcplt20.com or support@bcplt20.com',
       'The version number and effective date for these Terms are shown in the document header above',
     ]},
   ];
@@ -307,11 +311,11 @@ export function Terms() {
                     <div style={{fontFamily:'Montserrat,sans-serif',fontWeight:800,fontSize:15,color:'#FF7A29',marginBottom:7,letterSpacing:'.01em'}}>{t("Questions About These Terms?","इन शर्तों के बारे में सवाल?")}</div>
                     <p style={{color:'rgba(255,255,255,0.88)',fontSize:'clamp(13px,2vw,15px)',lineHeight:1.7}}>
                       {t(
-                        "Contact our legal team at",
-                        "हमारी legal team से संपर्क करें"
-                      )} <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong>{t(
+                        "Contact our team at",
+                        "हमारी team से संपर्क करें"
+                      )} <strong style={{color:'#E8B23D'}}>info@bcplt20.com</strong> / <strong style={{color:'#E8B23D'}}>support@bcplt20.com</strong>{t(
                         " or write to: Kriparti India Pvt. Ltd., New Delhi, India.",
-                        " या लिखें: Kriparti India Pvt. Ltd., New Delhi, India."
+                        " या लिखें: Kriparti India Pvt. Ltd., New Delhi, India।"
                       )}
                     </p>
                   </div>

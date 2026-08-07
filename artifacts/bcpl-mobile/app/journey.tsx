@@ -544,7 +544,7 @@ function NextActionBanner({ step, d }: { step: JourneyStep; d: Dashboard }) {
     p2_kyc_pending: {
       accent: c.getAccentText(c.amber), icon: 'clock',
       title: t('KYC Under Review', 'KYC रिव्यू में है'),
-      body: t('Your KYC documents are being verified. This usually takes a few hours. You will receive an SMS and email once verified.', 'आपके KYC दस्तावेज़ वेरीफ़ाई किए जा रहे हैं। इसमें आमतौर पर कुछ घंटे लगते हैं। वेरीफ़ाई होने पर आपको SMS और ईमेल मिलेगा।'),
+      body: t('Your KYC documents are being verified. You will receive an SMS and email once verified.', 'आपके KYC दस्तावेज़ वेरीफ़ाई किए जा रहे हैं। वेरीफ़ाई होने पर आपको SMS और ईमेल मिलेगा।'),
     },
     trial_wait: {
       accent: c.mint, icon: 'flag',

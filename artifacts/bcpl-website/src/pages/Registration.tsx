@@ -109,7 +109,7 @@ const CITIES = [
 const JOURNEY = [
   { phase:'P1', icon:IcoPen, label:'Register',   labelHi:'Register',       sub:'Fill form + pay entry fee',   subHi:'Form भरें + entry fee pay करें',        done:false, active:true  },
   { phase:'P1', icon:IcoVideo, label:'Upload Video',labelHi:'Video Upload',  sub:'2-min trial clip',            subHi:'2-min trial clip',                      done:false, active:false },
-  { phase:'P1', icon:IcoClock,  label:'48-Hour Result',labelHi:'48-Hour Result',sub:'Criteria-based evaluation', subHi:'Criteria-based evaluation',             done:false, active:false },
+  { phase:'P1', icon:IcoClock,  label:'15-Day Result',labelHi:'15-Day Result',sub:'Criteria-based evaluation', subHi:'Criteria-based evaluation',             done:false, active:false },
   { phase:'P2', icon:IcoStadium, label:'Physical Trial',labelHi:'Physical Trial',sub:'At your city — after Phase 1 qualification', subHi:'आपके शहर में — Phase 1 qualify करने के बाद',           done:false, active:false },
   { phase:'P2', icon:IcoScale, label:'Auction',    labelHi:'Auction',        sub:'Franchises bid on you',       subHi:'Franchises आप पर bid करती हैं',          done:false, active:false },
   { phase:'P2', icon:IcoTrophy, label:'Play BCPL',  labelHi:'BCPL खेलें',      sub:'Represent your franchise',    subHi:'अपनी franchise को represent करें',       done:false, active:false },

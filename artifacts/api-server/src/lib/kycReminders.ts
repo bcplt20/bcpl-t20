@@ -2,9 +2,9 @@
 // manual review for more than 24 hours without being cleared.
 //
 // Task #73 emails the admin ONCE at the moment a KYC parks for manual review.
-// Players are promised verification within 24–48 hours, so if a parked KYC is
-// still unreviewed after 24h it must resurface — but exactly once, never a
-// per-tick blast.
+// We aim to clear KYC well within the published 15-day window (internally we
+// target far sooner), so if a parked KYC is still unreviewed after 24h it must
+// resurface — but exactly once, never a per-tick blast.
 //
 // Safety model (mirrors lib/reminders.ts):
 //  1. Reserve-first dedupe: the partial UNIQUE index on
@@ -133,7 +133,7 @@ async function deliver(c: Candidate, alertTo: string): Promise<boolean> {
     trialCity:       c.trialCity,
     panVerified:     c.panVerified,
     aadhaarVerified: c.aadhaarVerified,
-    reason:          "⏰ Still unreviewed after 24h — this KYC has been parked for manual review for over a day. The player was promised verification within 24–48 hours; please review it now.",
+    reason:          "⏰ Still unreviewed after 24h — this KYC has been parked for manual review for over a day. The player expects verification well within the published 15-day window; please review it now.",
     flaggedAt:       c.parkedAt,
   });
   const res = await sendEmail({

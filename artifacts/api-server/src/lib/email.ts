@@ -44,9 +44,9 @@ export function adminAlertRecipient(): string | null {
   return to ? to : null;
 }
 
-/** Configured Phase 1 result window, human copy. Kept in sync with the
- *  phase1Config resultReleaseHours default (48h) — fixes the old
- *  "Expected Result BySoon" bug by always rendering a real window. */
+/** Player-facing Phase 1 result window copy. The ONLY promised timeline is
+ *  "within 15 days of video submission" — never state 48h to players (we may
+ *  internally aim sooner, but must not promise it). */
 const RESULT_WINDOW = "Within 15 Days";
 
 /** One PDF/document attachment for Brevo — content is base64-encoded bytes. */
@@ -331,7 +331,7 @@ export function tplPhase2Receipt(name: string, amount: number, regNo?: string) {
         children: `
           <div style="font-family:inherit;font-size:15px;color:${COLORS.ink};font-weight:700;margin-bottom:6px;">Next Step — Complete Your KYC</div>
           <p style="font-size:13px;color:${COLORS.inkSoft};margin:0 0 6px;line-height:1.6;">Complete Aadhaar and PAN verification to confirm your Phase 2 trial slot. Your trial venue and date will be announced soon.</p>
-          <p style="font-size:12px;color:${COLORS.inkFaint};margin:0;">Verification is usually completed within 24–48 hours.</p>`,
+          <p style="font-size:12px;color:${COLORS.inkFaint};margin:0;">Verification is completed within 15 days — usually much sooner.</p>`,
       })}
       ${PrimaryCTA("COMPLETE KYC", `${SITE_URL}/register/phase2`, COLORS.gold)}
       ${NextSteps([
@@ -475,7 +475,7 @@ export function tplKycManualReview(p: {
       ${HeroStatus({ iconUrl: ICONS.doc(COLORS.amber), ring: COLORS.amber, titleColor: COLORS.amber, title: "KYC NEEDS MANUAL REVIEW", subtitle: "A paying player's KYC could not be auto-verified." })}
       ${InfoCard({
         accent: COLORS.amber,
-        children: `<p style="font-size:14px;color:${COLORS.inkSoft};margin:0;line-height:1.6;">This KYC is now <strong style="color:${COLORS.amber};">waiting for your review</strong>. The player was promised verification within <strong style="color:${COLORS.ink};">24–48 hours</strong>.</p>`,
+        children: `<p style="font-size:14px;color:${COLORS.inkSoft};margin:0;line-height:1.6;">This KYC is now <strong style="color:${COLORS.amber};">waiting for your review</strong>. Please review it promptly — the player is expecting verification well within the published <strong style="color:${COLORS.ink};">15-day</strong> window.</p>`,
       })}
       ${KeyValueTable([
         ["Player", esc(p.playerName)],

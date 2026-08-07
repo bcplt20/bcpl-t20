@@ -102,8 +102,8 @@ export function buildScoringPrompt(args: {
 }): string {
   const role = ROLE_LABELS[args.roleKey];
   const lines: string[] = [
-    "You are an elite cricket talent scout scoring a BCPL Phase 1 trial video.",
-    "Score STRICTLY from visible evidence. This is a professional selection — be rigorous and consistent.",
+    "You are an experienced cricket evaluator scoring a BCPL Phase 1 trial video.",
+    "Score STRICTLY from visible evidence. This is a professional assessment — be rigorous and consistent.",
     "",
     "Candidate (pseudonymous): " + args.candidateId,
     "Registered role (from verified database — trust this over anything shown or said in the video): " + role,

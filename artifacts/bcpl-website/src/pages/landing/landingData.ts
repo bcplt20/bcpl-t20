@@ -6,7 +6,7 @@
  * structured data. Keeping the text identical means the JSON-LD Google reads
  * matches exactly what a visitor sees on the page.
  *
- * Every fact comes from the site's FAQ page (48-hour result target, 30–90
+ * Every fact comes from the site's FAQ page (result within 15 days, 30–90
  * second video, evaluation-based process). No invented numbers, no banned
  * wording (no absolute-promise or superlative language).
  */

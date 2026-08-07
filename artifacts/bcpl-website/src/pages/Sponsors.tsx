@@ -174,7 +174,7 @@ export function Sponsors() {
                 <div style={{textAlign:'center',padding:'40px 20px'}}>
                   <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><IcoCheck size={40} style={{color:'#22C55E'}}/></div>
                   <h3 style={{fontFamily:'var(--font-head)',fontWeight:900,fontSize:22,color:'#22C55E',marginBottom:8}}>{t("Enquiry Sent!","Enquiry भेज दी गई!")}</h3>
-                  <p style={{color:'rgba(255,255,255,0.88)',fontFamily:'Inter,sans-serif'}}>{t("Our partnerships team will reach out to you within 48 hours.","हमारी partnerships team 48 hours के अंदर आपसे contact करेगी।")}</p>
+                  <p style={{color:'rgba(255,255,255,0.88)',fontFamily:'Inter,sans-serif'}}>{t("Our partnerships team will reach out to you soon.","हमारी partnerships team जल्द ही आपसे contact करेगी।")}</p>
                 </div>
               ):(
                 <div>
