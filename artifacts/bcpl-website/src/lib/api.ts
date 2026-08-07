@@ -123,11 +123,14 @@ export const getProfileCompletion = () =>
     kycDone: boolean;
     profileComplete: boolean;
     needsBackfill: boolean;
-    have: { tshirtSize: string | null; emergencyName: string | null; emergencyPhone: string | null; bloodGroup: string | null };
+    have: { tshirtSize: string | null; trouserSize: string | null; shoeSize: string | null; helmetSize: string | null; emergencyName: string | null; emergencyPhone: string | null; bloodGroup: string | null };
   }>("GET", "/user/profile-completion");
 
 export const submitProfileBackfill = (body: {
   tshirtSize: string;
+  trouserSize: string;
+  shoeSize: string;
+  helmetSize: string;
   emergencyName: string;
   emergencyRelation?: string;
   emergencyPhone: string;
@@ -553,6 +556,9 @@ export const initiateKyc = (data: {
   // experience, linkedin) for backward compatibility, but the form no longer
   // collects or sends them.
   tshirtSize?: string;
+  trouserSize?: string;
+  shoeSize?: string;
+  helmetSize?: string;
   emergencyName?: string;
   emergencyRelation?: string;
   emergencyPhone?: string;
@@ -580,7 +586,9 @@ export const getKycProgress = (registrationId: string) =>
     aadhaarParked?: boolean;
     profession?: string;
     profile?: {
-      tshirtSize?: string | null; emergencyName?: string | null;
+      tshirtSize?: string | null; trouserSize?: string | null;
+      shoeSize?: string | null; helmetSize?: string | null;
+      emergencyName?: string | null;
       emergencyRelation?: string | null; emergencyPhone?: string | null;
       bloodGroup?: string | null;
     } | null;

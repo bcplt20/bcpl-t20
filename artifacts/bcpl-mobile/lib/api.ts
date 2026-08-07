@@ -221,6 +221,9 @@ export interface KycInitiateBody {
   aadhaarNumber: string;
   panNumber: string;
   tshirtSize?: string;
+  trouserSize?: string;
+  shoeSize?: string;
+  helmetSize?: string;
   emergencyName?: string;
   emergencyRelation?: string;
   emergencyPhone?: string;
@@ -248,8 +251,13 @@ export function getKycProgress(token: string, registrationId: string): Promise<{
   aadhaarParked?: boolean;
   profession?: string;
   profile?: {
-    tshirtSize?: string | null; emergencyName?: string | null;
-    emergencyRelation?: string | null; emergencyPhone?: string | null;
+    tshirtSize?: string | null;
+    trouserSize?: string | null;
+    shoeSize?: string | null;
+    helmetSize?: string | null;
+    emergencyName?: string | null;
+    emergencyRelation?: string | null;
+    emergencyPhone?: string | null;
     bloodGroup?: string | null;
   } | null;
 }> {

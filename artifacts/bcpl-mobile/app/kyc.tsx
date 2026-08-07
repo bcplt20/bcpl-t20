@@ -75,6 +75,9 @@ export default function KycScreen() {
 
   // Player essentials
   const [tshirt, setTshirt] = useState('');
+  const [trouser, setTrouser] = useState('');
+  const [shoe, setShoe] = useState('');
+  const [helmet, setHelmet] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
   const [ecName, setEcName] = useState('');
   const [ecRel, setEcRel] = useState('');
@@ -132,6 +135,9 @@ export default function KycScreen() {
         const prog = await getKycProgress(token, rid);
         if (prog.profile) {
           if (prog.profile.tshirtSize) setTshirt(prog.profile.tshirtSize);
+          if (prog.profile.trouserSize) setTrouser(prog.profile.trouserSize);
+          if (prog.profile.shoeSize) setShoe(prog.profile.shoeSize);
+          if (prog.profile.helmetSize) setHelmet(prog.profile.helmetSize);
           if (prog.profile.emergencyName) setEcName(prog.profile.emergencyName);
           if (prog.profile.emergencyRelation) setEcRel(prog.profile.emergencyRelation);
           if (prog.profile.emergencyPhone && /^\d{10}$/.test(prog.profile.emergencyPhone)) setEcPhone(prog.profile.emergencyPhone);
@@ -151,7 +157,7 @@ export default function KycScreen() {
   }, [dq.data, token]);
 
   const emergencyOk = !!(ecName.trim() && ecRel && /^\d{10}$/.test(ecPhone));
-  const canSubmit = !!tshirt && emergencyOk && !!profession && !!aadhaar && !!pan && !aadhaarErr && !panErr;
+  const canSubmit = !!tshirt && !!trouser && !!shoe && !!helmet && emergencyOk && !!profession && !!aadhaar && !!pan && !aadhaarErr && !panErr;
 
   const goToApproved = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['dashboard', token] });
@@ -163,8 +169,8 @@ export default function KycScreen() {
     if (!validateAadhaar(aadhaar)) { setAadhaarErr(t('Aadhaar must be 12 digits', 'आधार 12 अंकों का होना चाहिए')); return; }
     if (!validatePan(pan)) { setPanErr(t('Enter a valid PAN (e.g. ABCDE1234F)', 'सही PAN डालें (जैसे ABCDE1234F)')); return; }
     if (!/^\d{10}$/.test(ecPhone)) { setEcPhoneErr(t('Enter a 10-digit mobile number', '10 अंकों का मोबाइल नंबर डालें')); return; }
-    if (!profession || !tshirt || !ecName.trim() || !ecRel) {
-      setSubmitErr(t('Please complete profession, T-shirt size and emergency contact.', 'कृपया पेशा, टी-शर्ट साइज़ और आपातकालीन संपर्क पूरा करें।'));
+    if (!profession || !tshirt || !trouser || !shoe || !helmet || !ecName.trim() || !ecRel) {
+      setSubmitErr(t('Please complete profession, jersey details and emergency contact.', 'कृपया पेशा, जर्सी डिटेल्स और आपातकालीन संपर्क पूरा करें।'));
       return;
     }
     setSubmitting(true); setSubmitErr('');
@@ -175,6 +181,9 @@ export default function KycScreen() {
         aadhaarNumber: aadhaar.replace(/\s/g, ''),
         panNumber: pan.toUpperCase(),
         tshirtSize: tshirt,
+        trouserSize: trouser,
+        shoeSize: shoe,
+        helmetSize: helmet,
         emergencyName: ecName.trim(),
         emergencyRelation: ecRel,
         emergencyPhone: ecPhone,
@@ -455,9 +464,18 @@ export default function KycScreen() {
           <>
             {/* 1. Player essentials */}
             <Card style={{ marginTop: 22 }}>
-              <SectionTitle c={c} n="1" title={t('Player essentials', 'प्लेयर की जरूरी जानकारी')} sub={t('Required for match jerseys and on-ground safety.', 'मैच जर्सी और मैदान पर सुरक्षा के लिए आवश्यक।')} />
+              <SectionTitle c={c} n="1" title={t('Jersey Details', 'जर्सी डिटेल्स')} sub={t('These jersey details are not for trials — no kit is provided at trials. If you are picked into a team through the auction, having your sizes on file makes jersey preparation easy. Please fill your sizes accordingly.', 'ये jersey details trials के लिए नहीं हैं — trials में kit नहीं दी जाती। अगर auction के ज़रिए आप किसी team में चुने जाते हैं, तो आपकी sizes पहले से हमारे पास होने से jersey बनवाना आसान रहेगा। इसी हिसाब से अपनी सही sizes भरें।')} />
               <Label c={c} text={t('T-SHIRT SIZE *', 'टी-शर्ट साइज़ *')} />
               <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} c={c} />
+              <View style={{ height: 18 }} />
+              <Label c={c} text={t('TROUSER SIZE *', 'ट्राउज़र साइज़ *')} />
+              <ChipRow options={['28', '30', '32', '34', '36', '38', '40', '42', '44']} value={trouser} onChange={setTrouser} c={c} />
+              <View style={{ height: 18 }} />
+              <Label c={c} text={t('SHOE SIZE (UK) *', 'जूते का साइज़ (UK) *')} />
+              <ChipRow options={['4', '5', '6', '7', '8', '9', '10', '11', '12']} value={shoe} onChange={setShoe} c={c} />
+              <View style={{ height: 18 }} />
+              <Label c={c} text={t('HELMET SIZE *', 'हेलमेट साइज़ *')} />
+              <ChipRow options={['S', 'M', 'L', 'XL']} value={helmet} onChange={setHelmet} c={c} />
               <View style={{ height: 18 }} />
               <Label c={c} text={t('BLOOD GROUP', 'ब्लड ग्रुप')} />
               <ChipRow options={BLOOD_OPTS} value={bloodGroup} onChange={setBloodGroup} c={c} />

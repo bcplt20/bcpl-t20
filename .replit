@@ -87,7 +87,7 @@ channel = "stable-25_05"
 
 [[ports]]
 localPort = 8080
-externalPort = 8080
+externalPort = 80
 
 [[ports]]
 localPort = 8081
@@ -95,8 +95,8 @@ externalPort = 8081
 
 [[ports]]
 localPort = 20570
-externalPort = 80
+externalPort = 3000
 
 [[ports]]
 localPort = 21290
-externalPort = 3000
+externalPort = 3001

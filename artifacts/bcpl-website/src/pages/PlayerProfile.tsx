@@ -265,6 +265,10 @@ function fmtAmt(n: number) {
 // Same required fields + validation as the KYC page (T-shirt + emergency
 // contact required, blood group optional). Submits to /api/user/profile-backfill.
 const TSHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'] as const;
+// Jersey/kit sizes — must match backend enums exactly.
+const TROUSER_SIZES = ['28', '30', '32', '34', '36', '38', '40', '42', '44'] as const;
+const SHOE_SIZES = ['4', '5', '6', '7', '8', '9', '10', '11', '12'] as const; // UK
+const HELMET_SIZES = ['S', 'M', 'L', 'XL'] as const;
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] as const;
 
 function ProfileBackfillModal({ t, onClose, onDone }: {
@@ -273,6 +277,9 @@ function ProfileBackfillModal({ t, onClose, onDone }: {
   onDone: () => void;
 }) {
   const [tshirtSize, setTshirtSize] = useState('');
+  const [trouserSize, setTrouserSize] = useState('');
+  const [shoeSize, setShoeSize] = useState('');
+  const [helmetSize, setHelmetSize] = useState('');
   const [emergencyName, setEmergencyName] = useState('');
   const [emergencyRelation, setEmergencyRelation] = useState('');
   const [emergencyPhone, setEmergencyPhone] = useState('');
@@ -283,12 +290,18 @@ function ProfileBackfillModal({ t, onClose, onDone }: {
   const submit = async () => {
     setErr('');
     if (!tshirtSize) return setErr(t('Please select your T-shirt size.', 'कृपया टी-शर्ट साइज़ चुनें।'));
+    if (!trouserSize) return setErr(t('Please select your trouser size.', 'कृपया ट्राउज़र साइज़ चुनें।'));
+    if (!shoeSize) return setErr(t('Please select your shoe size (UK).', 'कृपया जूते का साइज़ (UK) चुनें।'));
+    if (!helmetSize) return setErr(t('Please select your helmet size.', 'कृपया हेलमेट साइज़ चुनें।'));
     if (!emergencyName.trim()) return setErr(t('Emergency contact name is required.', 'इमरजेंसी कॉन्टैक्ट का नाम ज़रूरी है।'));
     if (!/^\d{10}$/.test(emergencyPhone.trim())) return setErr(t('Please enter a valid 10-digit emergency number.', 'कृपया सही 10-अंकों का इमरजेंसी नंबर डालें।'));
     setBusy(true);
     try {
       await submitProfileBackfill({
         tshirtSize,
+        trouserSize,
+        shoeSize,
+        helmetSize,
         emergencyName: emergencyName.trim(),
         emergencyRelation: emergencyRelation.trim() || undefined,
         emergencyPhone: emergencyPhone.trim(),
@@ -327,6 +340,32 @@ function ProfileBackfillModal({ t, onClose, onDone }: {
         {label(t('T-shirt size *', 'टी-शर्ट साइज़ *'))}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {TSHIRT_SIZES.map(s => chip(s, tshirtSize === s, () => setTshirtSize(tshirtSize === s ? '' : s)))}
+        </div>
+
+        {label(t('Trouser size *', 'ट्राउज़र साइज़ *'))}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {TROUSER_SIZES.map(s => chip(s, trouserSize === s, () => setTrouserSize(trouserSize === s ? '' : s)))}
+        </div>
+
+        {label(t('Shoe size (UK) *', 'जूते का साइज़ (UK) *'))}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {SHOE_SIZES.map(s => chip(s, shoeSize === s, () => setShoeSize(shoeSize === s ? '' : s)))}
+        </div>
+
+        {label(t('Helmet size *', 'हेलमेट साइज़ *'))}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {HELMET_SIZES.map(s => chip(s, helmetSize === s, () => setHelmetSize(helmetSize === s ? '' : s)))}
+        </div>
+
+        {/* Disclaimer: these jersey sizes are NOT for trials */}
+        <div style={{ marginTop: 14, display: 'flex', gap: 8, alignItems: 'flex-start', background: 'rgba(232,178,61,0.06)', border: '1px solid rgba(232,178,61,0.25)', borderRadius: 10, padding: '10px 12px' }}>
+          <span style={{ fontSize: 14, lineHeight: 1.4 }} aria-hidden>ℹ️</span>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.78)', lineHeight: 1.6 }}>
+            {t(
+              "These jersey details are not for trials — no kit is provided at trials. If you are picked into a team through the auction, having your sizes on file makes jersey preparation easy. Please fill your sizes accordingly.",
+              "ये jersey details trials के लिए नहीं हैं — trials में kit नहीं दी जाती। अगर auction के ज़रिए आप किसी team में चुने जाते हैं, तो आपकी sizes पहले से हमारे पास होने से jersey बनवाना आसान रहेगा। इसी हिसाब से अपनी सही sizes भरें।"
+            )}
+          </div>
         </div>
 
         {label(t('Emergency contact name *', 'इमरजेंसी कॉन्टैक्ट का नाम *'))}

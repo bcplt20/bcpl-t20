@@ -79,20 +79,30 @@ describe("POST /api/user/profile-backfill", () => {
     expect(String(res.body.error)).toMatch(/T-shirt/i);
   });
 
+  it("rejects a payload missing the required trouser size (400)", async () => {
+    const res = await auth(request(app).post("/api/user/profile-backfill"))
+      .send({ tshirtSize: "L", shoeSize: "9", helmetSize: "M", emergencyName: "Jane", emergencyPhone: "9876543210" });
+    expect(res.status).toBe(400);
+    expect(String(res.body.error)).toMatch(/trouser/i);
+  });
+
   it("rejects an invalid emergency phone (400)", async () => {
     const res = await auth(request(app).post("/api/user/profile-backfill"))
-      .send({ tshirtSize: "L", emergencyName: "Jane", emergencyPhone: "123" });
+      .send({ tshirtSize: "L", trouserSize: "34", shoeSize: "9", helmetSize: "M", emergencyName: "Jane", emergencyPhone: "123" });
     expect(res.status).toBe(400);
   });
 
   it("saves the missing fields and marks the profile complete", async () => {
     const res = await auth(request(app).post("/api/user/profile-backfill"))
-      .send({ tshirtSize: "M", emergencyName: "Jane Doe", emergencyRelation: "Sister", emergencyPhone: "9876543210", bloodGroup: "B+" });
+      .send({ tshirtSize: "M", trouserSize: "34", shoeSize: "9", helmetSize: "M", emergencyName: "Jane Doe", emergencyRelation: "Sister", emergencyPhone: "9876543210", bloodGroup: "B+" });
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
 
     const [profile] = await db.select().from(playerProfilesTable).where(eq(playerProfilesTable.registrationId, regId));
     expect(profile!.tshirtSize).toBe("M");
+    expect(profile!.trouserSize).toBe("34");
+    expect(profile!.shoeSize).toBe("9");
+    expect(profile!.helmetSize).toBe("M");
     expect(profile!.emergencyName).toBe("Jane Doe");
     expect(profile!.emergencyRelation).toBe("Sister");
     expect(profile!.emergencyPhone).toBe("9876543210");
@@ -116,7 +126,7 @@ describe("POST /api/user/profile-backfill", () => {
     const tok2 = signToken({ userId: uid2, phone: p2 });
     const res = await request(app).post("/api/user/profile-backfill")
       .set("authorization", "Bearer " + tok2)
-      .send({ tshirtSize: "L", emergencyName: "Jane", emergencyPhone: "9876543210" });
+      .send({ tshirtSize: "L", trouserSize: "34", shoeSize: "9", helmetSize: "M", emergencyName: "Jane", emergencyPhone: "9876543210" });
     expect(res.status).toBe(400);
     expect(String(res.body.error)).toMatch(/kyc/i);
 

@@ -26,6 +26,10 @@ const PROFESSIONS = [
 ];
 
 const TSHIRT_OPTS     = ['S','M','L','XL','XXL'];
+// Jersey/kit sizes — must match backend enums exactly.
+const TROUSER_OPTS    = ['28','30','32','34','36','38','40','42','44'];
+const SHOE_OPTS       = ['4','5','6','7','8','9','10','11','12']; // UK
+const HELMET_OPTS     = ['S','M','L','XL'];
 const RELATION_OPTS   = ['Father','Mother','Spouse','Friend','Other'];
 const BLOOD_OPTS      = ['A+','A-','B+','B-','AB+','AB-','O+','O-'];
 
@@ -53,8 +57,11 @@ export function Phase2KYC() {
   const [city, setCity]             = useState('');
   const [role, setRole]             = useState('');
 
-  // Jersey size — the only field kept from the removed employment card
+  // Jersey/kit sizes — collected for auction-picked players' team jerseys.
   const [tshirt, setTshirt]         = useState('');
+  const [trouser, setTrouser]       = useState('');
+  const [shoe, setShoe]             = useState('');
+  const [helmet, setHelmet]         = useState('');
   // Emergency contact
   const [ecName, setEcName]         = useState('');
   const [ecRel, setEcRel]           = useState('');
@@ -108,6 +115,9 @@ export function Phase2KYC() {
           const prog = await getKycProgress(rid);
           if (prog.profile) {
             if (prog.profile.tshirtSize)        setTshirt(prog.profile.tshirtSize);
+            if (prog.profile.trouserSize)       setTrouser(prog.profile.trouserSize);
+            if (prog.profile.shoeSize)          setShoe(prog.profile.shoeSize);
+            if (prog.profile.helmetSize)        setHelmet(prog.profile.helmetSize);
             if (prog.profile.emergencyName)     setEcName(prog.profile.emergencyName);
             if (prog.profile.emergencyRelation) setEcRel(prog.profile.emergencyRelation);
             if (prog.profile.emergencyPhone && /^\d{10}$/.test(prog.profile.emergencyPhone)) setEcPhone(prog.profile.emergencyPhone);
@@ -140,6 +150,9 @@ export function Phase2KYC() {
       if (!saved) return;
       const p = JSON.parse(saved);
       if (p.tshirt)     setTshirt(p.tshirt);
+      if (p.trouser)    setTrouser(p.trouser);
+      if (p.shoe)       setShoe(p.shoe);
+      if (p.helmet)     setHelmet(p.helmet);
       if (p.ecName)     setEcName(p.ecName);
       if (p.ecRel)      setEcRel(p.ecRel);
       if (p.ecPhone && /^\d{10}$/.test(p.ecPhone)) setEcPhone(p.ecPhone);
@@ -149,7 +162,8 @@ export function Phase2KYC() {
 
   // Blood group is deliberately NOT required — many players don't know theirs.
   const emergencyOk  = !!(ecName.trim() && ecRel && /^\d{10}$/.test(ecPhone));
-  const canSubmit = !!tshirt && emergencyOk && !!profession && !!aadhaar && !!pan && !aadhaarErr && !panErr;
+  const jerseyOk     = !!tshirt && !!trouser && !!shoe && !!helmet;
+  const canSubmit = jerseyOk && emergencyOk && !!profession && !!aadhaar && !!pan && !aadhaarErr && !panErr;
 
   const handleAadhaarBlur = () => {
     if (aadhaar && !validateAadhaar(aadhaar)) setAadhaarErr('Aadhaar must be 12 digits');
@@ -170,8 +184,8 @@ export function Phase2KYC() {
     if (!/^\d{10}$/.test(ecPhone)) { setEcPhoneErr('Enter a 10-digit mobile number'); return; }
     // Defensive: canSubmit already gates these, but this path is also reused
     // for OTP resend — never let a submit through without the required set.
-    if (!profession || !tshirt || !ecName.trim() || !ecRel) {
-      setSubmitErr('Please complete profession, T-shirt size and emergency contact before submitting.');
+    if (!profession || !tshirt || !trouser || !shoe || !helmet || !ecName.trim() || !ecRel) {
+      setSubmitErr('Please complete profession, jersey sizes (T-shirt, trouser, shoe, helmet) and emergency contact before submitting.');
       return;
     }
 
@@ -183,6 +197,9 @@ export function Phase2KYC() {
         aadhaarNumber: aadhaar.replace(/\s/g, ''),
         panNumber: pan.toUpperCase(),
         tshirtSize: tshirt,
+        trouserSize: trouser,
+        shoeSize: shoe,
+        helmetSize: helmet,
         emergencyName: ecName.trim(),
         emergencyRelation: ecRel,
         emergencyPhone: ecPhone,
@@ -532,15 +549,41 @@ export function Phase2KYC() {
               <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 22, color: '#fff', marginBottom: 6, textTransform: 'uppercase' }}>{t("1. Player Essentials", "1. प्लेयर की जरूरी जानकारी")}</div>
               <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)', marginBottom: 24 }}>{t("Required for match jerseys and on-ground safety.", "मैच जर्सी और मैदान पर सुरक्षा के लिए आवश्यक।")}</div>
 
+              {/* Jersey Details — t-shirt, trouser, shoe, helmet sizes */}
+              <div style={{ fontFamily: 'var(--font-head)', fontWeight: 800, fontSize: 16, color: '#fff', marginBottom: 16, textTransform: 'uppercase' }}>{t("Jersey Details", "जर्सी की जानकारी")}</div>
               <div className="grid2">
                 <div>
                   <label style={lbl}>{t("T-SHIRT SIZE *", "टी-शर्ट का साइज़ *")}</label>
                   <ChipRow options={TSHIRT_OPTS} value={tshirt} onChange={setTshirt} minWidth={48} />
                 </div>
                 <div>
-                  <label style={lbl}>{t("BLOOD GROUP", "ब्लड ग्रुप")}</label>
-                  <ChipRow options={BLOOD_OPTS} value={bloodGroup} onChange={setBloodGroup} minWidth={48} />
+                  <label style={lbl}>{t("TROUSER SIZE *", "ट्राउज़र का साइज़ *")}</label>
+                  <ChipRow options={TROUSER_OPTS} value={trouser} onChange={setTrouser} minWidth={48} />
                 </div>
+                <div>
+                  <label style={lbl}>{t("SHOE SIZE (UK) *", "जूते का साइज़ (UK) *")}</label>
+                  <ChipRow options={SHOE_OPTS} value={shoe} onChange={setShoe} minWidth={48} />
+                </div>
+                <div>
+                  <label style={lbl}>{t("HELMET SIZE *", "हेलमेट का साइज़ *")}</label>
+                  <ChipRow options={HELMET_OPTS} value={helmet} onChange={setHelmet} minWidth={48} />
+                </div>
+              </div>
+
+              {/* Disclaimer: these sizes are NOT for trials */}
+              <div style={{ marginTop: 16, display: 'flex', gap: 10, alignItems: 'flex-start', background: 'rgba(232,178,61,0.06)', border: '1px solid rgba(232,178,61,0.25)', borderRadius: 12, padding: '14px 16px' }}>
+                <span style={{ fontSize: 16, lineHeight: 1.4 }} aria-hidden>ℹ️</span>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.6 }}>
+                  {t(
+                    "These jersey details are not for trials — no kit is provided at trials. If you are picked into a team through the auction, having your sizes on file makes jersey preparation easy. Please fill your sizes accordingly.",
+                    "ये jersey details trials के लिए नहीं हैं — trials में kit नहीं दी जाती। अगर auction के ज़रिए आप किसी team में चुने जाते हैं, तो आपकी sizes पहले से हमारे पास होने से jersey बनवाना आसान रहेगा। इसी हिसाब से अपनी सही sizes भरें।"
+                  )}
+                </div>
+              </div>
+
+              <div style={{ marginTop: 24 }}>
+                <label style={lbl}>{t("BLOOD GROUP", "ब्लड ग्रुप")}</label>
+                <ChipRow options={BLOOD_OPTS} value={bloodGroup} onChange={setBloodGroup} minWidth={48} />
               </div>
 
               <div style={{ marginTop: 32, paddingTop: 32, borderTop: '1px solid var(--line)' }}>

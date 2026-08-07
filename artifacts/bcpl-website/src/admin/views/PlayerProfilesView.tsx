@@ -45,7 +45,7 @@ type Journey = {
   passes: { passNumber: number; kind: string; status: string; model: string | null; score: number | null; confidence: number | null; latencyMs: number | null; at: string | null }[];
   ranking: { cityRank: number | null; cityTotal: number | null; roleRank: number | null; roleTotal: number | null; percentile: number | null; snapshotAt: string } | null;
   kyc: { status: string; aadhaarVerified: boolean; panVerified: boolean; profession: string | null; verifiedAt: string | null } | null;
-  profile: { company: string | null; jobTitle: string | null; experience: string | null; tshirtSize: string | null; bloodGroup: string | null; emergencyName: string | null; emergencyRelation: string | null; emergencyPhone: string | null } | null;
+  profile: { company: string | null; jobTitle: string | null; experience: string | null; tshirtSize: string | null; trouserSize: string | null; shoeSize: string | null; helmetSize: string | null; bloodGroup: string | null; emergencyName: string | null; emergencyRelation: string | null; emergencyPhone: string | null } | null;
   notifications: { type: string; template: string; status: string; error: string | null; at: string }[];
 };
 
@@ -273,6 +273,9 @@ function MasterProfile({ regKey, onBack }: { regKey: string; onBack: () => void 
           <div style={{ ...label, marginBottom: 8 }}>Player essentials</div>
           {data.profile ? (<>
             <Field k="T-shirt size" v={data.profile.tshirtSize} />
+            <Field k="Trouser size" v={data.profile.trouserSize} />
+            <Field k="Shoe size (UK)" v={data.profile.shoeSize} />
+            <Field k="Helmet size" v={data.profile.helmetSize} />
             <Field k="Blood group" v={data.profile.bloodGroup} />
             <Field k="Emergency contact" v={data.profile.emergencyName ? data.profile.emergencyName + (data.profile.emergencyRelation ? " (" + data.profile.emergencyRelation + ")" : "") : "—"} />
             <Field k="Emergency phone" v={data.profile.emergencyPhone} monospace />

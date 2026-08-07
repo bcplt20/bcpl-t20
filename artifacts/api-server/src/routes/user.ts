@@ -17,6 +17,7 @@ import { getUploadPresignedUrl, getDownloadPresignedUrl, headS3Object } from "..
 import { logger } from "../lib/logger";
 import { classificationSchemaFor, isClassificationComplete } from "../lib/classification";
 import { isLegacyCarryover } from "../lib/carryover";
+import { TROUSER_SIZES, SHOE_SIZES, HELMET_SIZES } from "./kyc";
 
 const router = Router();
 
@@ -133,10 +134,12 @@ export async function pickUserRegistration(userId: string) {
 // contact (players who completed KYC BEFORE these fields were collected on the
 // KYC page). We collect ONLY the missing fields via a small authed form.
 
-/** A profile counts as INCOMPLETE when either required field is blank. */
-function profileIncomplete(p: { tshirtSize?: string | null; emergencyName?: string | null; emergencyPhone?: string | null } | null | undefined): boolean {
+/** A profile counts as INCOMPLETE when any required field is blank. Includes
+ *  the jersey/kit sizes (t-shirt, trouser, shoe, helmet) collected on the KYC
+ *  page — all are required for a complete profile. */
+function profileIncomplete(p: { tshirtSize?: string | null; trouserSize?: string | null; shoeSize?: string | null; helmetSize?: string | null; emergencyName?: string | null; emergencyPhone?: string | null } | null | undefined): boolean {
   if (!p) return true;
-  return !p.tshirtSize || !p.emergencyName || !p.emergencyPhone;
+  return !p.tshirtSize || !p.trouserSize || !p.shoeSize || !p.helmetSize || !p.emergencyName || !p.emergencyPhone;
 }
 
 /** KYC is "done" once the record is verified (or the registration reached the
@@ -151,6 +154,16 @@ function kycIsDone(kyc: { status: string } | null | undefined, phase2Status: str
 const profileBackfillSchema = z.object({
   tshirtSize:        z.enum(["S", "M", "L", "XL", "XXL"], {
     errorMap: () => ({ message: "Please select your T-shirt size." }),
+  }),
+  // Jersey/kit sizes — required, same enums as the KYC page.
+  trouserSize:       z.enum(TROUSER_SIZES, {
+    errorMap: () => ({ message: "Please select your trouser size." }),
+  }),
+  shoeSize:          z.enum(SHOE_SIZES, {
+    errorMap: () => ({ message: "Please select your shoe size (UK)." }),
+  }),
+  helmetSize:        z.enum(HELMET_SIZES, {
+    errorMap: () => ({ message: "Please select your helmet size." }),
   }),
   emergencyName:     z.string({ required_error: "Emergency contact name is required." })
                       .trim().min(1, "Emergency contact name is required.").max(100),
@@ -366,6 +379,9 @@ router.get("/profile-completion", requireAuth, async (req: AuthRequest, res) => 
     // Echo what we already have so the form only asks for what's missing.
     have: {
       tshirtSize:    profile?.tshirtSize ?? null,
+      trouserSize:   profile?.trouserSize ?? null,
+      shoeSize:      profile?.shoeSize ?? null,
+      helmetSize:    profile?.helmetSize ?? null,
       emergencyName: profile?.emergencyName ?? null,
       emergencyPhone: profile?.emergencyPhone ?? null,
       bloodGroup:    profile?.bloodGroup ?? null,
@@ -393,9 +409,12 @@ router.post("/profile-backfill", requireAuth, async (req: AuthRequest, res) => {
     return void res.status(400).json({ error: "Complete your KYC first — these details are collected on the KYC page." });
   }
 
-  const { tshirtSize, emergencyName, emergencyRelation, emergencyPhone, bloodGroup } = parsed.data;
+  const { tshirtSize, trouserSize, shoeSize, helmetSize, emergencyName, emergencyRelation, emergencyPhone, bloodGroup } = parsed.data;
   const values = {
     tshirtSize,
+    trouserSize,
+    shoeSize,
+    helmetSize,
     emergencyName,
     emergencyRelation: emergencyRelation || undefined,
     emergencyPhone,

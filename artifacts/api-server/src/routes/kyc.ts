@@ -57,6 +57,11 @@ export async function ensurePlayerProfiles(): Promise<void> {
       updated_at timestamptz NOT NULL DEFAULT now()
     )
   `);
+  // Jersey/kit sizes (nullable — back-compat with rows created before these
+  // columns existed). Collected on the KYC page for auction/team jerseys.
+  await db.execute(sql`ALTER TABLE player_profiles ADD COLUMN IF NOT EXISTS trouser_size varchar(10)`);
+  await db.execute(sql`ALTER TABLE player_profiles ADD COLUMN IF NOT EXISTS shoe_size varchar(10)`);
+  await db.execute(sql`ALTER TABLE player_profiles ADD COLUMN IF NOT EXISTS helmet_size varchar(10)`);
   console.log("[MIGRATE] player_profiles ready");
 }
 
@@ -67,6 +72,13 @@ export const PROFESSIONS = [
   "Farmer / Agriculture", "Delivery / Logistics (Zomato, Swiggy etc.)",
   "Student / Intern", "Freelancer / Self-Employed", "Other",
 ] as const;
+
+// Jersey/kit size enums — shared by KYC /initiate and the profile-backfill
+// route so both validate identically. NOT for trials (no kit given at trials);
+// collected only so auction-picked players' jerseys are easy to manufacture.
+export const TROUSER_SIZES = ["28", "30", "32", "34", "36", "38", "40", "42", "44"] as const;
+export const SHOE_SIZES    = ["4", "5", "6", "7", "8", "9", "10", "11", "12"] as const; // UK
+export const HELMET_SIZES  = ["S", "M", "L", "XL"] as const;
 
 // ─── Helper: mark KYC + registration as verified ─────────────────────────────
 // Single path for OTP success, admin approval and webhook — keeps kyc_records
@@ -215,6 +227,18 @@ export const kycInitiateSchema = z.object({
     tshirtSize:        z.enum(["S", "M", "L", "XL", "XXL"], {
       errorMap: () => ({ message: "Please select your T-shirt size. If this field is missing, refresh the KYC page and try again." }),
     }),
+    // Jersey/kit sizes — REQUIRED for new submissions (same as tshirtSize).
+    // NOT for trials; collected so team jerseys are easy to make if the player
+    // is picked in the auction.
+    trouserSize:       z.enum(TROUSER_SIZES, {
+      errorMap: () => ({ message: "Please select your trouser size. If this field is missing, refresh the KYC page and try again." }),
+    }),
+    shoeSize:          z.enum(SHOE_SIZES, {
+      errorMap: () => ({ message: "Please select your shoe size (UK). If this field is missing, refresh the KYC page and try again." }),
+    }),
+    helmetSize:        z.enum(HELMET_SIZES, {
+      errorMap: () => ({ message: "Please select your helmet size. If this field is missing, refresh the KYC page and try again." }),
+    }),
     emergencyName:     z.string({ required_error: "Emergency contact name is required. If this field is missing, refresh the KYC page and try again." })
                         .trim().min(1, "Emergency contact name is required. If this field is missing, refresh the KYC page and try again.").max(100),
     emergencyRelation: z.string().trim().max(30).optional(),
@@ -252,6 +276,9 @@ router.post("/initiate", requireAuth, async (req: AuthRequest, res) => {
     experience:        profile.experience        || undefined,
     linkedin:          profile.linkedin          || undefined,
     tshirtSize:        profile.tshirtSize        || undefined,
+    trouserSize:       profile.trouserSize       || undefined,
+    shoeSize:          profile.shoeSize          || undefined,
+    helmetSize:        profile.helmetSize        || undefined,
     emergencyName:     profile.emergencyName     || undefined,
     emergencyRelation: profile.emergencyRelation || undefined,
     emergencyPhone:    profile.emergencyPhone    || undefined,

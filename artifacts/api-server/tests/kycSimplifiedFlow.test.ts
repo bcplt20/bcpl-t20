@@ -56,6 +56,9 @@ const validBody = () => ({
   aadhaarNumber: "123456789012",
   panNumber: "ABCDE1234F",
   tshirtSize: "L",
+  trouserSize: "34",
+  shoeSize: "9",
+  helmetSize: "M",
   emergencyName: "Jane Doe",
   emergencyPhone: "9876543210",
 });
@@ -112,6 +115,9 @@ describe("POST /api/kyc/initiate — simplified form happy path", () => {
     // Required profile fields stored; optional blood group left null.
     const [profile] = await db.select().from(playerProfilesTable).where(eq(playerProfilesTable.registrationId, regId));
     expect(profile!.tshirtSize).toBe("L");
+    expect(profile!.trouserSize).toBe("34");
+    expect(profile!.shoeSize).toBe("9");
+    expect(profile!.helmetSize).toBe("M");
     expect(profile!.emergencyName).toBe("Jane Doe");
     expect(profile!.emergencyPhone).toBe("9876543210");
     expect(profile!.bloodGroup).toBeNull();

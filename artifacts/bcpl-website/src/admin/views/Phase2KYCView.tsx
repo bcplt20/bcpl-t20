@@ -31,6 +31,9 @@ type KycRow = {
   experience?: string | null;
   linkedin?: string | null;
   tshirtSize?: string | null;
+  trouserSize?: string | null;
+  shoeSize?: string | null;
+  helmetSize?: string | null;
   emergencyName?: string | null;
   emergencyRelation?: string | null;
   emergencyPhone?: string | null;
@@ -350,6 +353,9 @@ export default function Phase2KYCView({ refreshTick = 0 }: { refreshTick?: numbe
                   { label:"Experience",  value: detail.experience ?? "Not provided" },
                   { label:"LinkedIn",    value: detail.linkedin ?? "Not provided" },
                   { label:"T-Shirt Size", value: detail.tshirtSize ?? "Not provided" },
+                  { label:"Trouser Size", value: detail.trouserSize ?? "Not provided" },
+                  { label:"Shoe Size (UK)", value: detail.shoeSize ?? "Not provided" },
+                  { label:"Helmet Size", value: detail.helmetSize ?? "Not provided" },
                   { label:"Emergency Contact", value: detail.emergencyName ? detail.emergencyName + (detail.emergencyRelation ? " (" + detail.emergencyRelation + ")" : "") : "Not provided" },
                   { label:"Emergency Phone", value: detail.emergencyPhone ?? "Not provided" },
                   { label:"Blood Group", value: detail.bloodGroup ?? "Not provided" },

@@ -1076,6 +1076,9 @@ router.get("/kyc", async (req, res) => {
       experience:        r.profile?.experience ?? null,
       linkedin:          r.profile?.linkedin ?? null,
       tshirtSize:        r.profile?.tshirtSize ?? null,
+      trouserSize:       r.profile?.trouserSize ?? null,
+      shoeSize:          r.profile?.shoeSize ?? null,
+      helmetSize:        r.profile?.helmetSize ?? null,
       emergencyName:     r.profile?.emergencyName ?? null,
       emergencyRelation: r.profile?.emergencyRelation ?? null,
       emergencyPhone:    r.profile?.emergencyPhone ?? null,
@@ -1686,7 +1689,7 @@ router.get("/players/:key/journey", async (req, res) => {
       passes: passes.map(x => ({ passNumber: x.passNumber, kind: x.kind, status: x.status, model: x.model, score: x.score, confidence: x.confidence, latencyMs: x.latencyMs, at: x.responseAt ?? x.requestAt })),
       ranking: snap ? { cityRank: snap.cityRank, cityTotal: snap.cityTotal, roleRank: snap.roleRank, roleTotal: snap.roleTotal, percentile: snap.percentile, snapshotAt: snap.snapshotAt } : null,
       kyc: kyc ? { status: kyc.status, aadhaarVerified: kyc.aadhaarVerified, panVerified: kyc.panVerified, profession: kyc.profession, verifiedAt: kyc.verifiedAt } : null,
-      profile: profile ? { company: profile.company, jobTitle: profile.jobTitle, experience: profile.experience, tshirtSize: profile.tshirtSize, bloodGroup: profile.bloodGroup, emergencyName: profile.emergencyName, emergencyRelation: profile.emergencyRelation, emergencyPhone: profile.emergencyPhone } : null,
+      profile: profile ? { company: profile.company, jobTitle: profile.jobTitle, experience: profile.experience, tshirtSize: profile.tshirtSize, trouserSize: profile.trouserSize, shoeSize: profile.shoeSize, helmetSize: profile.helmetSize, bloodGroup: profile.bloodGroup, emergencyName: profile.emergencyName, emergencyRelation: profile.emergencyRelation, emergencyPhone: profile.emergencyPhone } : null,
       notifications: notifs.map(n => ({ type: n.type, template: n.template, status: n.status, error: n.error, at: n.createdAt })),
     });
   } catch (err: any) {

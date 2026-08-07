@@ -12,6 +12,13 @@ export const playerProfilesTable = pgTable("player_profiles", {
   experience:        varchar("experience",         { length: 20 }),
   linkedin:          varchar("linkedin",           { length: 200 }),
   tshirtSize:        varchar("tshirt_size",        { length: 5 }),
+  // Jersey/kit sizes — collected AFTER Phase 2 payment (not for trials; used
+  // only if a player is picked into a team via the auction, so jersey/kit
+  // manufacturing already has the sizes on file). Nullable for back-compat
+  // (rows created before these columns existed have no values).
+  trouserSize:       varchar("trouser_size",       { length: 10 }),
+  shoeSize:          varchar("shoe_size",          { length: 10 }),
+  helmetSize:        varchar("helmet_size",        { length: 10 }),
   emergencyName:     varchar("emergency_name",     { length: 100 }),
   emergencyRelation: varchar("emergency_relation", { length: 30 }),
   emergencyPhone:    varchar("emergency_phone",    { length: 15 }),

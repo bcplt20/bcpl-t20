@@ -11,6 +11,9 @@ const base = {
   aadhaarNumber: "123456789012",
   panNumber: "ABCDE1234F",
   tshirtSize: "L",
+  trouserSize: "34",
+  shoeSize: "9",
+  helmetSize: "M",
   emergencyName: "Jane Doe",
   emergencyPhone: "9876543210",
 } as const;
@@ -55,5 +58,32 @@ describe("kycInitiateSchema (Task #33 required fields)", () => {
   it("accepts an optional blood group when it is a valid value", () => {
     const r = kycInitiateSchema.safeParse({ ...base, bloodGroup: "O+" });
     expect(r.success).toBe(true);
+  });
+
+  it("rejects a missing trouser size with a clear 400 message", () => {
+    const { trouserSize, ...noTrouser } = base;
+    const r = kycInitiateSchema.safeParse(noTrouser);
+    expect(r.success).toBe(false);
+    if (!r.success) expect(r.error.issues.map(i => i.message).join(" ")).toMatch(/trouser size/i);
+  });
+
+  it("rejects a missing shoe size with a clear 400 message", () => {
+    const { shoeSize, ...noShoe } = base;
+    const r = kycInitiateSchema.safeParse(noShoe);
+    expect(r.success).toBe(false);
+    if (!r.success) expect(r.error.issues.map(i => i.message).join(" ")).toMatch(/shoe size/i);
+  });
+
+  it("rejects a missing helmet size with a clear 400 message", () => {
+    const { helmetSize, ...noHelmet } = base;
+    const r = kycInitiateSchema.safeParse(noHelmet);
+    expect(r.success).toBe(false);
+    if (!r.success) expect(r.error.issues.map(i => i.message).join(" ")).toMatch(/helmet size/i);
+  });
+
+  it("rejects out-of-enum jersey sizes", () => {
+    expect(kycInitiateSchema.safeParse({ ...base, trouserSize: "99" }).success).toBe(false);
+    expect(kycInitiateSchema.safeParse({ ...base, shoeSize: "20" }).success).toBe(false);
+    expect(kycInitiateSchema.safeParse({ ...base, helmetSize: "XXL" }).success).toBe(false);
   });
 });
