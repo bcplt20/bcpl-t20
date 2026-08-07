@@ -256,7 +256,7 @@ export default function NewMatchScreen() {
           >
             <LinearGradient colors={['#00DCF5', '#5B2BF0']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: 18, alignItems: 'center' }}>
               <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20 }}>
-                {createMut.isPending ? t('Starting...', 'शुरू कर रहे हैं...') : t('Match शुरू करें', 'Start Match')}
+                {createMut.isPending ? t('Starting...', 'शुरू कर रहे हैं...') : t('Start Match', 'Match शुरू करें')}
               </Text>
             </LinearGradient>
           </Pressable>

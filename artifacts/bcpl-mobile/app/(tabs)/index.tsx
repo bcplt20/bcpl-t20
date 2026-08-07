@@ -17,7 +17,7 @@ import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, type Match, type AppBanner, type Team, type PublicSponsor, getPublicSponsors, getTeamGroup } from '@/lib/api';
+import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, getAppMedia, type Match, type AppBanner, type Team, type PublicSponsor, getPublicSponsors, getTeamGroup, type AppMediaItem } from '@/lib/api';
 import * as WebBrowser from 'expo-web-browser';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
@@ -270,6 +270,55 @@ const TEAMS_CANON_ORDER = [
   'Delhi Suryas', 'Punjab Warriors', 'Kolkata Tigers', 'Lucknow Nawabs', 'Bengaluru Rockets',
 ];
 
+function HomeMediaSection({ media }: { media: AppMediaItem[] }) {
+  const c = useColors();
+  const { t } = useLang();
+  const router = useRouter();
+
+  if (!media || media.length === 0) return null;
+
+  const photos = media.filter(m => m.kind === 'photo').slice(0, 6);
+  const videos = media.filter(m => m.kind === 'video' || m.kind === 'short').slice(0, 4);
+
+  return (
+    <View style={{ marginTop: 32 }}>
+      <View style={{ paddingHorizontal: 16 }}>
+        <SectionHeader title={t('Media', 'मीडिया')} onSeeAll={() => router.navigate('/media')} seeAllLabel={t('See all', 'सभी देखें')} />
+      </View>
+      
+      {photos.length > 0 && (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12, paddingBottom: 16 }}>
+          {photos.map(p => (
+            <Pressable key={p.id} onPress={() => router.navigate('/media')} style={({pressed}) => ({ opacity: pressed ? 0.9 : 1 })}>
+              <Image source={{ uri: p.thumbUrl || p.url }} style={{ width: 140, height: 140, borderRadius: 16, backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }} contentFit="cover" transition={150} />
+            </Pressable>
+          ))}
+        </ScrollView>
+      )}
+
+      {videos.length > 0 && (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}>
+          {videos.map(v => (
+            <Pressable key={v.id} onPress={() => router.navigate('/media')} style={({pressed}) => ({ opacity: pressed ? 0.9 : 1, width: 220 })}>
+              <View style={{ width: '100%', aspectRatio: 16/9, borderRadius: 16, overflow: 'hidden', backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }}>
+                <Image source={{ uri: v.thumbUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)' }}>
+                  <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.9)', justifyContent: 'center', alignItems: 'center' }}>
+                    <Feather name="play" size={20} color="#000" style={{ marginLeft: 2 }} />
+                  </View>
+                </View>
+              </View>
+              {v.title ? (
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13, marginTop: 8 }} numberOfLines={2}>{v.title}</Text>
+              ) : null}
+            </Pressable>
+          ))}
+        </ScrollView>
+      )}
+    </View>
+  );
+}
+
 function TeamsStrip() {
   const c = useColors();
   const router = useRouter();
@@ -437,6 +486,7 @@ export default function HomeScreen() {
   });
   const pointsQ = useQuery({ queryKey: ['points'], queryFn: getPointsTable });
   const sponsorsQ = useQuery({ queryKey: ['sponsors'], queryFn: getPublicSponsors });
+  const mediaQ = useQuery({ queryKey: ['app-media'], queryFn: getAppMedia, staleTime: 60000 });
 
   const matches = matchesQ.data?.matches ?? [];
   const featured = pickFeatured(matches);
@@ -663,6 +713,8 @@ export default function HomeScreen() {
         ) : null}
 
         <TeamsStrip />
+        
+        <HomeMediaSection media={mediaQ.data?.items ?? []} />
 
         <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
           <SectionHeader title={t('Latest News', 'ताज़ा खबरें')} onSeeAll={() => router.navigate('/news')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-news" />

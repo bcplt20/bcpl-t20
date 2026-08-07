@@ -5,8 +5,8 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
-import { getMvpLeaderboard, type MvpPlayer, type MvpPointsConfig } from '@/lib/api';
-import { ScreenBackground, GlassAppBar, Card, useAppBarHeight, useBottomNavHeight, LoadingView, ErrorView, TeamDot } from '@/components/ui';
+import { getMvpLeaderboard, getMvpStats, type MvpPlayer, type MvpPointsConfig, type TournamentStatRow } from '@/lib/api';
+import { ScreenBackground, GlassAppBar, Card, useAppBarHeight, useBottomNavHeight, LoadingView, ErrorView, TeamDot, TeamLogo } from '@/components/ui';
 
 const DEFAULT_CFG: MvpPointsConfig = {
   batting: { run: 1, fourBonus: 1, sixBonus: 2, milestone30: 4, milestone50: 8, milestone100: 16, duck: -2 },
@@ -149,11 +149,12 @@ export default function MvpScreen() {
   const { t } = useLang();
   const appBarHeight = useAppBarHeight();
   const bottomNavHeight = useBottomNavHeight();
-  const [filter, setFilter] = useState<'all' | 'eligible'>('all');
+  const [filter, setFilter] = useState<'all' | 'eligible' | 'stats'>('all');
 
   const q = useQuery({
     queryKey: ['mvp', filter],
     queryFn: () => getMvpLeaderboard(filter === 'eligible'),
+    enabled: filter !== 'stats',
   });
 
   return (
@@ -168,27 +169,37 @@ export default function MvpScreen() {
             onPress={() => setFilter('all')}
             style={{ flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10, backgroundColor: filter === 'all' ? c.card : 'transparent', shadowColor: filter === 'all' ? '#000' : 'transparent', shadowOpacity: 0.1, shadowRadius: 4, elevation: filter === 'all' ? 2 : 0 }}
           >
-            <Text style={{ color: filter === 'all' ? c.ink : c.sub, fontFamily: filter === 'all' ? 'PlusJakartaSans_700Bold' : 'PlusJakartaSans_600SemiBold', fontSize: 14 }}>
-              {t('All Players', 'सभी खिलाड़ी')}
+            <Text style={{ color: filter === 'all' ? c.ink : c.sub, fontFamily: filter === 'all' ? 'PlusJakartaSans_700Bold' : 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
+              {t('Points', 'पॉइंट्स')}
             </Text>
           </Pressable>
           <Pressable 
             onPress={() => setFilter('eligible')}
             style={{ flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10, backgroundColor: filter === 'eligible' ? c.magenta : 'transparent', shadowColor: filter === 'eligible' ? c.magenta : 'transparent', shadowOpacity: 0.3, shadowRadius: 8, elevation: filter === 'eligible' ? 4 : 0 }}
           >
-            <Text style={{ color: filter === 'eligible' ? '#fff' : c.sub, fontFamily: filter === 'eligible' ? 'PlusJakartaSans_700Bold' : 'PlusJakartaSans_600SemiBold', fontSize: 14 }}>
-              {t('Car Race (Finalists)', 'कार रेस (फाइनलिस्ट)')}
+            <Text style={{ color: filter === 'eligible' ? '#fff' : c.sub, fontFamily: filter === 'eligible' ? 'PlusJakartaSans_700Bold' : 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
+              {t('Finalists', 'फाइनलिस्ट')}
+            </Text>
+          </Pressable>
+          <Pressable 
+            onPress={() => setFilter('stats')}
+            style={{ flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10, backgroundColor: filter === 'stats' ? c.card : 'transparent', shadowColor: filter === 'stats' ? '#000' : 'transparent', shadowOpacity: 0.1, shadowRadius: 4, elevation: filter === 'stats' ? 2 : 0 }}
+          >
+            <Text style={{ color: filter === 'stats' ? c.ink : c.sub, fontFamily: filter === 'stats' ? 'PlusJakartaSans_700Bold' : 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
+              {t('Stats', 'आँकड़े')}
             </Text>
           </Pressable>
         </View>
 
-        {q.isLoading ? (
+        {filter === 'stats' ? (
+          <TournamentStatsView />
+        ) : q.isLoading ? (
           <LoadingView />
         ) : q.isError ? (
           <ErrorView onRetry={() => q.refetch()} />
         ) : (
           <View>
-            {q.data?.note && (
+            {q.data?.note && filter === 'eligible' && (
               <View style={{ backgroundColor: c.card2, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: c.line, marginBottom: 16 }}>
                 <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20, textAlign: 'center' }}>
                   {q.data.note}
@@ -196,7 +207,7 @@ export default function MvpScreen() {
               </View>
             )}
             
-            {q.data?.leaderboard.map((p) => (
+            {q.data?.leaderboard.slice(0, 15).map((p) => (
               <PlayerRow key={`${p.name}-${p.team}`} p={p} finalistsExist={!!q.data?.finalists} />
             ))}
             
@@ -213,6 +224,72 @@ export default function MvpScreen() {
           </View>
         )}
       </ScrollView>
+    </View>
+  );
+}
+
+function TournamentStatsView() {
+  const c = useColors();
+  const { t } = useLang();
+  
+  const q = useQuery({ queryKey: ['mvp-stats'], queryFn: getMvpStats, refetchInterval: 60000 });
+  const [activeTab, setActiveTab] = useState<'runs'|'wickets'|'catches'|'sixes'|'fours'>('runs');
+
+  if (q.isLoading) return <LoadingView />;
+  if (q.isError) return <ErrorView onRetry={() => q.refetch()} />;
+
+  const data = q.data;
+  if (!data) return null;
+
+  let list: TournamentStatRow[] = [];
+  let title = '';
+  if (activeTab === 'runs') { list = data.mostRuns; title = t('Most Runs', 'सर्वाधिक रन'); }
+  if (activeTab === 'wickets') { list = data.mostWickets; title = t('Most Wickets', 'सर्वाधिक विकेट'); }
+  if (activeTab === 'catches') { list = data.mostCatches; title = t('Most Catches', 'सर्वाधिक कैच'); }
+  if (activeTab === 'sixes') { list = data.mostSixes; title = t('Most Sixes', 'सर्वाधिक छक्के'); }
+  if (activeTab === 'fours') { list = data.mostFours; title = t('Most Fours', 'सर्वाधिक चौके'); }
+
+  const isEmpty = !list || list.length === 0;
+
+  return (
+    <View style={{ flex: 1, paddingBottom: 24 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }} contentContainerStyle={{ gap: 8 }}>
+        {(['runs', 'wickets', 'catches', 'sixes', 'fours'] as const).map(tab => (
+          <Pressable key={tab} onPress={() => setActiveTab(tab)} style={{ paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: activeTab === tab ? c.violet : c.card2, borderWidth: 1, borderColor: activeTab === tab ? c.violet : c.line }}>
+            <Text style={{ color: activeTab === tab ? '#fff' : c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13 }}>
+              {tab === 'runs' ? t('Most Runs', 'सर्वाधिक रन') : tab === 'wickets' ? t('Most Wickets', 'सर्वाधिक विकेट') : tab === 'catches' ? t('Most Catches', 'सर्वाधिक कैच') : tab === 'sixes' ? t('Most Sixes', 'सर्वाधिक छक्के') : t('Most Fours', 'सर्वाधिक चौके')}
+            </Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+
+      {isEmpty ? (
+        <View style={{ padding: 40, alignItems: 'center' }}>
+          <Feather name="bar-chart-2" size={48} color={c.line} style={{ marginBottom: 16 }} />
+          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15, textAlign: 'center' }}>
+            {t('Tournament stats not available yet.', 'टूर्नामेंट के आँकड़े अभी उपलब्ध नहीं हैं।')}
+          </Text>
+        </View>
+      ) : (
+        <View style={{ gap: 12 }}>
+          {list.slice(0, 10).map((row, i) => (
+            <View key={`${row.player}-${row.team}`} style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: c.card, padding: 12, borderRadius: 16, borderWidth: 1, borderColor: i === 0 ? `${c.violet}50` : c.line, elevation: i === 0 ? 4 : 0, shadowColor: i === 0 ? c.violet : 'transparent', shadowOpacity: 0.2, shadowRadius: 8 }}>
+              <View style={{ width: 28, alignItems: 'center' }}>
+                <Text style={{ color: i === 0 ? c.violet : c.sub, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: i === 0 ? 18 : 14 }}>{i + 1}</Text>
+              </View>
+              <TeamLogo name={row.team} size={36} />
+              <View style={{ flex: 1, marginLeft: 12 }}>
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: i === 0 ? 16 : 14 }} numberOfLines={1}>{row.player}</Text>
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 12 }}>{row.team}</Text>
+              </View>
+              <View style={{ alignItems: 'flex-end', marginLeft: 8 }}>
+                <Text style={{ color: i === 0 ? c.violet : c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: i === 0 ? 22 : 18 }}>{row.value}</Text>
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11 }}>{row.matches} {t('Matches', 'मैच')}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
     </View>
   );
 }

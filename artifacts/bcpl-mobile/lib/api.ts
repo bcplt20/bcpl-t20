@@ -560,6 +560,26 @@ export function getMvpLeaderboard(eligibleOnly?: boolean): Promise<MvpLeaderboar
   return apiFetch(`/mvp/leaderboard${q}`);
 }
 
+export interface TournamentStatRow {
+  player: string;
+  team: string;
+  matches: number;
+  value: number;
+}
+
+export interface TournamentStats {
+  season: number;
+  mostRuns: TournamentStatRow[];
+  mostWickets: TournamentStatRow[];
+  mostCatches: TournamentStatRow[];
+  mostSixes: TournamentStatRow[];
+  mostFours: TournamentStatRow[];
+}
+
+export function getMvpStats(): Promise<TournamentStats> {
+  return apiFetch(`/mvp/stats`);
+}
+
 export const GROUP_A_TEAMS = [
   'Rajasthan Scorchers', 'Mumbai Mavericks', 'Chennai Thalaivas', 'Hyderabad Hawks', 'Ahmedabad Lions',
 ];

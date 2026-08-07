@@ -50,10 +50,10 @@ export function ProfileBackfillCard() {
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, marginBottom: 4 }}>
-            {t('अपनी jersey sizes भरें', 'Complete your jersey sizes')}
+            {t('Complete your jersey sizes', 'अपनी jersey sizes भरें')}
           </Text>
           <Text style={{ color: 'rgba(255,255,255,0.85)', fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13, lineHeight: 18 }}>
-            {t('ये trials के लिए नहीं हैं, पर auction/team के लिए ज़रूरी हैं।', 'These are not for trials, but required for the auction/team phase.')}
+            {t('These are not for trials, but required for the auction/team phase.', 'ये trials के लिए नहीं हैं, पर auction/team के लिए ज़रूरी हैं।')}
           </Text>
         </View>
         <Feather name="chevron-right" size={20} color="#fff" style={{ opacity: 0.8 }} />

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { BCPLFooter } from "../components/BCPLFooter";
 import { SiteHeader } from "../components/SiteHeader";
-import { getMvpLeaderboard, DEFAULT_MVP_POINTS_CONFIG, type MvpEntry, type MvpPointsConfig } from "../lib/api";
+import { getMvpLeaderboard, getMvpStats, DEFAULT_MVP_POINTS_CONFIG, type MvpEntry, type MvpPointsConfig, type MvpStats, type MvpStatEntry } from "../lib/api";
 import { useLang } from "../lib/i18n";
 import { IcoTrophy } from "../lib/icons";
 
@@ -30,6 +30,19 @@ const CSS = `
 .mvp-row.final { background: rgba(232,178,61,.07); }
 .mvp-toggle button { font-family: var(--font-head); font-weight: 800; font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase; padding: 9px 16px; border-radius: 100px; border: 1px solid ${LINE}; background: rgba(255,255,255,.04); color: ${TXT2}; cursor: pointer; transition: all .2s; }
 .mvp-toggle button.on { background: rgba(255,122,41,.16); border-color: ${ORANGE}; color: ${ORANGE}; }
+
+/* Tournament Stats tabs + leaderboard cards */
+.ts-tabs { display: flex; gap: 9px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; }
+.ts-tab { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-head); font-weight: 800; font-size: 12.5px; letter-spacing: .03em; padding: 10px 16px; border-radius: 100px; border: 1px solid ${LINE}; background: rgba(255,255,255,.04); color: ${TXT2}; cursor: pointer; transition: all .2s; }
+.ts-tab:hover { border-color: rgba(255,255,255,.32); color: #fff; }
+.ts-tab.on { color: #0E1A33; border-color: transparent; box-shadow: 0 6px 18px rgba(0,0,0,.28); }
+.ts-tab .ts-ic { font-size: 15px; line-height: 1; }
+.ts-hero { display: flex; align-items: center; gap: 16px; padding: 20px 22px; border-radius: 18px 18px 0 0; position: relative; overflow: hidden; }
+.ts-hero-medal { width: 56px; height: 56px; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: 900; font-size: 24px; color: #0E1A33; flex-shrink: 0; box-shadow: 0 6px 16px rgba(0,0,0,.3); }
+.ts-list { display: flex; flex-direction: column; }
+.ts-item { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 12px; padding: 13px 20px; border-top: 1px solid rgba(255,255,255,.07); }
+.ts-item:first-child { border-top: none; }
+@media(max-width:520px){ .ts-hero { padding: 16px; gap: 12px; } .ts-hero-medal { width: 48px; height: 48px; font-size: 20px; } .ts-item { padding: 12px 14px; } }
 `;
 
 function RankBadge({ rank }: { rank: number }) {
@@ -174,6 +187,151 @@ function PointsInfographic({ config }: { config?: MvpPointsConfig }) {
   );
 }
 
+/* ── Tournament Stats (Cricbuzz-style): raw tallies from official matches.
+   Tabs across categories; each shows a highlighted #1 hero row + top 5-10. ── */
+type StatKey = "mostRuns" | "mostWickets" | "mostCatches" | "mostSixes" | "mostFours";
+type StatTab = {
+  key: StatKey; icon: string; titleEn: string; titleHi: string;
+  unitEn: string; unitHi: string; accent: string; soft: string;
+};
+const STAT_TABS: StatTab[] = [
+  { key: "mostRuns",    icon: "🏏", titleEn: "Most Runs",    titleHi: "सर्वाधिक रन",    unitEn: "runs",    unitHi: "रन",    accent: "#FF6B3D", soft: "rgba(255,107,61," },
+  { key: "mostWickets", icon: "🎯", titleEn: "Most Wickets", titleHi: "सर्वाधिक विकेट", unitEn: "wkts",    unitHi: "विकेट", accent: "#7B8CFF", soft: "rgba(123,140,255," },
+  { key: "mostCatches", icon: "🧤", titleEn: "Most Catches", titleHi: "सर्वाधिक कैच",   unitEn: "catches", unitHi: "कैच",   accent: "#3ED6A6", soft: "rgba(62,214,166," },
+  { key: "mostSixes",   icon: "💥", titleEn: "Most Sixes",   titleHi: "सर्वाधिक छक्के", unitEn: "sixes",   unitHi: "छक्के", accent: "#E8B23D", soft: "rgba(232,178,61," },
+  { key: "mostFours",   icon: "🚀", titleEn: "Most Fours",   titleHi: "सर्वाधिक चौके",  unitEn: "fours",   unitHi: "चौके",  accent: "#4FC3F7", soft: "rgba(79,195,247," },
+];
+
+function TournamentStats() {
+  const { t } = useLang();
+  const [stats, setStats] = useState<MvpStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState(false);
+  const [tab, setTab] = useState<StatKey>("mostRuns");
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    setErr(false);
+    getMvpStats()
+      .then(s => { if (alive) setStats(s); })
+      .catch(() => { if (alive) setErr(true); })
+      .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
+  }, []);
+
+  const active = STAT_TABS.find(s => s.key === tab)!;
+  const rows: MvpStatEntry[] = (stats?.[tab] ?? []).slice(0, 10);
+  const leader = rows[0];
+  const rest = rows.slice(1);
+
+  /* Hide the whole section only if the endpoint is missing AND we have nothing.
+     If the API returns empty arrays, still show a graceful empty state. */
+  const hardMissing = err && !stats;
+
+  return (
+    <div style={{ marginTop: 56 }}>
+      <div style={{ textAlign: "center", marginBottom: 22 }}>
+        <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 12, letterSpacing: ".14em", color: ORANGE, textTransform: "uppercase", marginBottom: 8 }}>
+          {t("Tournament Stats", "टूर्नामेंट स्टैट्स")}
+        </div>
+        <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(22px,4vw,34px)", color: "#fff" }}>
+          {t("Season Leaders", "सीज़न लीडर्स")}
+        </h2>
+      </div>
+
+      {/* Tabs */}
+      <div className="ts-tabs">
+        {STAT_TABS.map(s => (
+          <button key={s.key} className={"ts-tab" + (s.key === tab ? " on" : "")}
+            onClick={() => setTab(s.key)}
+            style={s.key === tab ? { background: s.accent } : undefined}>
+            <span className="ts-ic">{s.icon}</span>{t(s.titleEn, s.titleHi)}
+          </button>
+        ))}
+      </div>
+
+      {hardMissing && (
+        <div style={{ textAlign: "center", padding: "clamp(40px,7vw,72px) 24px", background: PANEL, border: `1px solid ${LINE}`, borderRadius: 20 }}>
+          <p style={{ color: TXT3, fontSize: 15, lineHeight: 1.7, maxWidth: 420, margin: "0 auto" }}>
+            {t("Tournament stats will appear here once matches are played.",
+               "मैच खेले जाने पर टूर्नामेंट स्टैट्स यहाँ दिखेंगे।")}
+          </p>
+        </div>
+      )}
+
+      {!hardMissing && (
+        <div style={{ background: PANEL, border: `1px solid ${LINE}`, borderRadius: 20, overflow: "hidden", boxShadow: "0 12px 34px rgba(0,0,0,.28)" }}>
+          {loading ? (
+            <div style={{ textAlign: "center", padding: 60, color: TXT3 }}>{t("Loading stats…", "स्टैट्स लोड हो रहे हैं…")}</div>
+          ) : rows.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "clamp(40px,7vw,72px) 24px" }}>
+              <div style={{ fontSize: 40, marginBottom: 12 }}>{active.icon}</div>
+              <p style={{ color: TXT3, fontSize: 15, lineHeight: 1.7, maxWidth: 420, margin: "0 auto" }}>
+                {t(`No ${active.unitEn} recorded yet — check back after the next match.`,
+                   `अभी कोई ${active.unitHi} दर्ज नहीं — अगले मैच के बाद देखें।`)}
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* #1 hero row (photo-less) */}
+              {leader && (
+                <div className="ts-hero" style={{
+                  background: `linear-gradient(100deg, ${active.soft}.24) 0%, ${active.soft}.05) 55%, transparent 100%)`,
+                  borderBottom: `2px solid ${active.soft}.4)`,
+                }}>
+                  <span className="ts-hero-medal" style={{ background: `linear-gradient(135deg, ${active.accent}, #FFE08A)` }}>1</span>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(18px,3vw,24px)", color: "#fff", lineHeight: 1.15, overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {leader.player}
+                    </div>
+                    <div style={{ fontSize: 13, color: TXT3, marginTop: 3 }}>
+                      {leader.team} · {leader.matches} {t("matches", "मैच")}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right", flexShrink: 0 }}>
+                    <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: "clamp(26px,5vw,40px)", color: active.accent, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>
+                      {leader.value}
+                    </div>
+                    <div style={{ fontSize: 11, color: TXT3, letterSpacing: ".08em", textTransform: "uppercase", marginTop: 2 }}>
+                      {t(active.unitEn, active.unitHi)}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Ranks 2..10 */}
+              <div className="ts-list">
+                {rest.map((r, i) => (
+                  <div key={`${r.player}-${i}`} className="ts-item">
+                    <span style={{
+                      display: "inline-flex", alignItems: "center", justifyContent: "center",
+                      width: 28, height: 28, borderRadius: "50%",
+                      fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13,
+                      color: TXT, background: "rgba(255,255,255,.07)", border: `1px solid ${LINE}`,
+                    }}>{i + 2}</span>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 15, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {r.player}
+                      </div>
+                      <div style={{ fontSize: 12, color: TXT3, marginTop: 1 }}>
+                        {r.team} · {r.matches} {t("M", "M")}
+                      </div>
+                    </div>
+                    <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: GOLD, fontVariantNumeric: "tabular-nums" }}>
+                      {r.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function MVP() {
   const { t } = useLang();
   const [eligibleOnly, setEligibleOnly] = useState(false);
@@ -195,8 +353,11 @@ export function MVP() {
   }, [eligibleOnly]);
 
   const hasFinalists = Boolean(data?.finalists);
-  const rows = data?.rows ?? [];
-  const empty = !loading && !err && rows.length === 0;
+  const allRows = data?.rows ?? [];
+  /* "All Players" list shows only the TOP 15 (both default & eligibleOnly
+     views). Server already returns finalist-first ordering, so slicing keeps it. */
+  const rows = allRows.slice(0, 15);
+  const empty = !loading && !err && allRows.length === 0;
 
   return (
     <div style={{ background: PAGE, minHeight: "100vh" }}>
@@ -321,6 +482,8 @@ export function MVP() {
             </div>
           </div>
         )}
+
+        <TournamentStats />
 
         <PointsInfographic config={data?.pointsConfig} />
 

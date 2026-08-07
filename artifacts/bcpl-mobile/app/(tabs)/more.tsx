@@ -200,6 +200,11 @@ function MoreMenu() {
       <View>
         <Card padding={16} border={true}>
           <IconRow 
+            icon="image" title={t('Media', 'मीडिया')} subtitle={t('Photos, Videos & Shorts', 'फ़ोटोज़, वीडियोज़ और शॉर्ट्स')}
+            colors={['#FF3DA6', '#FF8A3D']} onPress={() => router.push('/media')} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 12, marginLeft: 50 }} />
+          <IconRow 
             icon="watch" title={t('Scorer', 'स्कोरर')} subtitle={t('Score your local matches', 'अपना मैच स्कोर करें')}
             colors={['#5B2BF0', '#00DCF5']} onPress={() => router.push('/scorer')} 
           />

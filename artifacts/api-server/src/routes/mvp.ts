@@ -21,8 +21,8 @@ import {
 import { and, eq, inArray } from "drizzle-orm";
 import { logger } from "../lib/logger";
 import {
-  computeMvpPoints, resolveMvpConfig, type ScoredDelivery, type PlayerAggregate,
-  type MvpPointsConfig,
+  computeMvpPoints, computeMvpStats, resolveMvpConfig,
+  type ScoredDelivery, type PlayerAggregate, type MvpPointsConfig, type MvpStats,
 } from "../lib/mvpPoints";
 
 const router = Router();
@@ -39,9 +39,13 @@ type CacheEntry = {
 const CACHE_TTL_MS = 60_000;
 const cache = new Map<number, CacheEntry>();
 
-/** Test hook — clear the leaderboard cache. */
+type StatsCacheEntry = { computedAt: number; stats: MvpStats };
+const statsCache = new Map<number, StatsCacheEntry>();
+
+/** Test hook — clear the leaderboard + stats caches. */
 export function __clearMvpCache(): void {
   cache.clear();
+  statsCache.clear();
 }
 
 async function loadConfig() {
@@ -50,21 +54,63 @@ async function loadConfig() {
   return resolveMvpConfig(row?.value ?? null);
 }
 
+/**
+ * Load every scored delivery for a season's COMPLETED official matches, plus
+ * the inningsId→matchId map. Shared by the leaderboard (points) and the stats
+ * (raw tallies) endpoints so both read from exactly one source of truth.
+ */
+async function loadSeasonDeliveries(season: number): Promise<{
+  deliveries: ScoredDelivery[];
+  matchIdByInnings: Map<string, string>;
+}> {
+  const matches = await db.select({ id: matchesTable.id }).from(matchesTable).where(and(
+    eq(matchesTable.season, season),
+    eq(matchesTable.status, "completed"),
+  ));
+  const matchIds = matches.map((m) => m.id);
+  if (matchIds.length === 0) return { deliveries: [], matchIdByInnings: new Map() };
+
+  const innings = await db.select({
+    id: inningsTable.id, matchId: inningsTable.matchId,
+    battingTeam: inningsTable.battingTeam, bowlingTeam: inningsTable.bowlingTeam,
+  }).from(inningsTable).where(inArray(inningsTable.matchId, matchIds));
+
+  const inningsById = new Map(innings.map((i) => [i.id, i]));
+  const matchIdByInnings = new Map(innings.map((i) => [i.id, i.matchId]));
+  const inningsIds = innings.map((i) => i.id);
+  if (inningsIds.length === 0) return { deliveries: [], matchIdByInnings };
+
+  const dels = await db.select().from(deliveriesTable)
+    .where(inArray(deliveriesTable.inningsId, inningsIds));
+
+  const deliveries: ScoredDelivery[] = dels.map((d) => {
+    const inn = inningsById.get(d.inningsId);
+    return {
+      inningsId: d.inningsId,
+      overNumber: d.overNumber,
+      batterName: d.batterName,
+      bowlerName: d.bowlerName,
+      runsOffBat: d.runsOffBat,
+      extrasRuns: d.extrasRuns,
+      extraType: d.extraType ?? null,
+      totalRuns: d.totalRuns,
+      isWicket: d.isWicket,
+      dismissalType: d.dismissalType ?? null,
+      dismissedBatter: d.dismissedBatter ?? null,
+      fielderName: d.fielderName ?? null,
+      battingTeam: inn?.battingTeam ?? "",
+      bowlingTeam: inn?.bowlingTeam ?? "",
+    };
+  });
+  return { deliveries, matchIdByInnings };
+}
+
 /** Build (or reuse) the full per-player aggregate + finalists for a season. */
 async function buildLeaderboard(season: number): Promise<CacheEntry> {
   const hit = cache.get(season);
   if (hit && Date.now() - hit.computedAt < CACHE_TTL_MS) return hit;
 
   const config = await loadConfig();
-
-  // Completed official matches of the season.
-  const matches = await db.select({
-    id: matchesTable.id, team1: matchesTable.team1, team2: matchesTable.team2,
-    stage: matchesTable.stage, status: matchesTable.status,
-  }).from(matchesTable).where(and(
-    eq(matchesTable.season, season),
-    eq(matchesTable.status, "completed"),
-  ));
 
   // Finalists come from the FINAL fixture (any status — a scheduled final still
   // defines who is eligible for the car), independent of completion.
@@ -77,49 +123,26 @@ async function buildLeaderboard(season: number): Promise<CacheEntry> {
   const finalists: [string, string] | null = finalMatch
     ? [finalMatch.team1, finalMatch.team2] : null;
 
-  const matchIds = matches.map(m => m.id);
   let players: PlayerAggregate[] = [];
-
-  if (matchIds.length > 0) {
-    const innings = await db.select({
-      id: inningsTable.id, matchId: inningsTable.matchId,
-      battingTeam: inningsTable.battingTeam, bowlingTeam: inningsTable.bowlingTeam,
-    }).from(inningsTable).where(inArray(inningsTable.matchId, matchIds));
-
-    const inningsById = new Map(innings.map(i => [i.id, i]));
-    const matchIdByInnings = new Map(innings.map(i => [i.id, i.matchId]));
-    const inningsIds = innings.map(i => i.id);
-
-    if (inningsIds.length > 0) {
-      const dels = await db.select().from(deliveriesTable)
-        .where(inArray(deliveriesTable.inningsId, inningsIds));
-
-      const scored: ScoredDelivery[] = dels.map(d => {
-        const inn = inningsById.get(d.inningsId);
-        return {
-          inningsId: d.inningsId,
-          overNumber: d.overNumber,
-          batterName: d.batterName,
-          bowlerName: d.bowlerName,
-          runsOffBat: d.runsOffBat,
-          extrasRuns: d.extrasRuns,
-          extraType: d.extraType ?? null,
-          totalRuns: d.totalRuns,
-          isWicket: d.isWicket,
-          dismissalType: d.dismissalType ?? null,
-          dismissedBatter: d.dismissedBatter ?? null,
-          fielderName: d.fielderName ?? null,
-          battingTeam: inn?.battingTeam ?? "",
-          bowlingTeam: inn?.bowlingTeam ?? "",
-        };
-      });
-      players = computeMvpPoints(scored, matchIdByInnings, config);
-    }
+  const { deliveries, matchIdByInnings } = await loadSeasonDeliveries(season);
+  if (deliveries.length > 0) {
+    players = computeMvpPoints(deliveries, matchIdByInnings, config);
   }
 
   const entry: CacheEntry = { computedAt: Date.now(), players, finalists, config };
   cache.set(season, entry);
   return entry;
+}
+
+/** Build (or reuse) the raw statistical leaders for a season (~60s cache). */
+async function buildStats(season: number): Promise<MvpStats> {
+  const hit = statsCache.get(season);
+  if (hit && Date.now() - hit.computedAt < CACHE_TTL_MS) return hit.stats;
+
+  const { deliveries, matchIdByInnings } = await loadSeasonDeliveries(season);
+  const stats = computeMvpStats(deliveries, matchIdByInnings, 10);
+  statsCache.set(season, { computedAt: Date.now(), stats });
+  return stats;
 }
 
 /* ── GET /api/mvp/leaderboard ───────────────────────────────────────────── */
@@ -178,6 +201,26 @@ router.get("/leaderboard", async (req, res) => {
   } catch (e) {
     logger.error({ err: e }, "mvp leaderboard failed");
     res.status(500).json({ error: "Could not load MVP leaderboard" });
+  }
+});
+
+/* ── GET /api/mvp/stats ─────────────────────────────────────────────────── */
+/**
+ * SHARED API CONTRACT (consumed by web + app):
+ *   GET /api/mvp/stats?season=N  (default current season)
+ *   → { season, mostRuns[], mostWickets[], mostCatches[], mostSixes[], mostFours[] }
+ *   Each entry: { player, team, matches, value } — top 10, raw tallies (no point
+ *   system). Computed ONLY from completed official matches' deliveries — same
+ *   source as the MVP leaderboard. Cached ~60s.
+ */
+router.get("/stats", async (req, res) => {
+  try {
+    const season = Number(req.query.season) || DEFAULT_SEASON;
+    const stats = await buildStats(season);
+    res.json({ season, ...stats });
+  } catch (e) {
+    logger.error({ err: e }, "mvp stats failed");
+    res.status(500).json({ error: "Could not load MVP stats" });
   }
 });
 

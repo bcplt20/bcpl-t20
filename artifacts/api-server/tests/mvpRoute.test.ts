@@ -162,3 +162,31 @@ describe("GET /api/mvp/leaderboard", () => {
     r.body.leaderboard.forEach((p: { rank: number }, i: number) => expect(p.rank).toBe(i + 1));
   });
 });
+
+describe("GET /api/mvp/stats", () => {
+  type Leader = { player: string; team: string; matches: number; value: number };
+
+  it("returns raw statistical leaders from the same completed-match deliveries", async () => {
+    const r = await request(app).get(`/api/mvp/stats?season=${SEASON}`);
+    expect(r.status).toBe(200);
+    expect(r.body.season).toBe(SEASON);
+    for (const k of ["mostRuns", "mostWickets", "mostCatches", "mostSixes", "mostFours"]) {
+      expect(Array.isArray(r.body[k])).toBe(true);
+    }
+    // Kohli: 12 runs, one six, one four (TEAM_A).
+    const runs = (r.body.mostRuns as Leader[]).find((x) => x.player === "Kohli");
+    expect(runs).toMatchObject({ player: "Kohli", team: TEAM_A, value: 12, matches: 1 });
+    expect((r.body.mostSixes as Leader[]).find((x) => x.player === "Kohli")).toMatchObject({ value: 1 });
+    expect((r.body.mostFours as Leader[]).find((x) => x.player === "Kohli")).toMatchObject({ value: 1 });
+    // Bumrah: 1 wicket (bowled), credited to the bowler.
+    expect((r.body.mostWickets as Leader[]).find((x) => x.player === "Bumrah"))
+      .toMatchObject({ player: "Bumrah", team: TEAM_B, value: 1 });
+    // Each entry carries the contract shape.
+    for (const e of r.body.mostRuns as Leader[]) {
+      expect(e).toHaveProperty("player");
+      expect(e).toHaveProperty("team");
+      expect(e).toHaveProperty("matches");
+      expect(e).toHaveProperty("value");
+    }
+  });
+});

@@ -985,6 +985,23 @@ export type MvpLeaderboard = {
 export const getMvpLeaderboard = (eligibleOnly = false) =>
   req<MvpLeaderboard>("GET", `/mvp/leaderboard${eligibleOnly ? "?eligibleOnly=1" : ""}`);
 
+/* ─── Tournament Stats (public) — raw tallies from official completed matches'
+   deliveries (same source as MVP). No point system. Shared web+app contract:
+   GET /api/mvp/stats?season=N →
+   { season, mostRuns:[{player,team,matches,value}x10], mostWickets, mostCatches,
+     mostSixes, mostFours }. Ties: fewer matches, then name. 60s cache. */
+export type MvpStatEntry = { player: string; team: string; matches: number; value: number };
+export type MvpStats = {
+  season: number;
+  mostRuns: MvpStatEntry[];
+  mostWickets: MvpStatEntry[];
+  mostCatches: MvpStatEntry[];
+  mostSixes: MvpStatEntry[];
+  mostFours: MvpStatEntry[];
+};
+export const getMvpStats = (season?: number) =>
+  req<MvpStats>("GET", `/mvp/stats${season ? `?season=${season}` : ""}`);
+
 /* ─── Admin: Fan Voting management (adminReq / session token) ─── */
 export type AdminPollListItem = Omit<Poll, "votingOpen" | "options"> & { totalVotes: number };
 export type AdminPollResult = {

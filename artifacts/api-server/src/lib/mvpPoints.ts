@@ -126,6 +126,110 @@ const BOWLER_WICKET_TYPES = new Set([
 ]);
 const BOWLED_LBW = new Set(["bowled", "lbw"]);
 
+/* ── raw statistical leaders (no point system) ──────────────────────────── */
+
+export type StatLeader = {
+  player: string;
+  team: string;
+  matches: number;
+  value: number;
+};
+
+export type MvpStats = {
+  mostRuns: StatLeader[];
+  mostWickets: StatLeader[];
+  mostCatches: StatLeader[];
+  mostSixes: StatLeader[];
+  mostFours: StatLeader[];
+};
+
+/**
+ * Raw per-player tallies (runs / wickets / catches / sixes / fours) across the
+ * supplied official-match deliveries — NO point system, plain counts.
+ *
+ * Attribution mirrors the MVP engine exactly:
+ *  - batting stats key on batterName + the innings BATTING team;
+ *  - a wicket credits the bowler ONLY for bowled/lbw/caught/stumped/hit-wicket/
+ *    caught-and-bowled (run-outs never credit a bowler);
+ *  - a catch credits the fielderName on the innings BOWLING team.
+ *
+ * Ties are broken by FEWER matches (more per game = higher), then name asc.
+ * Returns the top `limit` (default 10) for each category.
+ */
+export function computeMvpStats(
+  deliveries: ScoredDelivery[],
+  matchIdByInnings: Map<string, string>,
+  limit = 10,
+): MvpStats {
+  type Tally = {
+    player: string; team: string;
+    runs: number; wickets: number; catches: number; sixes: number; fours: number;
+    matches: Set<string>;
+  };
+  const players = new Map<string, Tally>();
+  const keyOf = (name: string, team: string) => `${team}::${name}`;
+  const get = (name: string, team: string): Tally => {
+    const k = keyOf(name, team);
+    let t = players.get(k);
+    if (!t) {
+      t = { player: name, team, runs: 0, wickets: 0, catches: 0, sixes: 0, fours: 0, matches: new Set() };
+      players.set(k, t);
+    }
+    return t;
+  };
+  const matchOf = (inningsId: string) => matchIdByInnings.get(inningsId) ?? inningsId;
+
+  for (const d of deliveries) {
+    const matchId = matchOf(d.inningsId);
+
+    /* batting: runs, fours, sixes (off the bat only) */
+    const bat = get(d.batterName, d.battingTeam);
+    bat.runs += d.runsOffBat;
+    if (d.runsOffBat === 4) bat.fours += 1;
+    if (d.runsOffBat === 6) bat.sixes += 1;
+    bat.matches.add(matchId);
+
+    if (d.isWicket && d.dismissalType) {
+      /* bowler wicket credit (excludes run-outs by convention) */
+      if (BOWLER_WICKET_TYPES.has(d.dismissalType)) {
+        const bowl = get(d.bowlerName, d.bowlingTeam);
+        bowl.wickets += 1;
+        bowl.matches.add(matchId);
+      }
+      /* fielder catch credit (bowling side) */
+      if (d.dismissalType === "caught" && d.fielderName) {
+        const f = get(d.fielderName, d.bowlingTeam);
+        f.catches += 1;
+        f.matches.add(matchId);
+      }
+    }
+  }
+
+  const all = [...players.values()].map((t) => ({
+    player: t.player, team: t.team, matches: t.matches.size,
+    runs: t.runs, wickets: t.wickets, catches: t.catches, sixes: t.sixes, fours: t.fours,
+  }));
+
+  const leaders = (metric: "runs" | "wickets" | "catches" | "sixes" | "fours"): StatLeader[] =>
+    all
+      .filter((t) => t[metric] > 0)
+      .sort((a, b) =>
+        b[metric] - a[metric] ||        // higher tally first
+        a.matches - b.matches ||        // fewer matches breaks a tie
+        a.player.localeCompare(b.player) // then name asc
+      )
+      .slice(0, limit)
+      .map((t) => ({ player: t.player, team: t.team, matches: t.matches, value: t[metric] }));
+
+  return {
+    mostRuns: leaders("runs"),
+    mostWickets: leaders("wickets"),
+    mostCatches: leaders("catches"),
+    mostSixes: leaders("sixes"),
+    mostFours: leaders("fours"),
+  };
+}
+
 /**
  * Compute per-player MVP points for one or more matches.
  *

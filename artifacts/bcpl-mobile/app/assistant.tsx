@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
@@ -117,11 +117,17 @@ export default function AssistantScreen() {
         ['What is my current status?', 'मेरा अभी का status क्या है?'],
         ['When is my trial?', 'मेरा trial कब है?'],
         ['How do I upload my video?', 'Video कैसे upload करूँ?'],
+        ['Winning prize?', 'कार किसे मिलेगी?'],
+        ['Phase 1 fee?', 'Phase 1 की फ़ीस क्या है?'],
+        ['Points system?', 'पॉइंट्स कैसे मिलते हैं?'],
       ]
     : [
         ['How do I register?', 'Registration कैसे करूँ?'],
         ['What is the entry fee?', 'Entry fee कितनी है?'],
         ['How do trials work?', 'Trials कैसे होते हैं?'],
+        ['Winning prize?', 'कार किसे मिलेगी?'],
+        ['Phase 1 fee?', 'Phase 1 की फ़ीस क्या है?'],
+        ['Points system?', 'पॉइंट्स कैसे मिलते हैं?'],
       ];
 
   return (
@@ -133,6 +139,17 @@ export default function AssistantScreen() {
           contentContainerStyle={{ padding: 16, paddingTop: appBarHeight + 12, paddingBottom: 16 }}
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
         >
+          <View style={{ alignItems: 'center', marginBottom: 24 }}>
+            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(0, 220, 245, 0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+              <Ionicons name="sparkles" size={32} color="#00DCF5" />
+            </View>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, textAlign: 'center' }}>
+              BCPL AI
+            </Text>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, textAlign: 'center', marginTop: 4 }}>
+              {t('Powered by AI — instant answers 24/7', 'AI द्वारा संचालित — हर समय तुरंत जवाब')}
+            </Text>
+          </View>
           <Bubble role="assistant" text={hello} />
           {msgs.length === 0 && (
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 4, marginBottom: 8 }}>
@@ -140,9 +157,9 @@ export default function AssistantScreen() {
                 <Pressable
                   key={en}
                   onPress={() => setInput(lang === 'hi' ? hi : en)}
-                  style={{ backgroundColor: c.card2, borderWidth: 1, borderColor: c.line, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 }}
+                  style={{ backgroundColor: c.card2, borderWidth: 1, borderColor: c.cyan, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 }}
                 >
-                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12.5 }}>{t(en, hi)}</Text>
+                  <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12.5 }}>{t(en, hi)}</Text>
                 </Pressable>
               ))}
             </View>
@@ -150,7 +167,15 @@ export default function AssistantScreen() {
           {msgs.map((m, i) => (
             <Bubble key={i} role={m.role} text={m.text} />
           ))}
-          {busy && <Bubble role="assistant" text={t('Typing…', 'लिख रहा है…')} dim />}
+          {busy && (
+            <View style={{ alignSelf: 'flex-start', backgroundColor: c.card, borderWidth: 1, borderColor: c.line, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 16, borderBottomLeftRadius: 4, marginBottom: 10 }}>
+              <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center', height: 21 }}>
+                <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.sub, opacity: 0.5 }} />
+                <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.sub, opacity: 0.8 }} />
+                <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.sub, opacity: 0.5 }} />
+              </View>
+            </View>
+          )}
           {err ? (
             <Text style={{ color: '#FF7A9C', fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12.5, marginTop: 4 }}>{err}</Text>
           ) : null}

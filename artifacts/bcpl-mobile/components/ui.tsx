@@ -106,10 +106,11 @@ export function Card({ children, style, padding = 16, border = true }: { childre
   return (
     <View style={[{
       backgroundColor: c.card,
-      borderRadius: 22,
+      borderRadius: 18,
       borderWidth: border ? 1 : 0,
       borderColor: border ? c.line : 'transparent',
       padding: padding as any,
+      overflow: 'hidden',
     }, style]}>
       {children}
     </View>

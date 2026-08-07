@@ -70,6 +70,7 @@ export default function ScoringScreen() {
   // Run out details
   const [dismissalType, setDismissalType] = useState('');
   const [runOutRuns, setRunOutRuns] = useState(0);
+  const [outFielder, setOutFielder] = useState('');
 
   const [toastMsg, setToastMsg] = useState('');
   
@@ -389,11 +390,11 @@ export default function ScoringScreen() {
 
   const renderPadBtn = (label: string, onPress: () => void, color?: string, outline?: boolean, flex?: number) => (
     <Pressable
-      onPress={() => { Haptics.selectionAsync().catch(()=>0); onPress(); }}
+      onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(()=>0); onPress(); }}
       style={({ pressed }) => [
         styles.padBtn,
         { flex: flex || 1, backgroundColor: outline ? 'transparent' : (color || c.card2), borderColor: outline ? color : 'transparent', borderWidth: outline ? 2 : 0 },
-        pressed && { opacity: 0.7 }
+        pressed && { opacity: 0.7, transform: [{ scale: 0.96 }] }
       ]}
     >
       <Text style={[styles.padBtnText, { color: outline ? color : (color === c.card2 ? c.ink : '#fff') }]}>
@@ -426,33 +427,109 @@ export default function ScoringScreen() {
             <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 14 }}>
               {activeInnings.battingTeam} {t('Batting', 'बल्लेबाज़ी')}
             </Text>
-            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 48, lineHeight: 56 }}>
-              {activeInnings.totalRuns}/{activeInnings.totalWickets}
-            </Text>
-            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 20 }}>
-              {t('Overs:', 'ओवर्स:')} {activeInnings.overs}.{activeInnings.balls} <Text style={{ color: c.sub }}>/ {match?.oversLimit}</Text>
-            </Text>
-            
-            {/* Player inline stats */}
-            <View style={{ flexDirection: 'row', gap: 16, marginTop: 12 }}>
-              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>
-                {formatBatter(striker, strikerData, true)}
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
+              <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 48, lineHeight: 56 }}>
+                {activeInnings.totalRuns}/{activeInnings.totalWickets}
               </Text>
-              <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15 }}>
-                {formatBatter(nonStriker, nonStrikerData, false)}
+              <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 20 }}>
+                ({activeInnings.overs}.{activeInnings.balls})
               </Text>
             </View>
-            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 14, marginTop: 4 }}>
-              {formatBowler(bowler, bowlerData)}
-            </Text>
+            
+            <View style={{ flexDirection: 'row', gap: 16, marginTop: 4 }}>
+              <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
+                CRR: {activeInnings.overs > 0 || activeInnings.balls > 0 ? (activeInnings.totalRuns / (activeInnings.overs + activeInnings.balls / 6)).toFixed(2) : '0.00'}
+              </Text>
+              {activeInnings.target && (
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
+                  REQ: {Math.max(0, (activeInnings.target - activeInnings.totalRuns) / Math.max(0.1, ((match?.oversLimit ?? 20) - (activeInnings.overs + activeInnings.balls / 6)))).toFixed(2)}
+                </Text>
+              )}
+            </View>
 
             {activeInnings.target && (
               <View style={{ marginTop: 8, backgroundColor: `${c.magenta}20`, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 }}>
                 <Text style={{ color: c.magenta, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>
-                  {t(`Need ${activeInnings.target - activeInnings.totalRuns} more to win`, `जीत के लिए ${activeInnings.target - activeInnings.totalRuns} और चाहिए`)}
+                  {t(`Need ${Math.max(0, activeInnings.target - activeInnings.totalRuns)} runs in ${((match?.oversLimit ?? 20) * 6) - (activeInnings.overs * 6 + activeInnings.balls)} balls`, `जीत के लिए ${((match?.oversLimit ?? 20) * 6) - (activeInnings.overs * 6 + activeInnings.balls)} गेंदों में ${Math.max(0, activeInnings.target - activeInnings.totalRuns)} रन चाहिए`)}
                 </Text>
               </View>
             )}
+
+            {/* CricHeroes Style Current Batsmen/Bowler */}
+            <View style={{ width: '100%', marginTop: 24, gap: 12 }}>
+              <View style={{ flexDirection: 'row', backgroundColor: c.card2, borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: c.line }}>
+                <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: 'row', paddingHorizontal: 12, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: c.line, backgroundColor: c.card, alignItems: 'center' }}>
+                    <Text style={{ flex: 1, color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>{t('BATSMAN', 'बल्लेबाज़')}</Text>
+                    <Text style={{ width: 24, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>R</Text>
+                    <Text style={{ width: 24, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>B</Text>
+                    <Text style={{ width: 20, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>4s</Text>
+                    <Text style={{ width: 20, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>6s</Text>
+                    <Text style={{ width: 40, textAlign: 'right', color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>SR</Text>
+                  </View>
+                  {[
+                    { name: striker, data: strikerData, isStriker: true },
+                    { name: nonStriker, data: nonStrikerData, isStriker: false }
+                  ].map((b, i) => (
+                    <View key={i} style={{ flexDirection: 'row', paddingHorizontal: 12, paddingVertical: 10, borderBottomWidth: i === 0 ? 1 : 0, borderBottomColor: c.line, alignItems: 'center' }}>
+                      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        {b.isStriker && <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.cyan }} />}
+                        <Text style={{ color: b.isStriker ? c.ink : c.sub, fontFamily: b.isStriker ? 'PlusJakartaSans_700Bold' : 'PlusJakartaSans_600SemiBold', fontSize: 14 }} numberOfLines={1}>
+                          {b.name}
+                        </Text>
+                      </View>
+                      <Text style={{ width: 24, textAlign: 'center', color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{b.data?.runs || 0}</Text>
+                      <Text style={{ width: 24, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13 }}>{b.data?.balls || 0}</Text>
+                      <Text style={{ width: 20, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13 }}>{b.data?.fours || 0}</Text>
+                      <Text style={{ width: 20, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13 }}>{b.data?.sixes || 0}</Text>
+                      <Text style={{ width: 40, textAlign: 'right', color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13 }}>
+                        {b.data?.balls ? ((b.data.runs / b.data.balls) * 100).toFixed(0) : '0'}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              <View style={{ flexDirection: 'row', backgroundColor: c.card2, borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: c.line }}>
+                <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: 'row', paddingHorizontal: 12, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: c.line, backgroundColor: c.card, alignItems: 'center' }}>
+                    <Text style={{ flex: 1, color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>{t('BOWLER', 'गेंदबाज़')}</Text>
+                    <Text style={{ width: 32, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>O</Text>
+                    <Text style={{ width: 24, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>M</Text>
+                    <Text style={{ width: 24, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>R</Text>
+                    <Text style={{ width: 24, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>W</Text>
+                    <Text style={{ width: 36, textAlign: 'right', color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>ECO</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', paddingHorizontal: 12, paddingVertical: 10, alignItems: 'center' }}>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.magenta }} />
+                      <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }} numberOfLines={1}>{bowler}</Text>
+                    </View>
+                    <Text style={{ width: 32, textAlign: 'center', color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>{bowlerData ? `${Math.floor(Number(bowlerData.overs))}.${Math.round((Number(bowlerData.overs) % 1) * 10)}` : '0.0'}</Text>
+                    <Text style={{ width: 24, textAlign: 'center', color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13 }}>0</Text>
+                    <Text style={{ width: 24, textAlign: 'center', color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{bowlerData?.runs || 0}</Text>
+                    <Text style={{ width: 24, textAlign: 'center', color: c.coral, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{bowlerData?.wickets || 0}</Text>
+                    <Text style={{ width: 36, textAlign: 'right', color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13 }}>
+                      {bowlerData?.overs && Number(bowlerData.overs) > 0 ? (bowlerData.runs / Number(bowlerData.overs)).toFixed(1) : '0.0'}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* This Over Strip */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: c.card, borderRadius: 12, borderWidth: 1, borderColor: c.line, padding: 12, gap: 8 }}>
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12 }}>{t('THIS OVER', 'इस ओवर में')}</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, alignItems: 'center' }}>
+                  {activeInnings.recentBalls?.slice(0, 6).map((b, i) => (
+                    <View key={i} style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: b.isWicket ? c.coral : b.extraType ? c.amber : b.runs >= 4 ? c.cyan : c.card2, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ color: b.isWicket || b.runs >= 4 || b.extraType ? '#fff' : c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12 }}>
+                        {b.isWicket ? 'W' : b.extraType ? `${b.runs}${b.extraType[0].toUpperCase()}` : b.runs}
+                      </Text>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
           </View>
         ) : (
           <View style={{ padding: 16, alignItems: 'center' }}>
@@ -848,6 +925,21 @@ export default function ScoringScreen() {
               ))}
             </View>
 
+            {(dismissalType === 'caught' || dismissalType === 'stumped' || dismissalType === 'run_out') && (
+              <View style={{ marginBottom: 16 }}>
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', marginBottom: 8 }}>
+                  {t('Fielder Name (optional)', 'फील्डर का नाम (वैकल्पिक)')}
+                </Text>
+                <TextInput
+                  value={outFielder}
+                  onChangeText={setOutFielder}
+                  style={[styles.inputChip, { backgroundColor: c.card, color: c.ink, borderColor: c.line, textAlign: 'left', marginBottom: 8 }]}
+                  placeholder={t('Enter fielder name', 'फील्डर का नाम दर्ज करें')}
+                  placeholderTextColor={c.sub}
+                />
+              </View>
+            )}
+
             {dismissalType === 'run_out' && (
               <View style={{ marginBottom: 16 }}>
                 <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', marginBottom: 8 }}>
@@ -868,13 +960,14 @@ export default function ScoringScreen() {
             )}
 
             <View style={{ flexDirection: 'row', gap: 12 }}>
-              <Pressable onPress={() => { setOutModal(false); setDismissalType(''); }} style={[styles.modalBtn, { backgroundColor: c.card2 }]}>
+              <Pressable onPress={() => { setOutModal(false); setDismissalType(''); setOutFielder(''); }} style={[styles.modalBtn, { backgroundColor: c.card2 }]}>
                 <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold' }}>{t('Cancel', 'रद्द करें')}</Text>
               </Pressable>
               <Pressable
                 onPress={() => {
                   if (!dismissalType) return;
-                  handleScore('wicket', dismissalType === 'run_out' ? runOutRuns : 0, { dismissalType });
+                  handleScore('wicket', dismissalType === 'run_out' ? runOutRuns : 0, { dismissalType, fielderName: outFielder || undefined });
+                  setOutFielder('');
                 }}
                 style={[styles.modalBtn, { backgroundColor: '#FF1A75', opacity: dismissalType ? 1 : 0.5 }]}
               >
