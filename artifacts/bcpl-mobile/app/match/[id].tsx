@@ -92,10 +92,10 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
       />
       <View style={{ alignItems: 'center', paddingVertical: 24, gap: 20, paddingHorizontal: 16 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 24 }}>
-        <View style={{ alignItems: 'center', gap: 12, width: 110 }}>
+        <View style={{ alignItems: 'center', gap: 12, width: 120 }}>
           <View style={styles.logoWrap}>
             <LinearGradient colors={['rgba(255,255,255,0.1)', 'transparent']} style={styles.logoGlow} />
-            <TeamLogo name={live.team1} size={72} glow={true} />
+            <TeamLogo name={live.team1} size={96} glow={c.isDark} />
           </View>
           <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15, textAlign: 'center', lineHeight: 20 }} numberOfLines={2}>
             {live.team1}
@@ -119,10 +119,10 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
           ) : null}
         </View>
 
-        <View style={{ alignItems: 'center', gap: 12, width: 110 }}>
+        <View style={{ alignItems: 'center', gap: 12, width: 120 }}>
           <View style={styles.logoWrap}>
             <LinearGradient colors={['rgba(255,255,255,0.1)', 'transparent']} style={styles.logoGlow} />
-            <TeamLogo name={live.team2} size={72} glow={true} />
+            <TeamLogo name={live.team2} size={96} glow={c.isDark} />
           </View>
           <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15, textAlign: 'center', lineHeight: 20 }} numberOfLines={2}>
             {live.team2}

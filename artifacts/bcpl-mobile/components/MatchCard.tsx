@@ -114,7 +114,7 @@ export const MatchCard = React.memo(({ match }: { match: Match }) => {
           <View style={styles.teamsRow}>
             <View style={styles.team}>
               <View style={styles.logoWrap}>
-                <TeamLogo name={match.team1} size={64} glow={true} />
+                <TeamLogo name={match.team1} size={84} glow={c.isDark} />
               </View>
               <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={2}>
                 {match.team1}
@@ -122,7 +122,7 @@ export const MatchCard = React.memo(({ match }: { match: Match }) => {
             </View>
             
             <View style={styles.vsContainer}>
-              <View style={[styles.vsChip, { backgroundColor: c.card, borderColor: 'transparent', shadowColor: c.cyan, shadowOpacity: c.isDark ? 0.4 : 0.2, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 }]}>
+              <View style={[styles.vsChip, { backgroundColor: c.card, borderColor: 'transparent', shadowColor: c.cyan, shadowOpacity: c.isDark ? 0.4 : 0, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: c.isDark ? 4 : 0 }]}>
                 <LinearGradient colors={[c.cyan, c.violet]} style={[StyleSheet.absoluteFill, { borderRadius: 20, opacity: 0.15 }]} />
                 <View style={{ position: 'absolute', top: 1, left: 1, right: 1, bottom: 1, backgroundColor: c.card, borderRadius: 19 }} />
                 <Text style={[styles.vs, { color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 0.5 }]}>VS</Text>
@@ -132,7 +132,7 @@ export const MatchCard = React.memo(({ match }: { match: Match }) => {
   
             <View style={styles.team}>
               <View style={styles.logoWrap}>
-                <TeamLogo name={match.team2} size={64} glow={true} />
+                <TeamLogo name={match.team2} size={84} glow={c.isDark} />
               </View>
               <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={2}>
                 {match.team2}
@@ -185,20 +185,21 @@ const styles = StyleSheet.create({
   },
   logoGlow: {
     position: 'absolute',
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
   teamName: {
     fontSize: 14,
     fontFamily: 'PlusJakartaSans_700Bold',
     textAlign: 'center',
     lineHeight: 18,
+    marginTop: -4,
   },
   vsContainer: {
     flexDirection: 'column',
     alignItems: 'center',
-    width: 70,
+    width: 90,
     justifyContent: 'center',
   },
   vsLineVert: {

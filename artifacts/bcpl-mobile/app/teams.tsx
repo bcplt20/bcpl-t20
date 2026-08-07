@@ -165,9 +165,10 @@ export default function TeamsScreen() {
 
 const styles = StyleSheet.create({
   logoBadge: {
-    width: 64,
-    height: 64,
+    width: 80,
+    height: 80,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 4,
   },
 });

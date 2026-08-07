@@ -32,12 +32,12 @@ function TeamCard({ t }: { t: CardTeam }) {
         {/* Watermark logo */}
         {t.logo && <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ position: "absolute", right: "-6%", bottom: "-6%", width: "72%", height: "72%", objectFit: "contain", opacity: 0.055, pointerEvents: "none", transition: "opacity 0.3s", filter: "grayscale(20%)" }} />}
 
-        {/* Top row: logo badge + name */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, position: "relative", zIndex: 1 }}>
-          <div style={{ width: 56, height: 56, background: `radial-gradient(circle at 50% 45%, ${t.color}33 0%, transparent 72%)`, borderRadius: 14, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Top row: logo (transparent, no backing) + name */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16, position: "relative", zIndex: 1 }}>
+          <div style={{ width: 80, height: 80, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", ...(t.logo ? {} : { background: `${t.color}22`, border: `2px solid ${t.color}`, borderRadius: 16 }) }}>
             {t.logo
-              ? <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ width: "100%", height: "100%", objectFit: "contain", filter: `drop-shadow(0 3px 8px rgba(0,0,0,0.4))` }} />
-              : <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: t.color }}>{t.abbr}</span>}
+              ? <img loading="lazy" decoding="async" src={t.logo} alt={t.name} style={{ width: "100%", height: "100%", objectFit: "contain", filter: `drop-shadow(0 4px 11px rgba(0,0,0,0.45))` }} />
+              : <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 22, color: t.color }}>{t.abbr}</span>}
           </div>
           <div>
             <div style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 16, color: "#fff", lineHeight: 1.2, marginBottom: 4 }}>{t.name}</div>
@@ -126,12 +126,12 @@ export function Teams() {
 
           {/* Logo parade */}
           {teams && (
-            <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 10, marginBottom: 0 }}>
+            <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 14, marginBottom: 0 }}>
               {teams.map(tm => (
-                <Link key={tm.slug} href={`/team/${tm.slug}`} style={{ width: 52, height: 52, background: `radial-gradient(circle at 50% 45%, ${tm.color}33 0%, transparent 72%)`, borderRadius: 14, padding: 4, display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}>
+                <Link key={tm.slug} href={`/team/${tm.slug}`} style={{ width: 76, height: 76, display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", ...(tm.logo ? {} : { background: `${tm.color}22`, border: `2px solid ${tm.color}`, borderRadius: 16 }) }}>
                   {tm.logo
-                    ? <img loading="lazy" decoding="async" src={tm.logo} alt={tm.abbr} style={{ width: "100%", height: "100%", objectFit: "contain", filter: `drop-shadow(0 3px 7px rgba(0,0,0,0.4))` }} />
-                    : <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 13, color: tm.color }}>{tm.abbr}</span>}
+                    ? <img loading="lazy" decoding="async" src={tm.logo} alt={tm.abbr} style={{ width: "100%", height: "100%", objectFit: "contain", filter: `drop-shadow(0 4px 10px rgba(0,0,0,0.45))`, transition: "transform .2s" }} />
+                    : <span style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: tm.color }}>{tm.abbr}</span>}
                 </Link>
               ))}
             </div>

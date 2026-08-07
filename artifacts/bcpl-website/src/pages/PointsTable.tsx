@@ -37,16 +37,20 @@ const QUALIFY_TOP = 2;
 function TeamBadge({ name, color, logo, size = 32 }: { name: string; color: string; logo?: string; size?: number }) {
   const [broken, setBroken] = React.useState(false);
   const showLogo = Boolean(logo) && !broken;
+  // With a real logo: transparent PNG straight on the row, NO backing circle.
+  // Only the initials fallback keeps a coloured ring so it stays legible.
   return (
     <span style={{
-      width: size, height: size, borderRadius: "50%",
-      background: showLogo ? `radial-gradient(circle at 50% 45%, ${color}33 0%, transparent 72%)` : `${color}33`,
-      border: showLogo ? "none" : `2px solid ${color}`, display: "inline-flex", alignItems: "center",
-      justifyContent: "center", overflow: "hidden", flexShrink: 0,
+      width: size, height: size,
+      borderRadius: showLogo ? 0 : "50%",
+      background: showLogo ? "transparent" : `${color}33`,
+      border: showLogo ? "none" : `2px solid ${color}`,
+      display: "inline-flex", alignItems: "center", justifyContent: "center",
+      overflow: "hidden", flexShrink: 0,
       fontFamily: "var(--font-head)", fontWeight: 800, fontSize: size * 0.34, color,
     }}>
       {showLogo
-        ? <img loading="lazy" decoding="async" src={logo} alt={name} onError={() => setBroken(true)} style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 2px 5px rgba(0,0,0,0.4))" }} />
+        ? <img loading="lazy" decoding="async" src={logo} alt={name} onError={() => setBroken(true)} style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.45))" }} />
         : initials(name)}
     </span>
   );
@@ -255,8 +259,8 @@ export function PointsTable() {
                     <tr key={i} className={`pts-row${inZone ? " qualify" : ""}${isZoneLast ? " qualify-last" : ""}`}>
                       <td className="stick stick-pos"><PosBadge pos={row.pos} /></td>
                       <td className="stick stick-team">
-                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                          <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} size={34} />
+                        <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
+                          <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} size={50} />
                           <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "#fff" }}>{row.name}</div>
                         </div>
                       </td>

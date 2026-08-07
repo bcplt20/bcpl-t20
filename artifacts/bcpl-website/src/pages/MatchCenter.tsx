@@ -64,25 +64,24 @@ const STATUS_META: Record<UiStatus, { label: string; color: string }> = {
   abandoned: { label: "ABANDONED", color: "#A7B2C6" },
 };
 
-/* Circular team badge: shows the team logo when available, keeps the colored
-   ring, and falls back to initials when there is no logo or the image fails. */
+/* Team logo: transparent PNG straight on the page (NO backing circle/ring),
+   falling back to the BCPL ball logo when there is no team logo or it fails. */
 function TeamBadge({ name, color, logo, size, fontSize }: {
   name: string; color: string; logo?: string; size: number; fontSize: number;
 }) {
+  void color; void fontSize;
   const [broken, setBroken] = useState(false);
   const showLogo = Boolean(logo) && !broken;
+  const src = showLogo ? logo : BALL_LOGO;
+  // Transparent logo directly on the page — no backing circle/gradient.
   return (
     <span style={{
-      width: size, height: size, borderRadius: "50%",
-      background: `radial-gradient(circle at 50% 45%, ${color}33 0%, transparent 72%)`,
+      width: size, height: size,
       display: "inline-flex", alignItems: "center",
-      justifyContent: "center", overflow: "hidden", flexShrink: 0,
-      fontFamily: "var(--font-head)", fontWeight: 800, fontSize, color,
+      justifyContent: "center", flexShrink: 0,
     }}>
-      {showLogo
-        ? <img decoding="async" src={logo} alt={name} onError={() => setBroken(true)}
-            style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.4))" }} />
-        : <img decoding="async" src={BALL_LOGO} alt={name} style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.4))" }} />}
+      <img decoding="async" src={src} alt={name} onError={() => setBroken(true)}
+        style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 3px 9px rgba(0,0,0,0.45))" }} />
     </span>
   );
 }
@@ -187,8 +186,8 @@ export function MatchCenter() {
   }) => {
     const isWinner = winner === team;
     return (
-      <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 10, flexDirection: alignEnd ? "row-reverse" : "row" }}>
-        <TeamBadge name={team} color={color(team)} logo={logoOf(team)} size={40} fontSize={12} />
+      <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 12, flexDirection: alignEnd ? "row-reverse" : "row" }}>
+        <TeamBadge name={team} color={color(team)} logo={logoOf(team)} size={60} fontSize={12} />
         <div style={{ minWidth: 0, textAlign: alignEnd ? "right" : "left" }}>
           <div style={{ fontFamily: "'Montserrat',Inter,sans-serif", fontWeight: 800, fontSize: "clamp(12px,2.1vw,15px)", letterSpacing: ".02em", color: isWinner ? ORANGE : TXT, lineHeight: 1.25, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{team}</div>
           {score
@@ -609,7 +608,7 @@ export function MatchCenter() {
                         </div>
                         <div className="left stick stick-team">
                           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                            <TeamBadge name={row.team} color={color(row.team)} logo={logoOf(row.team)} size={30} fontSize={9} />
+                            <TeamBadge name={row.team} color={color(row.team)} logo={logoOf(row.team)} size={44} fontSize={9} />
                             <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 15, color: "#fff" }}>{row.team}</div>
                           </div>
                         </div>

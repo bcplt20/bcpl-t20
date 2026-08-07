@@ -69,21 +69,22 @@ export function MatchCountdown({ targetDate, compact }: { targetDate: string, co
   );
 }
 
-/* Team logo badge — transparent logo on a subtle team-color radial backdrop
-   (no white disc). Falls back to the BCPL ball logo (semis/final placeholders
-   & missing logos), never to bare initials. */
+/* Team logo badge — transparent logo sitting directly on the card, NO backing
+   circle/box of any kind. Falls back to the BCPL ball logo (semis/final
+   placeholders & missing logos), never to bare initials. `color` is kept in the
+   signature for call-site compatibility but no longer paints a backdrop. */
 export function TeamLogoBadge({ team, color, logo, size }: { team: string; color: string; logo: string; size: number }) {
+  void color;
   const [broken, setBroken] = useState(false);
   const src = (!logo || broken) ? BALL_LOGO : logo;
   return (
     <span style={{
       width: size, height: size, flexShrink: 0,
-      background: `radial-gradient(circle at 50% 45%, ${color}33 0%, transparent 72%)`,
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center'
     }}>
       <img src={src} alt={team} decoding="async"
         onError={() => setBroken(true)}
-        style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.45))' }} />
+        style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))' }} />
     </span>
   );
 }
@@ -168,18 +169,18 @@ export function MatchCard({ match, compact = false, delayIndex = 0 }: MatchCardP
   const dateStr = dt ? fmt({ weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase() : 'DATE TBD';
   const timeStr = dt ? `${fmt({ hour: 'numeric', minute: '2-digit', hour12: true })} IST` : 'TIME TBD';
 
-  const logoSize = compact ? 44 : 64;
+  const logoSize = compact ? 64 : 96;
 
   const TeamSide = ({ team, color, logo, right }: { team: string; color: string; logo: string; right?: boolean }) => (
-    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: compact ? 6 : 10 }}>
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: compact ? 8 : 12 }}>
       <TeamLogoBadge team={team} color={color} logo={logo} size={logoSize} />
       <div style={{
         textAlign: 'center',
-        fontSize: compact ? 'clamp(13px, 3.4vw, 17px)' : 'clamp(17px, 3.6vw, 26px)',
+        fontSize: compact ? 'clamp(14px, 3.6vw, 18px)' : 'clamp(18px, 3.8vw, 28px)',
         fontFamily: 'var(--font-head)', fontWeight: 900, textTransform: 'uppercase',
-        lineHeight: 1.15, letterSpacing: '0.03em',
+        lineHeight: 1.12, letterSpacing: '0.02em',
         color: match.winner === team ? '#FFB347' : '#fff',
-        textShadow: '0 2px 8px rgba(0,0,0,0.4)'
+        textShadow: '0 2px 10px rgba(0,0,0,0.45)'
       }}>
         {team}
       </div>
@@ -231,14 +232,16 @@ export function MatchCard({ match, compact = false, delayIndex = 0 }: MatchCardP
         </div>
 
         {/* Teams */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: compact ? 10 : 18, marginBottom: compact ? 10 : 16 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: compact ? 8 : 16, marginBottom: compact ? 12 : 18 }}>
           <TeamSide team={match.team1} color={c1} logo={logo1} />
-          <div style={{ alignSelf: 'center', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, paddingTop: compact ? 8 : 12 }}>
+          {/* VS — vertically centered on the logo row (logo height / 2) */}
+          <div style={{ alignSelf: 'flex-start', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: logoSize }}>
             <span style={{
-              fontSize: compact ? 13 : 18, fontFamily: 'var(--font-head)', fontWeight: 900,
-              fontStyle: 'italic', letterSpacing: '0.05em',
+              fontSize: compact ? 16 : 22, fontFamily: 'var(--font-head)', fontWeight: 900,
+              fontStyle: 'italic', letterSpacing: '0.04em', lineHeight: 1,
               background: 'linear-gradient(90deg,#FF7A29,#FFD700)',
-              WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent'
+              WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.35))'
             }}>VS</span>
           </div>
           <TeamSide team={match.team2} color={c2} logo={logo2} right />

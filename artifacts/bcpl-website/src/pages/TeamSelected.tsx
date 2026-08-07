@@ -120,9 +120,9 @@ export function TeamSelected() {
             <div style={{ position: 'absolute', right: -2, top: '50%', width: 24, height: 48, background: 'var(--bg)', borderRadius: '50% 0 0 50%', border: `2px solid ${team.color}`, borderRight: 'none', transform: 'translateY(-50%)', transition: 'border-color 0.5s' }} />
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap', padding: '0 16px' }}>
-              {/* Team logo */}
-              <div style={{ width: 88, height: 88, borderRadius: '16px', background: '#fff', padding: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-                <img src={team.logo} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt={team.name} />
+              {/* Team logo — transparent, no white box */}
+              <div style={{ width: 120, height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <img src={team.logo} style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 8px 22px rgba(0,0,0,0.5))' }} alt={team.name} />
               </div>
               <div style={{ flex: 1, minWidth: 180 }}>
                 <div style={{ fontFamily: 'var(--font-head)', fontWeight: 900, fontSize: 11, color: team.color, letterSpacing: '.14em', marginBottom: 6, textTransform: 'uppercase', transition: 'color 0.5s' }}>{t("FRANCHISE CONTRACT · SEASON 5", "फ्रैंचाइज़ी कॉन्ट्रैक्ट · सीजन 5")}</div>

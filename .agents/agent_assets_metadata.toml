@@ -228,3 +228,24 @@ uri = "file://screenshots/app-home-sponsors-names.jpg"
 type = "image"
 title = "App — Home पर Sponsors + floating AI button"
 description = "Home के सबसे नीचे tier-wise sponsors (tap करने पर उनकी website खुलती है), और AI button अब tab bar के ऊपर साफ़ float करता है।"
+
+[[outputs]]
+id = "JC__rht-9WnpkGtS7wmHb"
+uri = "file://screenshots/app-home-polish.jpg"
+type = "image"
+title = "App — नया tab bar (labels+सही icons), VS के नीचे timer, नया AI button"
+description = "Home | Schedule | Register | Scoring | Menu — हर button के नीचे नाम; match card में VS के नीचे countdown; sparkle वाला AI floating button ऊपर उठा हुआ।"
+
+[[outputs]]
+id = "oaZJihHzbq_WvouJn7OAq"
+uri = "file://screenshots/app-mvp-points2.jpg"
+type = "image"
+title = "App — रंगीन Points System (Batting/Bowling/Fielding)"
+description = "MVP page पर अब points का रंगीन infographic हमेशा दिखता है।"
+
+[[outputs]]
+id = "eslhtdZPtuJQJcYhit2mG"
+uri = "file://screenshots/web-mvp-points.jpg"
+type = "image"
+title = "Website — MVP points का नया रंगीन scoring guide"
+description = "Batting (orange), Bowling (blue), Fielding (green) — हर rule के आगे bold points badge।"

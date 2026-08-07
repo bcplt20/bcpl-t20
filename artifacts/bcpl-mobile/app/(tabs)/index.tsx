@@ -312,18 +312,18 @@ function TeamsStrip() {
                   end={{ x: 0, y: 1 }}
                   style={StyleSheet.absoluteFill}
                 />
-                <View style={{ width: 68, height: 68, alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ width: 88, height: 88, alignItems: 'center', justifyContent: 'center' }}>
                   {logo ? (
                     <Image source={{ uri: logo }} style={{ width: '100%', height: '100%' }} contentFit="contain" />
                   ) : (
-                    <View style={{ width: '100%', height: '100%', borderRadius: 34, backgroundColor: accent, alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24 }}>
+                    <View style={{ width: '100%', height: '100%', borderRadius: 44, backgroundColor: accent, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32 }}>
                         {team.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('')}
                       </Text>
                     </View>
                   )}
                 </View>
-                <View style={{ flex: 1, justifyContent: 'center', marginTop: 10 }}>
+                <View style={{ flex: 1, justifyContent: 'center', marginTop: 4 }}>
                   <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11, textAlign: 'center', letterSpacing: 0.5, textTransform: 'uppercase' }} numberOfLines={1}>
                     {team.name.split(' ')[0]}
                   </Text>
@@ -601,7 +601,7 @@ export default function HomeScreen() {
                   ) : (
                     <Text style={[styles.pos, { color: c.sub }]}>{i + 1}</Text>
                   )}
-                  <TeamLogo name={t.team} size={28} />
+                  <TeamLogo name={t.team} size={36} />
                   <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={1}>
                     {t.team}
                   </Text>

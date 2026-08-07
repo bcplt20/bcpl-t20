@@ -132,18 +132,20 @@ export default function TeamDetailScreen() {
           {/* HERO in team colors */}
           <View style={{ paddingTop: appBarHeight + 8, paddingBottom: 28, alignItems: 'center', overflow: 'hidden' }}>
             <LinearGradient
-              colors={[`${accent}44`, `${second}18`, 'transparent']}
+              colors={[`${accent}22`, `${second}05`, 'transparent']}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
               style={StyleSheet.absoluteFill}
             />
-            <View style={[styles.heroLogo, { borderColor: `${accent}66`, shadowColor: accent }]}>
+            <View style={styles.heroLogo}>
               {logo ? (
-                <Image source={{ uri: logo }} style={{ width: '86%', height: '86%' }} contentFit="contain" />
+                <Image source={{ uri: logo }} style={{ width: '100%', height: '100%' }} contentFit="contain" />
               ) : (
-                <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 34, color: accent }}>
-                  {team.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('')}
-                </Text>
+                <View style={{ width: '100%', height: '100%', borderRadius: 60, backgroundColor: accent, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 34, color: '#fff' }}>
+                    {team.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('')}
+                  </Text>
+                </View>
               )}
             </View>
             <View style={{ backgroundColor: `${accent}22`, borderColor: `${accent}55`, borderWidth: 1, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 5, marginTop: 16 }}>
@@ -223,17 +225,10 @@ export default function TeamDetailScreen() {
 
 const styles = StyleSheet.create({
   heroLogo: {
-    width: 92,
-    height: 92,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.96)',
-    borderWidth: 2,
+    width: 120,
+    height: 120,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 18,
-    elevation: 8,
   },
   playerRow: {
     flexDirection: 'row',

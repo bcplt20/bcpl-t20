@@ -207,10 +207,10 @@ export function TeamDetail() {
               <div className="wrap" style={{textAlign:'center',position:'relative',zIndex:2}}>
                 <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:12,marginBottom:16}}>
                   {team.logoUrl
-                    ? <div style={{width:96,height:96,background:`radial-gradient(circle at 50% 45%, ${ACCENT}40 0%, transparent 72%)`,borderRadius:22,padding:6,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        <img src={asset(team.logoUrl)} alt={team.name} style={{width:'100%',height:'100%',objectFit:'contain',filter:'drop-shadow(0 6px 16px rgba(0,0,0,0.5))'}}/>
+                    ? <div style={{width:144,height:144,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                        <img src={asset(team.logoUrl)} alt={team.name} style={{width:'100%',height:'100%',objectFit:'contain',filter:'drop-shadow(0 8px 22px rgba(0,0,0,0.55))'}}/>
                       </div>
-                    : <IcoBat size={40} style={{color:ACCENT}}/>}
+                    : <IcoBat size={56} style={{color:ACCENT}}/>}
                 </div>
                 <div className="tag-pill" style={{marginBottom:16,borderColor:`${ACCENT}55`,color:ACCENT,background:`${ACCENT}18`}}>
                   SEASON 5{team.city ? ` · ${team.city.toUpperCase()}` : ''}

@@ -1079,7 +1079,7 @@ export function Home() {
                             {i<2 && <div style={{ position:"absolute", left:0, top:0, bottom:0, width:2, background:"rgba(34,197,94,.55)" }}/>}
                             <div className="mont" style={{ fontSize:11, fontWeight:900, color: i<2?"#22C55E":"rgba(255,255,255,.4)", textAlign:"center" }}>{i+1}</div>
                             <div style={{ display:"flex", alignItems:"center", gap:6, minWidth:0 }}>
-                              <img src={L + (tm?.slug||"") + ".png"} alt={r.team} style={{ width:18, height:18, objectFit:"contain", flexShrink:0 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
+                              <img src={L + (tm?.slug||"") + ".png"} alt={r.team} style={{ width:26, height:26, objectFit:"contain", flexShrink:0 }} onError={e=>{(e.currentTarget as HTMLImageElement).style.display="none";}}/>
                               <span className="mont" style={{ fontSize:11, fontWeight:700, color:"#E2E8F0", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{r.team}</span>
                             </div>
                             {[r.played, r.won, r.lost].map((v:any,j:number)=>(
@@ -1275,12 +1275,12 @@ function TeamLogo({ slug, name, color }: { slug:string; name:string; color:strin
   if (!err) {
     return (
       <img src={`${L}${slug}.png`} alt={name} onError={()=>setErr(true)}
-        style={{ width:60, height:60, borderRadius:14, objectFit:"contain", background:"rgba(255,255,255,.04)", margin:"0 auto", display:"block", filter:"drop-shadow(0 6px 14px rgba(0,0,0,.4))" }}/>
+        style={{ width:88, height:88, objectFit:"contain", margin:"0 auto", display:"block", filter:"drop-shadow(0 7px 18px rgba(0,0,0,.45))" }}/>
     );
   }
   return (
-    <div style={{ width:60, height:60, borderRadius:14, background:color+"22", border:`1px solid ${color}44`, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto" }}>
-      <IcoBat size={24} style={{ color }} />
+    <div style={{ width:88, height:88, borderRadius:16, background:color+"22", border:`1px solid ${color}44`, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto" }}>
+      <IcoBat size={34} style={{ color }} />
     </div>
   );
 }
