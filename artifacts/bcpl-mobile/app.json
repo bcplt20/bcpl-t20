@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "BCPL T20",
+    "name": "BCPL",
     "slug": "bcpl-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,7 +14,9 @@
       "backgroundColor": "#16264A"
     },
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.bcplt20.app",
+      "buildNumber": "1"
     },
     "android": {},
     "web": {
