@@ -13,6 +13,11 @@ import { adminReq } from "../../lib/adminHttp";
  * throws an Error whose message explains what would be lost. Call again with
  * force=true to confirm the destructive delete.
  */
+/** AI match-report draft (Gemini) — Hindi + English, generated from the real scorecard. */
+export type AiReportDraft = { titleEn: string; titleHi: string; reportEn: string; reportHi: string };
+export const adminAiReportDraft = (id: string) =>
+  adminReq<AiReportDraft>("POST", `/admin/ai/matches/${id}/report-draft`);
+
 export const adminDeleteMatch = (id: string, force = false) =>
   adminReq<{ success: boolean }>(
     "DELETE",

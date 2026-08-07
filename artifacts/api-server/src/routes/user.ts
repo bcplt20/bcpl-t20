@@ -96,7 +96,7 @@ async function avatarPayload(
  *   phase1: selected > video_submitted > payment_done > rejected > pending
  * The rank is computed in SQL so the DB does the ordering (index-friendly).
  */
-async function pickUserRegistration(userId: string) {
+export async function pickUserRegistration(userId: string) {
   const rows = await db.select().from(registrationsTable)
     .where(eq(registrationsTable.userId, userId))
     .orderBy(

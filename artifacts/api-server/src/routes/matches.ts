@@ -30,7 +30,7 @@ const router = Router();
 /* ─── Helpers ─────────────────────────────────────────── */
 
 /** Aggregate batting & bowling scorecards from deliveries */
-async function buildScorecard(inningsId: string) {
+export async function buildScorecard(inningsId: string) {
   const deliveries = await db
     .select()
     .from(deliveriesTable)

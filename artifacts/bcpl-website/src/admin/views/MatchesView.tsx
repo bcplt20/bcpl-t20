@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { getMatches, createMatch, bulkCreateMatches, updateMatchStatus, recordMatchResult } from "../../lib/api";
-import { adminDeleteMatch } from "../api/matchesApi";
+import { adminDeleteMatch, adminAiReportDraft, type AiReportDraft } from "../api/matchesApi";
 
 const TEAMS = ["Rajasthan Scorchers","Punjab Warriors","Kolkata Tigers","Lucknow Nawabs","Mumbai Mavericks","Hyderabad Hawks","Delhi Suryas","Chennai Thalaivas","Ahmedabad Lions","Bengaluru Rockets"];
 const VENUES = ["Wankhede, Mumbai","SMS, Jaipur","PCA, Mohali","Ekana, Lucknow","Eden Gardens, Kolkata","Chinnaswamy, Bengaluru","Rajiv Gandhi, Hyderabad","MA Chidambaram, Chennai","Motera, Ahmedabad","Feroz Shah Kotla, Delhi"];
@@ -71,6 +71,10 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
   const [resultSaving,setResultSaving]= useState(false);
 
   const [busyId,      setBusyId]      = useState<string | null>(null);
+  const [aiDraftFor,  setAiDraftFor]  = useState<ApiMatch | null>(null);
+  const [aiDraft,     setAiDraft]     = useState<AiReportDraft | null>(null);
+  const [aiDraftErr,  setAiDraftErr]  = useState("");
+  const [aiDraftBusy, setAiDraftBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const reload = async () => {
@@ -339,6 +343,16 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
                     {busyId === m.id ? "Cancelling…" : "Cancel"}
                   </button>
                 )}
+                {grp(m.status) === "completed" && m.status === "completed" && (
+                  <button onClick={async () => {
+                    setAiDraftFor(m); setAiDraft(null); setAiDraftErr(""); setAiDraftBusy(true);
+                    try { setAiDraft(await adminAiReportDraft(m.id)); }
+                    catch (e) { setAiDraftErr((e as Error).message || "Draft failed"); }
+                    finally { setAiDraftBusy(false); }
+                  }} style={{ padding: "7px 14px", borderRadius: 7, border: "none", background: "#7C5CFF22", color: "#B7A6FF", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                    ✨ AI Report
+                  </button>
+                )}
                 <button disabled={busyId === m.id} onClick={() => deleteMatch(m)} style={{ padding: "7px 14px", borderRadius: 7, border: "1px solid #7F1D1D", background: "transparent", color: "#EF4444", fontSize: 11, cursor: "pointer", opacity: busyId === m.id ? 0.5 : 1 }}>
                   {busyId === m.id ? "Working…" : "Delete"}
                 </button>
@@ -354,6 +368,35 @@ export default function MatchesView({ onOpenScoring }: { onOpenScoring?: () => v
           </div>
         ))}
       </div>
+
+      {/* AI Report Draft Modal */}
+      {aiDraftFor && (
+        <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 }}>
+          <div style={{ background: "#2C3A5E", border: "1px solid #33436B", borderRadius: 20, padding: 28, width: 640, maxHeight: "85vh", overflowY: "auto" }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 }}>✨ AI Match Report Draft</div>
+            <div style={{ fontSize: 12, color: "#A6B3D0", marginBottom: 16 }}>Match #{aiDraftFor.matchNo} — {aiDraftFor.team1} vs {aiDraftFor.team2}. Generated from the real scorecard; review and copy into your news post.</div>
+            {aiDraftBusy && <div style={{ color: "#C3CEE3", fontSize: 13, padding: "24px 0", textAlign: "center" }}>Writing the report from the scorecard…</div>}
+            {aiDraftErr && <div style={{ padding: "10px 14px", borderRadius: 8, background: "#EF444422", color: "#F87171", fontSize: 12.5, fontWeight: 600 }}>⚠ {aiDraftErr}</div>}
+            {aiDraft && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {([["English", aiDraft.titleEn, aiDraft.reportEn], ["Hindi", aiDraft.titleHi, aiDraft.reportHi]] as const).map(([label, title, body]) => (
+                  <div key={label} style={{ background: "#243050", border: "1px solid #33436B", borderRadius: 12, padding: 16 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                      <div style={{ fontSize: 11, fontWeight: 800, color: "#8593B3", textTransform: "uppercase", letterSpacing: 1 }}>{label}</div>
+                      <button onClick={() => navigator.clipboard.writeText(title + "\n\n" + body)} style={{ padding: "5px 12px", borderRadius: 7, border: "1px solid #33436B", background: "transparent", color: "#C3CEE3", fontSize: 11, cursor: "pointer" }}>Copy</button>
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9", marginBottom: 8 }}>{title}</div>
+                    <div style={{ fontSize: 13, color: "#C3CEE3", lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{body}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
+              <button onClick={() => { setAiDraftFor(null); setAiDraft(null); setAiDraftErr(""); }} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: "1px solid #33436B", background: "transparent", color: "#A6B3D0", fontSize: 13, cursor: "pointer" }}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Match Modal */}
       {showAdd && (

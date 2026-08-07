@@ -822,6 +822,13 @@ export interface TrialPassData {
 }
 export const getTrialPass = () => req<TrialPassData>("GET", "/user/trial-pass");
 
+/* ─── AI helper (player chat + technique feedback) ───────────────────── */
+export type AiChatMsg = { role: "user" | "assistant"; text: string };
+export const aiChat = (messages: AiChatMsg[]) =>
+  req<{ reply: string }>("POST", "/ai/chat", { messages });
+export type AiTip = { en: string; hi: string };
+export const getAiFeedback = () => req<{ tips: AiTip[] }>("GET", "/ai/feedback");
+
 /* ─── Final 600 Selection Engine (admin) ──────────────────────────── */
 export type SelectionRoleQuota = { bat: number; bowl: number; ar: number; wk: number };
 export interface SelectionConfigDTO {

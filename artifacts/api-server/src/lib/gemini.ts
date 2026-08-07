@@ -164,6 +164,38 @@ export async function generateJson(model: string, prompt: string, fileUri: strin
   return text;
 }
 
+/**
+ * Plain text generateContent (no file grounding) — used by the player AI
+ * helper chat and admin match-report drafting. `system` goes through
+ * system_instruction; `messages` is the running conversation.
+ */
+export async function generateText(args: {
+  model: string;
+  system: string;
+  messages: Array<{ role: "user" | "model"; text: string }>;
+  temperature?: number;
+  maxOutputTokens?: number;
+}): Promise<string> {
+  const res = await fetch(BASE + "/v1beta/models/" + args.model + ":generateContent?key=" + apiKey(), {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text: args.system }] },
+      contents: args.messages.map((m) => ({ role: m.role, parts: [{ text: m.text }] })),
+      generationConfig: {
+        temperature: args.temperature ?? 0.4,
+        maxOutputTokens: args.maxOutputTokens ?? 1024,
+      },
+    }),
+    signal: AbortSignal.timeout(60_000),
+  });
+  if (!res.ok) throw new Error("gemini generateText failed: " + res.status + " " + (await res.text()).slice(0, 300));
+  const j = (await res.json()) as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
+  const text = (j.candidates?.[0]?.content?.parts ?? []).map((p) => p.text ?? "").join("").trim();
+  if (!text) throw new Error("gemini generateText: empty response");
+  return text;
+}
+
 /** Parse + schema-validate a JSON reply; retries are the caller's concern. */
 export function parseStructured<T>(schema: z.ZodType<T>, raw: string): T {
   const cleaned = raw.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "");

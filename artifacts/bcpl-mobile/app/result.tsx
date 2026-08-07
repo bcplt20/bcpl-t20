@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { getDashboard, getMyResult, type Phase1BreakdownItem } from '@/lib/api';
+import { getAiFeedback, getDashboard, getMyResult, type AiTip, type Phase1BreakdownItem } from '@/lib/api';
 import {
   Card,
   ErrorView,
@@ -99,6 +99,16 @@ export default function ResultScreen() {
     enabled: !!token,
   });
 
+  // AI Coach practice tips — best-effort; card simply stays hidden when the
+  // AI helper is unavailable (503) or the result is not scored yet (404).
+  const aiQ = useQuery({
+    queryKey: ['ai-feedback', token],
+    queryFn: () => getAiFeedback(token as string),
+    enabled: !!token && !!rq.data?.available,
+    retry: false,
+    staleTime: Infinity,
+  });
+
   const refetch = rq.refetch;
   useFocusEffect(
     useCallback(() => {
@@ -180,6 +190,7 @@ export default function ResultScreen() {
   }
 
   const qualified = r.decision === 'qualified';
+  const aiTips = aiQ.data?.tips ?? null;
   const total = r.total ?? 0;
   const breakdown = r.breakdown ?? [];
   const showCity = r.cityRank != null;
@@ -267,6 +278,34 @@ export default function ResultScreen() {
             </View>
             <Text style={{ color: c.sub, fontSize: 13.5, lineHeight: 21, fontFamily: 'PlusJakartaSans_500Medium' }}>
               {r.selectorNote}
+            </Text>
+          </Card>
+        ) : null}
+
+        {/* AI Coach practice tips */}
+        {aiTips && aiTips.length > 0 ? (
+          <Card style={{ marginTop: 14 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+              <View style={{ width: 30, height: 30, borderRadius: 15, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+                <LinearGradient colors={['#7C5CFF', '#FF3DA6']} style={StyleSheet.absoluteFill} />
+                <Feather name="zap" size={15} color="#fff" />
+              </View>
+              <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }}>
+                {t('AI Coach — Practice tips', 'AI कोच — अभ्यास के सुझाव')}
+              </Text>
+            </View>
+            {aiTips.map((tip: AiTip, i: number) => (
+              <View key={i} style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', marginBottom: i < aiTips.length - 1 ? 12 : 0 }}>
+                <View style={{ minWidth: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(124,92,255,0.16)', alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ color: c.violet, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11.5 }}>{i + 1}</Text>
+                </View>
+                <Text style={{ flex: 1, color: c.sub, fontSize: 13.5, lineHeight: 21, fontFamily: 'PlusJakartaSans_500Medium' }}>
+                  {t(tip.en, tip.hi)}
+                </Text>
+              </View>
+            ))}
+            <Text style={{ color: c.sub, fontSize: 11, marginTop: 12, opacity: 0.7, fontFamily: 'PlusJakartaSans_500Medium' }}>
+              {t('Personalised from your score breakdown. Practice guidance only.', 'आपके score breakdown से तैयार। केवल अभ्यास मार्गदर्शन के लिए।')}
             </Text>
           </Card>
         ) : null}

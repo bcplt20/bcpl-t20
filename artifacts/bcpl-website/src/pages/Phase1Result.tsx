@@ -15,7 +15,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
-import { getMyResult, sendResultFeedback, isAuthenticated, type MyResult } from '../lib/api';
+import { getMyResult, sendResultFeedback, isAuthenticated, getAiFeedback, type MyResult, type AiTip } from '../lib/api';
 import { FALLBACK_FEES } from '../lib/fees';
 import { useLang } from '../lib/i18n';
 import { Link, useLocation } from 'wouter';
@@ -224,6 +224,13 @@ export function Phase1Result() {
   const [fbComment, setFbComment] = useState('');
   const [fbSaved, setFbSaved]     = useState(false);
   const [fbBusy, setFbBusy]       = useState(false);
+  const [aiTips, setAiTips]       = useState<AiTip[] | null>(null);
+
+  // AI Coach tips — best-effort; silently absent when AI is unavailable.
+  useEffect(() => {
+    if (!result?.available || demo) return;
+    getAiFeedback().then((r) => setAiTips(r.tips)).catch(() => {});
+  }, [result, demo]);
   const timers = useRef<number[]>([]);
 
   useEffect(() => {
@@ -648,6 +655,29 @@ export function Phase1Result() {
               </div>
               <div style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.7, fontStyle:'italic' }}>
                 "{r.selectorNote}"
+              </div>
+            </div>
+          )}
+
+          {/* AI Coach practice tips */}
+          {aiTips && aiTips.length > 0 && (
+            <div className="rcard" style={{ marginTop:16 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:14 }}>
+                <div style={{ width:32, height:32, borderRadius:'50%', background:'linear-gradient(135deg,#7C5CFF,#FF3DA6)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <div style={{ fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:16, color:'var(--ink)', textTransform:'uppercase', letterSpacing:'.04em' }}>{t('AI Coach — Practice Tips', 'AI कोच — अभ्यास के सुझाव')}</div>
+              </div>
+              <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+                {aiTips.map((tip, i) => (
+                  <div key={i} style={{ display:'flex', gap:12, alignItems:'flex-start' }}>
+                    <div style={{ minWidth:24, height:24, borderRadius:'50%', background:'rgba(124,92,255,0.16)', color:'#B7A6FF', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:800 }}>{i + 1}</div>
+                    <div style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.6 }}>{t(tip.en, tip.hi)}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop:12, fontSize:11.5, color:'var(--ink-3)' }}>
+                {t('Personalised from your score breakdown. Practice guidance only.', 'आपके score breakdown से तैयार। केवल अभ्यास मार्गदर्शन के लिए।')}
               </div>
             </div>
           )}

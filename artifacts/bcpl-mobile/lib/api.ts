@@ -363,6 +363,16 @@ export function getTrialPass(token: string): Promise<TrialPassData> {
   return apiFetch('/user/trial-pass', { token });
 }
 
+// ── AI helper (player chat + technique feedback) ────────────────────────────
+export interface AiChatMsg { role: 'user' | 'assistant'; text: string }
+export function aiChat(token: string, messages: AiChatMsg[]): Promise<{ reply: string }> {
+  return apiFetch('/ai/chat', { method: 'POST', body: { messages }, token });
+}
+export interface AiTip { en: string; hi: string }
+export function getAiFeedback(token: string): Promise<{ tips: AiTip[] }> {
+  return apiFetch('/ai/feedback', { token });
+}
+
 // ── Player classification (playing style) ───────────────────────────────────
 export interface ClassificationValue {
   battingHand?: 'right' | 'left';
