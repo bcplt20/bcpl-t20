@@ -109,6 +109,18 @@ function accentHex(a?: string): string {
   return a.startsWith('#') ? a : ACCENT_HEX[a] || '#7C5CFF';
 }
 
+/** Dream11-style vibrant gradient set per banner accent. */
+function bannerGradient(a?: string): [string, string, string] {
+  const hex = accentHex(a).toUpperCase();
+  switch (hex) {
+    case '#5B2BF0': return ['#4316D8', '#8A2BE8', '#E03398'];   // violet → magenta
+    case '#FF1A75': return ['#C4126B', '#FF1A75', '#FF7A3D'];   // magenta → orange
+    case '#00E5FF': return ['#0047C8', '#0090F0', '#00DCF5'];   // deep blue → cyan
+    case '#FF8A3D': return ['#E04E12', '#FF8A3D', '#FFC53D'];   // orange → amber
+    default: return ['#4316D8', '#8A2BE8', '#E03398'];
+  }
+}
+
 function BannerCarousel({ banners }: { banners: AppBanner[] }) {
   const c = useColors();
   const router = useRouter();
@@ -176,43 +188,66 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
                 </>
               ) : (
                 <>
-                  <LinearGradient colors={[c.card2, c.card]} style={StyleSheet.absoluteFill} />
-
-                  {/* Diagonal stroke accents */}
+                  {/* Vibrant Dream11-style gradient background */}
                   <LinearGradient
-                    colors={[`${accentHex(item.accent)}40`, 'transparent']}
+                    colors={bannerGradient(item.accent)}
                     start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-                    style={{ position: 'absolute', top: -50, right: -50, width: 150, height: 300, transform: [{ rotate: '45deg' }] }}
+                    style={StyleSheet.absoluteFill}
+                  />
+                  {/* Glow blobs for depth */}
+                  <View style={{ position: 'absolute', top: -70, right: -50, width: 220, height: 220, borderRadius: 110, backgroundColor: 'rgba(255,255,255,0.14)' }} />
+                  <View style={{ position: 'absolute', bottom: -90, left: -60, width: 240, height: 240, borderRadius: 120, backgroundColor: 'rgba(0,0,0,0.18)' }} />
+                  {/* Diagonal energy strokes */}
+                  <LinearGradient
+                    colors={['rgba(255,255,255,0.35)', 'transparent']}
+                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+                    style={{ position: 'absolute', top: -40, right: 30, width: 26, height: 320, transform: [{ rotate: '38deg' }], borderRadius: 13 }}
                   />
                   <LinearGradient
-                    colors={[`${accentHex(item.accent)}20`, 'transparent']}
-                    start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }}
-                    style={{ position: 'absolute', bottom: -50, left: -50, width: 150, height: 300, transform: [{ rotate: '45deg' }] }}
+                    colors={['rgba(255,255,255,0.18)', 'transparent']}
+                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+                    style={{ position: 'absolute', top: -20, right: 76, width: 12, height: 300, transform: [{ rotate: '38deg' }], borderRadius: 6 }}
+                  />
+                  {/* Ball watermark */}
+                  <Image
+                    source={require('../../assets/images/bcpl-ball-clean.png')}
+                    style={{ position: 'absolute', right: -34, bottom: -34, width: 150, height: 150, opacity: 0.28 }}
+                    contentFit="contain"
                   />
                 </>
               )}
 
-              <View style={{ padding: 24, flex: 1, justifyContent: 'center' }}>
-                {item.ctaHref === '/register' && (
+              <View style={{ padding: 20, flex: 1, justifyContent: 'center' }}>
+                {item.ctaHref === '/register' && !hasImage && (
+                  <View style={[styles.heroKickBadge, { backgroundColor: 'rgba(255,255,255,0.18)', borderColor: 'rgba(255,255,255,0.35)' }]}>
+                    <Text style={[styles.heroKick, { color: '#FFFFFF' }]}>SEASON 5 · {t('REGISTRATIONS OPEN', 'रजिस्ट्रेशन शुरू')}</Text>
+                  </View>
+                )}
+                {item.ctaHref === '/register' && hasImage && (
                   <View style={[styles.heroKickBadge, { backgroundColor: c.card2, borderColor: c.line }]}>
                     <Text style={[styles.heroKick, { color: c.getAccentText(c.cyan) }]}>SEASON 5 · {t('REGISTRATIONS OPEN', 'रजिस्ट्रेशन शुरू')}</Text>
                   </View>
                 )}
-                
-                <Text style={{ color: hasImage ? '#FFFFFF' : c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32, lineHeight: 36 }}>
+
+                <Text style={{ color: '#FFFFFF', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 32, lineHeight: 36, textShadowColor: 'rgba(0,0,0,0.25)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 6 }}>
                   {item.title}
                 </Text>
                 {item.subtitle ? (
-                  <Text style={{ color: hasImage ? 'rgba(255,255,255,0.9)' : c.sub, fontSize: 13, marginTop: 8, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
+                  <Text style={{ color: 'rgba(255,255,255,0.92)', fontSize: 13, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
                     {item.subtitle}
                   </Text>
                 ) : null}
 
-                {item.ctaHref === '/register' ? (
-                  <View style={{ marginTop: 'auto' }}>
-                    <RegCountdown />
-                  </View>
-                ) : null}
+                <View style={{ marginTop: 'auto', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                  {item.ctaHref === '/register' ? <RegCountdown /> : <View />}
+                  {item.ctaLabel ? (
+                    <View style={{ backgroundColor: '#FFFFFF', borderRadius: 999, paddingHorizontal: 16, paddingVertical: 9, shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 4 }}>
+                      <Text style={{ color: bannerGradient(item.accent)[0], fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 13 }}>
+                        {item.ctaHref === '/register' ? t('Register Now', 'रजिस्टर करें') : item.ctaLabel}
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
               </View>
             </Card>
           </Pressable>
