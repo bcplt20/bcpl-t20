@@ -173,6 +173,7 @@ function BannerCarousel({ banners }: { banners: AppBanner[] }) {
         onTouchStart={stopTimer}
         onTouchEnd={startTimer}
         keyExtractor={(item) => item.id}
+        getItemLayout={(data, index) => ({ length: width, offset: width * index, index })}
         renderItem={({ item }) => {
           const hasImage = !!item.imageUrl;
           return (
@@ -287,19 +288,31 @@ function HomeMediaSection({ media }: { media: AppMediaItem[] }) {
       </View>
       
       {photos.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12, paddingBottom: 16 }}>
-          {photos.map(p => (
-            <Pressable key={p.id} onPress={() => router.navigate('/media')} style={({pressed}) => ({ opacity: pressed ? 0.9 : 1 })}>
+        <FlatList
+          data={photos}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 16, gap: 12, paddingBottom: 16 }}
+          keyExtractor={(item) => item.id}
+          getItemLayout={(data, index) => ({ length: 152, offset: 152 * index, index })} // 140 + 12 gap
+          renderItem={({ item: p }) => (
+            <Pressable onPress={() => router.navigate('/media')} style={({pressed}) => ({ opacity: pressed ? 0.9 : 1 })}>
               <Image source={{ uri: p.thumbUrl || p.url }} style={{ width: 140, height: 140, borderRadius: 16, backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }} contentFit="cover" cachePolicy="memory-disk" transition={150} />
             </Pressable>
-          ))}
-        </ScrollView>
+          )}
+        />
       )}
 
       {videos.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}>
-          {videos.map(v => (
-            <Pressable key={v.id} onPress={() => router.navigate('/media')} style={({pressed}) => ({ opacity: pressed ? 0.9 : 1, width: 220 })}>
+        <FlatList
+          data={videos}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
+          keyExtractor={(item) => item.id}
+          getItemLayout={(data, index) => ({ length: 232, offset: 232 * index, index })} // 220 + 12 gap
+          renderItem={({ item: v }) => (
+            <Pressable onPress={() => router.navigate('/media')} style={({pressed}) => ({ opacity: pressed ? 0.9 : 1, width: 220 })}>
               <View style={{ width: '100%', aspectRatio: 16/9, borderRadius: 16, overflow: 'hidden', backgroundColor: c.card2, borderWidth: 1, borderColor: c.line }}>
                 <Image source={{ uri: v.thumbUrl }} style={{ width: '100%', height: '100%' }} contentFit="cover" cachePolicy="memory-disk" />
                 <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)' }}>
@@ -312,8 +325,8 @@ function HomeMediaSection({ media }: { media: AppMediaItem[] }) {
                 <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13, marginTop: 8 }} numberOfLines={2}>{v.title}</Text>
               ) : null}
             </Pressable>
-          ))}
-        </ScrollView>
+          )}
+        />
       )}
     </View>
   );
@@ -323,7 +336,7 @@ function TeamsStrip() {
   const c = useColors();
   const router = useRouter();
   const { t } = useLang();
-  const q = useQuery({ queryKey: ['teams'], queryFn: getTeams });
+  const q = useQuery({ queryKey: ['teams'], queryFn: getTeams, staleTime: 5 * 60 * 1000 });
 
   const teams = React.useMemo(() => {
     const list = [...(q.data?.teams ?? [])];
@@ -342,14 +355,19 @@ function TeamsStrip() {
       <View style={{ paddingHorizontal: 16 }}>
         <SectionHeader title={t('Teams', 'टीमें')} onSeeAll={() => router.push('/teams')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-teams" />
       </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}>
-        {teams.map((team: Team) => {
+      <FlatList
+        data={teams}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}
+        keyExtractor={(item) => item.id}
+        getItemLayout={(data, index) => ({ length: 140, offset: 140 * index, index })} // 128 + 12 gap
+        renderItem={({ item: team }) => {
           const accent = team.color || c.violet;
           const second = team.secondColor || accent;
           const logo = teamLogoUri(team.logoUrl);
           return (
             <Pressable
-              key={team.id}
               onPress={() => router.push(`/team/${team.slug}`)}
               testID={`home-team-${team.slug}`}
               style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
@@ -383,8 +401,8 @@ function TeamsStrip() {
               </View>
             </Pressable>
           );
-        })}
-      </ScrollView>
+        }}
+      />
     </View>
   );
 }
@@ -482,11 +500,12 @@ export default function HomeScreen() {
   const matchesQ = useQuery({
     queryKey: ['matches'],
     queryFn: getMatches,
-    refetchInterval: 60_000,
+    staleTime: 60000,
+    refetchInterval: 60000,
   });
-  const pointsQ = useQuery({ queryKey: ['points'], queryFn: getPointsTable });
-  const sponsorsQ = useQuery({ queryKey: ['sponsors'], queryFn: getSponsors });
-  const mediaQ = useQuery({ queryKey: ['app-media'], queryFn: getAppMedia, staleTime: 60000 });
+  const pointsQ = useQuery({ queryKey: ['points'], queryFn: getPointsTable, staleTime: 60000 });
+  const sponsorsQ = useQuery({ queryKey: ['sponsors'], queryFn: getSponsors, staleTime: 5 * 60 * 1000 });
+  const mediaQ = useQuery({ queryKey: ['app-media'], queryFn: getAppMedia, staleTime: 5 * 60 * 1000 });
 
   const matches = matchesQ.data?.matches ?? [];
   const featured = pickFeatured(matches);
@@ -502,32 +521,25 @@ export default function HomeScreen() {
   const latestNews = NEWS_ARTICLES.slice(0, 2);
   const anyLive = matches.some((m) => m.status === 'live');
 
-  // Group sponsors by tier
+  // Group sponsors by category string as-is
   const sponsorGroups = React.useMemo(() => {
     if (!sponsorsQ.data?.sponsors) return [];
     
-    // Website canonical tier order:
-    const tierOrder = ['title', 'powered', 'associate', 'partner'];
-    const labelMap: Record<string, string> = {
-      'title': 'Title Sponsor',
-      'powered': 'Powered By',
-      'associate': 'Associate Sponsors',
-      'partner': 'Partners'
-    };
+    const groups: { label: string; items: typeof sponsorsQ.data.sponsors }[] = [];
+    
+    sponsorsQ.data.sponsors.forEach(s => {
+      // The API now returns `category` string as requested
+      // We fall back to tier if category isn't passed but it should be.
+      const label = (s as any).category || s.tier || 'Partners';
+      let group = groups.find(g => g.label.toLowerCase() === label.toLowerCase());
+      if (!group) {
+        group = { label, items: [] };
+        groups.push(group);
+      }
+      group.items.push(s);
+    });
 
-    const grouped = sponsorsQ.data.sponsors.reduce((acc, s) => {
-      const t = s.tier || 'partner';
-      if (!acc[t]) acc[t] = [];
-      acc[t].push(s);
-      return acc;
-    }, {} as Record<string, typeof sponsorsQ.data.sponsors>);
-
-    return tierOrder
-      .filter(t => grouped[t] && grouped[t].length > 0)
-      .map(t => ({
-        label: labelMap[t],
-        items: grouped[t]
-      }));
+    return groups;
   }, [sponsorsQ.data?.sponsors]);
 
   return (
@@ -537,6 +549,8 @@ export default function HomeScreen() {
       <ScrollView
         bounces={false}
         overScrollMode="never"
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustsScrollIndicatorInsets={false}
         contentContainerStyle={{ paddingBottom: bottomNavHeight }}
         refreshControl={
           <RefreshControl
@@ -588,11 +602,11 @@ export default function HomeScreen() {
             onPress={() => router.push('/vote')} 
             style={({ pressed }) => ({ flex: 1, backgroundColor: c.card, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: c.line, opacity: pressed ? 0.9 : 1 })}
           >
-            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(124,92,255,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-              <Feather name="heart" size={16} color={c.getAccentText(c.violet)} />
+            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(0,220,245,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+              <Feather name="bar-chart-2" size={16} color="#00DCF5" />
             </View>
             <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, marginBottom: 2 }}>{t('Fan Voting', 'फैन वोटिंग')}</Text>
-            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11 }}>{t('Have your say', 'अपनी राय दें')}</Text>
+            <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 11 }}>{t('Starts soon', 'जल्द शुरू होगा')}</Text>
           </Pressable>
           <Pressable 
             onPress={() => router.push('/mvp')} 
@@ -607,97 +621,102 @@ export default function HomeScreen() {
         </View>
 
         {/* BCPL so far — league in numbers */}
-        <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
-          <SectionHeader title={t('The league in numbers', 'आँकड़ों में लीग')} />
-          <View style={styles.statsGrid}>
-            {[
-              { v: '2,50,000+', l: t('Working professionals joined', 'वर्किंग प्रोफ़ेशनल्स जुड़े'), icon: 'users', color: ['#5B2BF0', '#9B2FF0'] },
-              { v: '400+', l: t('Players auctioned', 'खिलाड़ी ऑक्शन हुए'), icon: 'award', color: ['#16E0A3', '#00B8D9'] },
-              { v: '₹14 Cr+', l: t('Prize money distributed', 'प्राइज़ मनी बाँटी गई'), icon: 'dollar-sign', color: ['#B6FF3C', '#16E0A3'] },
-              { v: '4', l: t('Seasons completed', 'सीज़न पूरे हुए'), icon: 'calendar', color: ['#FF3DA6', '#FF1A75'] },
-              { v: '50+', l: t('Trial cities', 'ट्रायल शहर'), icon: 'map-pin', color: ['#FFC53D', '#FF8A3D'] },
-              { v: '10', l: t('Franchises', 'फ्रैंचाइज़ी'), icon: 'shield', color: ['#00E5FF', '#00B3FF'] },
-            ].map((s) => (
-              <View key={s.v + s.l} style={[styles.statBox, { backgroundColor: c.card2, borderColor: s.color[0], borderWidth: 1, shadowColor: s.color[0], shadowOpacity: c.isDark ? 0.34 : 0.09, shadowRadius: 10, elevation: 4 }]}>
-                <LinearGradient colors={s.color as [string, string]} style={[StyleSheet.absoluteFill, { opacity: c.isDark ? 0.08 : 0.04, borderRadius: 19 }]} />
-                <LinearGradient colors={s.color as [string, string]} style={styles.statIconBox}>
-                  <Feather name={s.icon as any} size={16} color="#fff" />
-                </LinearGradient>
-                <CountUpStat value={s.v} style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, marginTop: 12 }} />
-                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, marginTop: 4, lineHeight: 18 }}>{s.l}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        <View style={{ paddingHorizontal: 16, paddingTop: 32 }}>
-          <SectionHeader title={t('Match Center', 'मैच सेंटर')} onSeeAll={() => router.navigate('/matches')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-matches" />
-          {featured.length > 0 ? (
-            featured.map((m) => <MatchCard key={m.id} match={m} />)
-          ) : matchesQ.isLoading ? (
-            <Card style={{ alignItems: 'center', paddingVertical: 40 }}>
-              <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium' }}>Loading matches…</Text>
-            </Card>
-          ) : (
-            <Card style={{ alignItems: 'center', paddingVertical: 40 }}>
-              <View style={styles.iconCircle}>
-                <Feather name="calendar" size={28} color={c.sub} />
-              </View>
-              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 16, marginTop: 16 }}>Schedule</Text>
-              <Text style={{ color: c.sub, marginTop: 6, textAlign: 'center', fontSize: 13, lineHeight: 20 }}>
-                {t('Season 5 schedule coming soon — October 2026', 'सीज़न 5 का शेड्यूल जल्द आ रहा है — अक्टूबर 2026')}
-              </Text>
-            </Card>
-          )}
-        </View>
-
-        {(isGrouped || topTeams.length > 0) ? (
+        {React.useMemo(() => (
           <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
-            <SectionHeader title={t('Points Table', 'अंक तालिका')} onSeeAll={() => router.navigate('/points')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-points" />
-            <Card padding={0} border={true}>
-              <View style={[styles.pointsRow, { paddingVertical: 10, backgroundColor: c.card2, borderBottomWidth: 1, borderBottomColor: c.line }]}>
-                <Text style={[styles.pos, { color: c.sub, fontSize: 10.5 }]}>#</Text>
-                <View style={{ width: 28 }} />
-                <Text style={[styles.teamName, { color: c.sub, fontSize: 10.5, letterSpacing: 1 }]}>TEAM</Text>
-                <Text style={{ color: c.sub, fontSize: 10.5, width: 36, textAlign: 'center', fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1 }}>
-                  {t('MAT', 'मैच')}
-                </Text>
-                <Text style={{ color: c.sub, fontSize: 10.5, width: 44, textAlign: 'center', fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1 }}>
-                  {t('PTS', 'अंक')}
-                </Text>
-              </View>
+            <SectionHeader title={t('The league in numbers', 'आँकड़ों में लीग')} />
+            <View style={styles.statsGrid}>
+              {[
+                { v: '2,50,000+', l: t('Working professionals joined', 'वर्किंग प्रोफ़ेशनल्स जुड़े'), icon: 'users', color: ['#5B2BF0', '#9B2FF0'] },
+                { v: '400+', l: t('Players auctioned', 'खिलाड़ी ऑक्शन हुए'), icon: 'award', color: ['#16E0A3', '#00B8D9'] },
+                { v: '₹14 Cr+', l: t('Prize money distributed', 'प्राइज़ मनी बाँटी गई'), icon: 'dollar-sign', color: ['#B6FF3C', '#16E0A3'] },
+                { v: '4', l: t('Seasons completed', 'सीज़न पूरे हुए'), icon: 'calendar', color: ['#FF3DA6', '#FF1A75'] },
+                { v: '50+', l: t('Trial cities', 'ट्रायल शहर'), icon: 'map-pin', color: ['#FFC53D', '#FF8A3D'] },
+                { v: '10', l: t('Franchises', 'फ्रैंचाइज़ी'), icon: 'shield', color: ['#00E5FF', '#00B3FF'] },
+              ].map((s) => (
+                <View key={s.v + s.l} style={[styles.statBox, { backgroundColor: c.card2, borderColor: s.color[0], borderWidth: 1, shadowColor: s.color[0], shadowOpacity: c.isDark ? 0.34 : 0.09, shadowRadius: 10, elevation: 4 }]}>
+                  <LinearGradient colors={s.color as [string, string]} style={[StyleSheet.absoluteFill, { opacity: c.isDark ? 0.08 : 0.04, borderRadius: 19 }]} />
+                  <LinearGradient colors={s.color as [string, string]} style={styles.statIconBox}>
+                    <Feather name={s.icon as any} size={16} color="#fff" />
+                  </LinearGradient>
+                  <CountUpStat value={s.v} style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, marginTop: 12 }} />
+                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, marginTop: 4, lineHeight: 18 }}>{s.l}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        ), [c, t])}
 
-              {isGrouped ? (
-                <>
-                  <View style={{ backgroundColor: `${c.cyan}10`, paddingVertical: 6, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: c.line }}>
-                    <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11, letterSpacing: 1 }}>GROUP A</Text>
-                  </View>
-                  {groupA.slice(0, 2).map((t, i) => (
-                    <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: 1, borderTopColor: c.line }]}>
-                      <View style={[styles.medal, { backgroundColor: i === 0 ? '#FFC53D' : '#9E9BD1' }]}>
-                        <Text style={[styles.medalText, { color: c.card }]}>{i + 1}</Text>
-                      </View>
-                      <TeamLogo name={t.team} size={36} />
-                      <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={1}>{t.team}</Text>
-                      <Text style={{ color: c.sub, fontSize: 12.5, width: 36, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium' }}>{t.played}</Text>
-                      <View style={[styles.ptsPill, i === 0 && { backgroundColor: `${c.amber}22` }]}>
-                        <Text style={[styles.pts, { color: i === 0 ? c.getAccentText(c.amber) : c.ink }]}>{t.points}</Text>
-                      </View>
+        {React.useMemo(() => (
+          <View style={{ paddingHorizontal: 16, paddingTop: 32 }}>
+            <SectionHeader title={t('Match Center', 'मैच सेंटर')} onSeeAll={() => router.navigate('/matches')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-matches" />
+            {featured.length > 0 ? (
+              featured.map((m) => <MatchCard key={m.id} match={m} />)
+            ) : matchesQ.isLoading ? (
+              <Card style={{ alignItems: 'center', paddingVertical: 40 }}>
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium' }}>Loading matches…</Text>
+              </Card>
+            ) : (
+              <Card style={{ alignItems: 'center', paddingVertical: 40 }}>
+                <View style={styles.iconCircle}>
+                  <Feather name="calendar" size={28} color={c.sub} />
+                </View>
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 16, marginTop: 16 }}>Schedule</Text>
+                <Text style={{ color: c.sub, marginTop: 6, textAlign: 'center', fontSize: 13, lineHeight: 20 }}>
+                  {t('Season 5 schedule coming soon — October 2026', 'सीज़न 5 का शेड्यूल जल्द आ रहा है — अक्टूबर 2026')}
+                </Text>
+              </Card>
+            )}
+          </View>
+        ), [featured, matchesQ.isLoading, c, t])}
+
+        {React.useMemo(() => (
+          (isGrouped || topTeams.length > 0) ? (
+            <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
+              <SectionHeader title={t('Points Table', 'अंक तालिका')} onSeeAll={() => router.navigate('/points')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-points" />
+              <Card padding={0} border={true}>
+                <View style={[styles.pointsRow, { paddingVertical: 10, backgroundColor: c.card2, borderBottomWidth: 1, borderBottomColor: c.line }]}>
+                  <Text style={[styles.pos, { color: c.sub, fontSize: 10.5 }]}>#</Text>
+                  <View style={{ width: 28 }} />
+                  <Text style={[styles.teamName, { color: c.sub, fontSize: 10.5, letterSpacing: 1 }]}>TEAM</Text>
+                  <Text style={{ color: c.sub, fontSize: 10.5, width: 36, textAlign: 'center', fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1 }}>
+                    {t('MAT', 'मैच')}
+                  </Text>
+                  <Text style={{ color: c.sub, fontSize: 10.5, width: 44, textAlign: 'center', fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 1 }}>
+                    {t('PTS', 'अंक')}
+                  </Text>
+                </View>
+
+                {isGrouped ? (
+                  <>
+                    <View style={{ backgroundColor: `${c.cyan}10`, paddingVertical: 6, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: c.line }}>
+                      <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11, letterSpacing: 1 }}>GROUP A</Text>
                     </View>
-                  ))}
-                  
-                  <View style={{ backgroundColor: `${c.cyan}10`, paddingVertical: 6, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: c.line, borderTopWidth: 1, borderTopColor: c.line }}>
-                    <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11, letterSpacing: 1 }}>GROUP B</Text>
-                  </View>
-                  {groupB.slice(0, 2).map((t, i) => (
-                    <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: 1, borderTopColor: c.line }]}>
-                      <View style={[styles.medal, { backgroundColor: i === 0 ? '#FFC53D' : '#9E9BD1' }]}>
-                        <Text style={[styles.medalText, { color: c.card }]}>{i + 1}</Text>
+                    {groupA.slice(0, 2).map((t, i) => (
+                      <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: 1, borderTopColor: c.line }]}>
+                        <View style={[styles.medal, { backgroundColor: i === 0 ? '#FFC53D' : '#9E9BD1' }]}>
+                          <Text style={[styles.medalText, { color: c.card }]}>{i + 1}</Text>
+                        </View>
+                        <TeamLogo name={t.team} size={36} />
+                        <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={1}>{t.team}</Text>
+                        <Text style={{ color: c.sub, fontSize: 12.5, width: 36, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium' }}>{t.played}</Text>
+                        <View style={[styles.ptsPill, i === 0 && { backgroundColor: `${c.amber}22` }]}>
+                          <Text style={[styles.pts, { color: i === 0 ? c.getAccentText(c.amber) : c.ink }]}>{t.points}</Text>
+                        </View>
                       </View>
-                      <TeamLogo name={t.team} size={36} />
-                      <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={1}>{t.team}</Text>
-                      <Text style={{ color: c.sub, fontSize: 12.5, width: 36, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium' }}>{t.played}</Text>
-                      <View style={[styles.ptsPill, i === 0 && { backgroundColor: `${c.amber}22` }]}>
+                    ))}
+                    
+                    <View style={{ backgroundColor: `${c.cyan}10`, paddingVertical: 6, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: c.line, borderTopWidth: 1, borderTopColor: c.line }}>
+                      <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 11, letterSpacing: 1 }}>GROUP B</Text>
+                    </View>
+                    {groupB.slice(0, 2).map((t, i) => (
+                      <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: 1, borderTopColor: c.line }]}>
+                        <View style={[styles.medal, { backgroundColor: i === 0 ? '#FFC53D' : '#9E9BD1' }]}>
+                          <Text style={[styles.medalText, { color: c.card }]}>{i + 1}</Text>
+                        </View>
+                        <TeamLogo name={t.team} size={36} />
+                        <Text style={[styles.teamName, { color: c.ink }]} numberOfLines={1}>{t.team}</Text>
+                        <Text style={{ color: c.sub, fontSize: 12.5, width: 36, textAlign: 'center', fontFamily: 'PlusJakartaSans_500Medium' }}>{t.played}</Text>
+                        <View style={[styles.ptsPill, i === 0 && { backgroundColor: `${c.amber}22` }]}>
                         <Text style={[styles.pts, { color: i === 0 ? c.getAccentText(c.amber) : c.ink }]}>{t.points}</Text>
                       </View>
                     </View>
@@ -726,84 +745,89 @@ export default function HomeScreen() {
               )}
             </Card>
           </View>
-        ) : null}
+        ) : null
+        ), [isGrouped, groupA, groupB, topTeams, c, t])}
 
         <TeamsStrip />
         
         <HomeMediaSection media={mediaQ.data?.items ?? []} />
 
-        <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
-          <SectionHeader title={t('Latest News', 'ताज़ा खबरें')} onSeeAll={() => router.navigate('/news')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-news" />
-          {latestNews.map((n) => (
-            <Pressable
-              key={n.slug}
-              onPress={() => router.push(`/news/${n.slug}`)}
-              style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
-              testID={`home-news-${n.slug}`}
-            >
-              <Card padding={0} style={styles.newsCard}>
-                <Image
-                  source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${n.image}` }}
-                  style={styles.newsImage}
-                  contentFit="cover" cachePolicy="memory-disk"
-                  transition={150}
-                />
-                <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)']} style={styles.newsImageShade} pointerEvents="none" />
-                <View style={styles.newsContent}>
-                  <View style={styles.newsTagRow}>
-                    <View style={styles.newsTagPill}>
-                      <Text style={{ color: '#fff', fontSize: 9, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5 }}>
-                        {n.tag.toUpperCase()}
-                      </Text>
+        {React.useMemo(() => (
+          <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
+            <SectionHeader title={t('Latest News', 'ताज़ा खबरें')} onSeeAll={() => router.navigate('/news')} seeAllLabel={t('See all', 'सभी देखें')} seeAllTestID="see-news" />
+            {latestNews.map((n) => (
+              <Pressable
+                key={n.slug}
+                onPress={() => router.push(`/news/${n.slug}`)}
+                style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+                testID={`home-news-${n.slug}`}
+              >
+                <Card padding={0} style={styles.newsCard}>
+                  <Image
+                    source={{ uri: `${SITE_ASSETS}/bcpl-assets/news/${n.image}` }}
+                    style={styles.newsImage}
+                    contentFit="cover" cachePolicy="memory-disk"
+                    transition={150}
+                  />
+                  <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)']} style={styles.newsImageShade}  />
+                  <View style={styles.newsContent}>
+                    <View style={styles.newsTagRow}>
+                      <View style={styles.newsTagPill}>
+                        <Text style={{ color: '#fff', fontSize: 9, fontFamily: 'PlusJakartaSans_700Bold', letterSpacing: 0.5 }}>
+                          {n.tag.toUpperCase()}
+                        </Text>
+                      </View>
+                      <Text style={{ color: c.sub, fontSize: 11, fontFamily: 'PlusJakartaSans_500Medium' }}>{n.date}</Text>
                     </View>
-                    <Text style={{ color: c.sub, fontSize: 11, fontFamily: 'PlusJakartaSans_500Medium' }}>{n.date}</Text>
+                    <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15, marginTop: 8, lineHeight: 22, letterSpacing: -0.2 }} numberOfLines={2}>
+                      {n.title}
+                    </Text>
                   </View>
-                  <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15, marginTop: 8, lineHeight: 22, letterSpacing: -0.2 }} numberOfLines={2}>
-                    {n.title}
-                  </Text>
-                </View>
-              </Card>
-            </Pressable>
-          ))}
-        </View>
-
-        {sponsorGroups.length > 0 && (
-          <View style={{ paddingHorizontal: 16, marginTop: 40, marginBottom: 32, alignItems: 'center' }}>
-            <SectionHeader title={t('Our Sponsors', 'हमारे Sponsors')} />
-            {sponsorGroups.map((g, gi) => {
-              const isTop = gi === 0;
-              const logoH = isTop ? 64 : gi === 1 ? 44 : 32;
-              return (
-                <View key={g.label} style={{ marginTop: isTop ? 8 : 24, alignItems: 'center' }}>
-                  <Text style={{ color: c.getAccentText(c.amber), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: isTop ? 14 : 12, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>
-                    {g.label}
-                  </Text>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: isTop ? 16 : 12 }}>
-                    {g.items.map((s, i) => {
-                      const inner = (
-                        <View style={{ backgroundColor: '#1B2E52', borderRadius: 12, paddingHorizontal: logoH * 0.4, paddingVertical: logoH * 0.3, borderWidth: 1, borderColor: c.line }}>
-                          {s.logo ? (
-                            <Image source={{ uri: s.logo }} style={{ height: logoH, width: logoH * 3, maxWidth: 200 }} contentFit="contain" cachePolicy="memory-disk" />
-                          ) : (
-                            <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: logoH * 0.4, color: '#FFFFFF' }}>{s.name}</Text>
-                          )}
-                        </View>
-                      );
-                      if (s.url) {
-                        return (
-                          <Pressable key={i} onPress={() => WebBrowser.openBrowserAsync(s.url!)} style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}>
-                            {inner}
-                          </Pressable>
-                        );
-                      }
-                      return <View key={i}>{inner}</View>;
-                    })}
-                  </View>
-                </View>
-              );
-            })}
+                </Card>
+              </Pressable>
+            ))}
           </View>
-        )}
+        ), [latestNews, c, t])}
+
+        {React.useMemo(() => (
+          sponsorGroups.length > 0 && (
+            <View style={{ paddingHorizontal: 16, marginTop: 40, marginBottom: 32, alignItems: 'center' }}>
+              <SectionHeader title={t('Our Sponsors', 'हमारे Sponsors')} />
+              {sponsorGroups.map((g, gi) => {
+                const isTop = gi === 0;
+                const logoH = isTop ? 64 : gi === 1 ? 44 : 32;
+                return (
+                  <View key={g.label} style={{ marginTop: isTop ? 8 : 24, alignItems: 'center' }}>
+                    <Text style={{ color: c.getAccentText(c.amber), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: isTop ? 14 : 12, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>
+                      {g.label}
+                    </Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: isTop ? 16 : 12 }}>
+                      {g.items.map((s, i) => {
+                        const inner = (
+                          <View style={{ backgroundColor: c.isDark ? c.card2 : '#1B2E52', borderRadius: 12, paddingHorizontal: logoH * 0.4, paddingVertical: logoH * 0.3, borderWidth: 1, borderColor: c.line }}>
+                            {s.logo ? (
+                              <Image source={{ uri: s.logo }} style={{ height: logoH, width: logoH * 3, maxWidth: 200 }} contentFit="contain" cachePolicy="memory-disk" />
+                            ) : (
+                              <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: logoH * 0.4, color: '#FFFFFF' }}>{s.name}</Text>
+                            )}
+                          </View>
+                        );
+                        if (s.url) {
+                          return (
+                            <Pressable key={i} onPress={() => WebBrowser.openBrowserAsync(s.url!)} style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}>
+                              {inner}
+                            </Pressable>
+                          );
+                        }
+                        return <View key={i}>{inner}</View>;
+                      })}
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          )
+        ), [sponsorGroups, c, t])}
       </ScrollView>
     </View>
   );

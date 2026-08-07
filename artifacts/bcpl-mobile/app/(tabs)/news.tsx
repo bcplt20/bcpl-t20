@@ -28,7 +28,9 @@ const NewsCard = memo(({ n, onPress }: { n: MergedNews, onPress: () => void }) =
             transition={150}
           />
         ) : null}
-        <LinearGradient colors={['transparent', c.card]} style={{position: 'absolute', top: 120, left: 0, right: 0, height: 80}} pointerEvents="none" />
+        <View pointerEvents="none" style={{position: 'absolute', top: 120, left: 0, right: 0, height: 80}}>
+          <LinearGradient colors={['transparent', c.card]} style={StyleSheet.absoluteFill} />
+        </View>
         <View style={{ padding: 20, paddingTop: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
             <GradientTag label={n.tag} color={c.magenta} />

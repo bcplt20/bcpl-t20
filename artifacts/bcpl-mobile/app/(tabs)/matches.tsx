@@ -55,7 +55,7 @@ export default function MatchesScreen() {
       <ScreenBackground />
       <GlassAppBar title="Matches" />
       <View style={[styles.filters, { marginTop: appBarHeight, borderBottomColor: c.line }]}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 10, paddingBottom: 16, paddingTop: 10 }}>
+        <ScrollView contentInsetAdjustmentBehavior="never" automaticallyAdjustsScrollIndicatorInsets={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 10, paddingBottom: 16, paddingTop: 10 }}>
           {FILTERS.map((f) => {
             const isActive = filter === f.key;
             return (

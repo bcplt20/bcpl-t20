@@ -47,8 +47,8 @@ export default function AboutScreen() {
       <ScreenBackground />
       <GlassAppBar title={t('About BCPL', 'BCPL के बारे में')} back />
       
-      <ScrollView contentContainerStyle={{ paddingTop: appBarHeight + 16, paddingBottom: 60 }} showsVerticalScrollIndicator={false}>
-        
+      <ScrollView contentContainerStyle={{ paddingBottom: 60 }} showsVerticalScrollIndicator={false}>
+        <View style={{ height: appBarHeight }} />
         {/* Hero */}
         <View style={{ padding: 24, paddingTop: 32, alignItems: 'center' }}>
           <Image source={require('../assets/images/bcpl-ball.png')} style={{ width: 120, height: 120, marginBottom: 24 }} resizeMode="contain" />
@@ -67,7 +67,7 @@ export default function AboutScreen() {
 
         {/* Mission */}
         <View style={{ paddingHorizontal: 20, marginBottom: 32 }}>
-          <LinearGradient colors={['rgba(255,61,166,0.15)', 'rgba(255,61,166,0.05)']} style={{ padding: 24, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,61,166,0.2)' }}>
+          <LinearGradient colors={['rgba(255,61,166,0.15)', 'rgba(255,61,166,0.05)']} style={{ padding: 24, borderRadius: 18, borderWidth: 1, borderColor: 'rgba(255,61,166,0.2)' }}>
             <Feather name="zap" size={24} color={c.getAccentText(c.magenta)} style={{ marginBottom: 12 }} />
             <Text style={{ color: c.ink, fontFamily: 'Inter_500Medium', fontSize: 15, lineHeight: 24, fontStyle: 'italic' }}>
               "{t("Every working professional who watched IPL and thought 'I could have played' deserves a real shot. Millions stopped competitive cricket when work took over. BCPL exists to give them the stage they never got.", "हर working professional जो IPL देखते हुए सोचता है 'मैं भी खेल सकता था' — उसे एक असली मौका मिलना चाहिए। लाखों लोगों ने काम की वजह से competitive cricket छोड़ दी। BCPL उन्हें वो stage देने के लिए है जो उन्हें कभी नहीं मिला।")}"

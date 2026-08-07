@@ -212,10 +212,15 @@ export default function MvpScreen() {
             ))}
             
             {q.data?.leaderboard.length === 0 && (
-              <View style={{ padding: 40, alignItems: 'center' }}>
-                <Feather name="award" size={48} color={c.line} style={{ marginBottom: 16 }} />
-                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15, textAlign: 'center' }}>
-                  {t('No players found.', 'कोई खिलाड़ी नहीं मिला।')}
+              <View style={{ padding: 40, alignItems: 'center', marginTop: 24, marginBottom: 24 }}>
+                <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255, 197, 61, 0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 24, borderWidth: 1, borderColor: 'rgba(255, 197, 61, 0.2)' }}>
+                  <Feather name="award" size={36} color="#FFC53D" />
+                </View>
+                <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, textAlign: 'center', marginBottom: 12 }}>
+                  {t('MVP Race Starts Soon', 'MVP रेस जल्द शुरू होगी')}
+                </Text>
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 15, textAlign: 'center', lineHeight: 22 }}>
+                  {t('The leaderboard will update as matches are played. Stay tuned to see who wins the car!', 'मैच खेले जाने के साथ ही लीडरबोर्ड अपडेट होगा। देखते रहें कि कार कौन जीतता है!')}
                 </Text>
               </View>
             )}
@@ -264,10 +269,15 @@ function TournamentStatsView() {
       </ScrollView>
 
       {isEmpty ? (
-        <View style={{ padding: 40, alignItems: 'center' }}>
-          <Feather name="bar-chart-2" size={48} color={c.line} style={{ marginBottom: 16 }} />
-          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 15, textAlign: 'center' }}>
-            {t('Tournament stats not available yet.', 'टूर्नामेंट के आँकड़े अभी उपलब्ध नहीं हैं।')}
+        <View style={{ padding: 40, alignItems: 'center', marginTop: 24 }}>
+          <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(91, 43, 240, 0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 24, borderWidth: 1, borderColor: 'rgba(91, 43, 240, 0.2)' }}>
+            <Feather name="bar-chart-2" size={36} color="#5B2BF0" />
+          </View>
+          <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, textAlign: 'center', marginBottom: 12 }}>
+            {t('Stats updating soon', 'आँकड़े जल्द अपडेट होंगे')}
+          </Text>
+          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 15, textAlign: 'center', lineHeight: 22 }}>
+            {t('Match statistics will appear here once the tournament begins.', 'टूर्नामेंट शुरू होने के बाद मैच के आँकड़े यहाँ दिखाई देंगे।')}
           </Text>
         </View>
       ) : (

@@ -59,7 +59,7 @@ export default function MediaScreen() {
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
       <GlassAppBar title={t('Photos & Videos', 'फ़ोटो और वीडियो')} />
-      <ScrollView
+      <ScrollView contentInsetAdjustmentBehavior="never" automaticallyAdjustsScrollIndicatorInsets={false}
         contentContainerStyle={{ padding: 16, paddingBottom: bottomNavHeight, paddingTop: 0 }}
       >
         <View style={{ height: appBarHeight }} />
@@ -82,7 +82,7 @@ export default function MediaScreen() {
             {shorts.length > 0 && (
               <View>
                 <SectionHeader title={t('Shorts', 'शॉर्ट्स')} />
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12 }}>
+                <ScrollView contentInsetAdjustmentBehavior="never" automaticallyAdjustsScrollIndicatorInsets={false} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12 }}>
                   {shorts.map(item => (
                     <Pressable
                       key={item.id}

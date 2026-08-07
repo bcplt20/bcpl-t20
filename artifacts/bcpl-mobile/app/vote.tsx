@@ -197,13 +197,15 @@ export default function VoteScreen() {
         ) : q.isError ? (
           <ErrorView onRetry={() => q.refetch()} />
         ) : q.data?.polls.length === 0 ? (
-          <View style={{ padding: 40, alignItems: 'center' }}>
-            <Feather name="inbox" size={48} color={c.line} style={{ marginBottom: 16 }} />
-            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, textAlign: 'center', marginBottom: 8 }}>
-              {t('No active polls', 'कोई सक्रिय पोल नहीं')}
+          <View style={{ padding: 40, alignItems: 'center', marginTop: 40 }}>
+            <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(0, 220, 245, 0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 24, borderWidth: 1, borderColor: 'rgba(0, 220, 245, 0.2)' }}>
+              <Feather name="bar-chart-2" size={36} color="#00DCF5" />
+            </View>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, textAlign: 'center', marginBottom: 12 }}>
+              {t('Voting Starts Soon', 'Voting जल्द शुरू होगा')}
             </Text>
-            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, textAlign: 'center' }}>
-              {t('Check back later for new fan polls.', 'नए फैन पोल के लिए बाद में वापस आएं।')}
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 15, textAlign: 'center', lineHeight: 22 }}>
+              {t('Fan polls will appear here during the live matches. Support your favorite players!', 'लाइव मैचों के दौरान फैन पोल्स यहाँ दिखाई देंगे। अपने पसंदीदा खिलाड़ियों को सपोर्ट करें!')}
             </Text>
           </View>
         ) : (

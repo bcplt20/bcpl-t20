@@ -71,7 +71,7 @@ const chatBody = z.object({
 
 const CHAT_SYSTEM_BASE = `You are "BCPL AI", the official assistant of BCPL (Bhartiya Corporate Premier League) — a T20 cricket league for working professionals in India (bcplt20.com). You are a knowledgeable, helpful guide who can answer ANY question a player or fan has about BCPL — registration, fees, the trial process, KYC, the auction, prizes, schedule, points, fan voting, refunds and contact — using the KNOWLEDGE BASE and LIVE DATA provided below.
 
-LANGUAGE: Reply in the SAME language the user used — simple Hindi (Devanagari) for Hindi/Hinglish, English for English. Match Hinglish with easy Hindi. Keep replies focused and clear (usually 2-6 sentences; give a short step list when the question needs steps). Never use emojis.
+LANGUAGE (CRITICAL — follow for EVERY reply): Detect the language of the user's LATEST message and reply in EXACTLY that language. English question → English answer (never Hindi). Hindi/Devanagari or Hinglish (Hindi words in Latin script like "fees kitni hai") → simple Hindi in Devanagari. Any other Indian language (Bengali, Tamil, Telugu, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia, etc.) → reply in that same language and script. If the user switches language mid-conversation, switch with them — the LATEST message always decides, regardless of earlier messages. Keep replies focused and clear (usually 2-6 sentences; give a short step list when the question needs steps). Never use emojis.
 
 STRICT COMPLIANCE (never break these):
 - NEVER promise or imply selection, qualification, team placement, purchase at auction, contract, payment or career outcomes. Fees cover evaluation/participation only and never guarantee anything.
@@ -129,11 +129,23 @@ router.post("/chat", optionalAuth, async (req: AuthRequest, res) => {
     try { knowledge = await buildBcplKnowledge(); } catch (e) { logger.warn({ err: e }, "ai chat: knowledge build failed"); }
     try { liveData = await buildLiveContext(CURRENT_SEASON); } catch (e) { logger.warn({ err: e }, "ai chat: live context failed"); }
 
+    // Deterministic language hint: script of the LATEST user message decides
+    // the reply language (models sometimes latch onto earlier turns' language).
+    const lastUser = [...parsed.data.messages].reverse().find((m) => m.role === "user")?.text ?? "";
+    const devanagari = (lastUser.match(/[\u0900-\u097F]/g) ?? []).length;
+    const otherIndic = (lastUser.match(/[\u0980-\u0D7F\u0A00-\u0A7F]/g) ?? []).length;
+    const langHint = devanagari > 0
+      ? "LANGUAGE OF THIS REPLY: the user's latest message is in Hindi (Devanagari) — reply in simple Hindi (Devanagari)."
+      : otherIndic > 0
+        ? "LANGUAGE OF THIS REPLY: the user's latest message is in an Indian regional script — reply in that same language and script."
+        : "LANGUAGE OF THIS REPLY: the user's latest message is in Latin script — if it is plain English, reply in English; if it is Hinglish (Hindi words written in Latin letters), reply in simple Hindi (Devanagari).";
+
     const system = [
       CHAT_SYSTEM_BASE,
       knowledge,
       liveData,
       "PLAYER STATUS:\n" + lines.join("\n"),
+      langHint,
     ].filter(Boolean).join("\n\n");
     const messages = parsed.data.messages.map((m) => ({ role: m.role === "user" ? "user" as const : "model" as const, text: m.text }));
     const reply = scrub(await generateText({ model: chatModel(), system, messages }));

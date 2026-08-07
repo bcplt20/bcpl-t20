@@ -3,7 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AuthProvider } from '@/context/AuthContext';
@@ -28,9 +28,10 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StyleSheet, Pressable, Keyboard, Platform } from 'react-native';
+import { StyleSheet, Pressable, Keyboard, Platform, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, withRepeat, withSequence } from 'react-native-reanimated';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -42,36 +43,105 @@ function FloatingAiButton() {
   const insets = useSafeAreaInsets();
   const segments = useSegments();
 
+  const isAssistant = segments[segments.length - 1] === 'assistant';
+
   // If we are in the tabs group, float above the bottom tab bar.
   // The tab bar is strictly 68px tall.
   const inTabs = !segments[0] || segments[0] === '(tabs)';
   // Position deterministically: 68 (tabbar) + 16 (gap) + safeArea
   const bottomMargin = inTabs ? 68 + insets.bottom + 16 : insets.bottom + 16;
 
+  const pulse = useSharedValue(1);
+  useEffect(() => {
+    pulse.value = withRepeat(
+      withSequence(withTiming(1.4, { duration: 1500 }), withTiming(1, { duration: 1500 })),
+      -1,
+      true
+    );
+  }, []);
+
+  const glowStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulse.value }],
+    opacity: 0.5 - (pulse.value - 1),
+  }));
+
+  const iconRot = useSharedValue(0);
+  const iconScale = useSharedValue(1);
+  const crossOpacity = useSharedValue(0);
+  const sparkleOpacity = useSharedValue(1);
+
+  useEffect(() => {
+    if (isAssistant) {
+      iconRot.value = withTiming(90, { duration: 300 });
+      crossOpacity.value = withTiming(1, { duration: 300 });
+      sparkleOpacity.value = withTiming(0, { duration: 300 });
+    } else {
+      iconRot.value = withTiming(0, { duration: 300 });
+      crossOpacity.value = withTiming(0, { duration: 300 });
+      sparkleOpacity.value = withTiming(1, { duration: 300 });
+    }
+  }, [isAssistant]);
+
+  const crossStyle = useAnimatedStyle(() => ({
+    position: 'absolute',
+    opacity: crossOpacity.value,
+    transform: [{ rotate: `${iconRot.value}deg` }]
+  }));
+
+  const sparkleStyle = useAnimatedStyle(() => ({
+    position: 'absolute',
+    opacity: sparkleOpacity.value,
+    transform: [{ rotate: `${iconRot.value}deg` }]
+  }));
+
+  const handlePress = () => {
+    if (isAssistant) {
+      if (router.canGoBack()) router.back();
+      else router.replace('/');
+    } else {
+      router.push('/assistant');
+    }
+  };
+
   return (
-    <Pressable
-      onPress={() => router.push('/assistant')}
-      style={({ pressed }) => ({
+    <View style={{
         position: 'absolute',
         bottom: bottomMargin,
         right: 16,
         width: 56,
         height: 56,
-        borderRadius: 28,
+        zIndex: 9999,
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 9999,
-        transform: [{ scale: pressed ? 0.95 : 1 }],
-        shadowColor: c.violet,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.5,
-        shadowRadius: 12,
-        elevation: 10,
-      })}
-    >
-      <LinearGradient colors={['#7C5CFF', '#00DCF5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 28 }} />
-      <Ionicons name="sparkles" size={26} color="#fff" />
-    </Pressable>
+    }} pointerEvents="box-none">
+      <Animated.View style={[{ position: 'absolute', width: 56, height: 56, borderRadius: 28, backgroundColor: c.cyan }, glowStyle]} pointerEvents="none" />
+      <Pressable
+        onPress={handlePress}
+        style={({ pressed }) => ({
+          width: 56,
+          height: 56,
+          borderRadius: 28,
+          alignItems: 'center',
+          justifyContent: 'center',
+          transform: [{ scale: pressed ? 0.92 : 1 }],
+          shadowColor: c.violet,
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.6,
+          shadowRadius: 16,
+          elevation: 12,
+        })}
+      >
+        <LinearGradient colors={['#5B2BF0', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 28 }} />
+        <LinearGradient colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0)']} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 28 }} />
+        
+        <Animated.View style={crossStyle} pointerEvents="none">
+          <Feather name="x" size={26} color="#fff" />
+        </Animated.View>
+        <Animated.View style={sparkleStyle} pointerEvents="none">
+          <Ionicons name="sparkles" size={24} color="#fff" />
+        </Animated.View>
+      </Pressable>
+    </View>
   );
 }
 
@@ -106,7 +176,7 @@ function RootLayoutNav() {
         <Stack.Screen name="phase2-pay" options={{ title: 'Phase 2', headerShown: false }} />
         <Stack.Screen name="result" options={{ title: 'Phase 1 Result', headerShown: false }} />
         <Stack.Screen name="trial-pass" options={{ title: 'Trial Pass', headerShown: false }} />
-        <Stack.Screen name="assistant" options={{ title: 'BCPL AI', headerShown: false }} />
+        <Stack.Screen name="assistant" options={{ presentation: 'modal', title: 'BCPL AI', headerShown: false }} />
         <Stack.Screen name="vote" options={{ title: 'Fan Voting', headerShown: false }} />
         <Stack.Screen name="mvp" options={{ title: 'MVP Race', headerShown: false }} />
         <Stack.Screen name="pay-webview" options={{ title: 'Payment', headerShown: false, gestureEnabled: false }} />
@@ -169,7 +239,7 @@ export default function RootLayout() {
   void retriedOk; // re-render trigger once icon fonts finally load
 
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>

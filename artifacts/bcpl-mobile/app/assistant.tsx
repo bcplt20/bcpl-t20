@@ -7,9 +7,11 @@ import {
   Text,
   TextInput,
   View,
+  StyleSheet,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather, Ionicons } from '@expo/vector-icons';
+import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withSequence, withTiming, withDelay } from 'react-native-reanimated';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
@@ -36,23 +38,70 @@ function Bubble({ role, text, dim }: { role: 'user' | 'assistant'; text: string;
       style={{
         alignSelf: user ? 'flex-end' : 'flex-start',
         maxWidth: '85%',
-        borderRadius: 16,
-        borderBottomRightRadius: user ? 4 : 16,
-        borderBottomLeftRadius: user ? 16 : 4,
-        overflow: 'hidden',
         marginBottom: 10,
         opacity: dim ? 0.7 : 1,
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        gap: 8,
       }}
     >
-      {user ? (
-        <LinearGradient colors={['#7C5CFF', '#9D6BFF']} style={{ paddingHorizontal: 14, paddingVertical: 10 }}>
-          <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, lineHeight: 21 }}>{text}</Text>
-        </LinearGradient>
-      ) : (
-        <View style={{ backgroundColor: c.card, borderWidth: 1, borderColor: c.line, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 16, borderBottomLeftRadius: 4 }}>
-          <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, lineHeight: 21 }}>{text}</Text>
+      {!user && (
+        <View style={{ width: 28, height: 28, borderRadius: 14, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+          <LinearGradient colors={['#5B2BF0', '#00DCF5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+          <Ionicons name="sparkles" size={14} color="#fff" />
         </View>
       )}
+      <View
+        style={{
+          flexShrink: 1,
+          borderRadius: 18,
+          borderBottomRightRadius: user ? 4 : 18,
+          borderBottomLeftRadius: user ? 18 : 4,
+          overflow: 'hidden',
+        }}
+      >
+        {user ? (
+          <LinearGradient colors={['#5B2BF0', '#FF3DA6']} start={{x:0, y:0}} end={{x:1, y:1}} style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
+            <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14.5, lineHeight: 22 }}>{text}</Text>
+          </LinearGradient>
+        ) : (
+          <View style={{ backgroundColor: c.card, borderWidth: 1, borderColor: c.line, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 18, borderBottomLeftRadius: 4 }}>
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14.5, lineHeight: 22 }}>{text}</Text>
+          </View>
+        )}
+      </View>
+    </View>
+  );
+}
+
+function TypingIndicator() {
+  const c = useColors();
+  const d1 = useSharedValue(0.5);
+  const d2 = useSharedValue(0.5);
+  const d3 = useSharedValue(0.5);
+
+  React.useEffect(() => {
+    const anim = (v: any, delay: number) => {
+      setTimeout(() => {
+        v.value = withRepeat(withSequence(withTiming(1, { duration: 400 }), withTiming(0.5, { duration: 400 })), -1, true);
+      }, delay);
+    };
+    anim(d1, 0);
+    anim(d2, 200);
+    anim(d3, 400);
+  }, []);
+
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8, marginBottom: 10 }}>
+      <View style={{ width: 28, height: 28, borderRadius: 14, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+        <LinearGradient colors={['#5B2BF0', '#00DCF5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+        <Ionicons name="sparkles" size={14} color="#fff" />
+      </View>
+      <View style={{ backgroundColor: c.card, borderWidth: 1, borderColor: c.line, paddingHorizontal: 16, paddingVertical: 14, borderRadius: 18, borderBottomLeftRadius: 4, flexDirection: 'row', gap: 4, height: 42, alignItems: 'center' }}>
+        <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.cyan }, useAnimatedStyle(() => ({ opacity: d1.value }))]} />
+        <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.cyan }, useAnimatedStyle(() => ({ opacity: d2.value }))]} />
+        <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.cyan }, useAnimatedStyle(() => ({ opacity: d3.value }))]} />
+      </View>
     </View>
   );
 }
@@ -167,15 +216,7 @@ export default function AssistantScreen() {
           {msgs.map((m, i) => (
             <Bubble key={i} role={m.role} text={m.text} />
           ))}
-          {busy && (
-            <View style={{ alignSelf: 'flex-start', backgroundColor: c.card, borderWidth: 1, borderColor: c.line, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 16, borderBottomLeftRadius: 4, marginBottom: 10 }}>
-              <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center', height: 21 }}>
-                <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.sub, opacity: 0.5 }} />
-                <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.sub, opacity: 0.8 }} />
-                <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.sub, opacity: 0.5 }} />
-              </View>
-            </View>
-          )}
+          {busy && <TypingIndicator />}
           {err ? (
             <Text style={{ color: '#FF7A9C', fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12.5, marginTop: 4 }}>{err}</Text>
           ) : null}

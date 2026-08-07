@@ -5,7 +5,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
 import { NATIVE_PAGES } from '@/data/pages';
-import { Card, EmptyView, GlassAppBar, ScreenBackground, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
+import { Card, EmptyView, GlassAppBar, ScreenBackground, useAppBarHeight, useBottomNavHeight, SectionHeader } from '@/components/ui';
 import { Animated } from 'react-native';
 import { Image } from 'expo-image';
 import { AccordionItem } from '@/components/MoreSections';
@@ -120,15 +120,8 @@ export default function NativePageScreen() {
         {sections.map((sec, sIdx) => {
           if (isFaq) {
             return (
-              <View key={sIdx} style={{ gap: 8 }}>
-                {sec.title && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: sIdx === 0 ? 0 : 12, marginBottom: 4 }}>
-                    <LinearGradient colors={['#FF3DA6', '#5B2BF0']} style={{ width: 20, height: 3, borderRadius: 2 }} />
-                    <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 1, color: c.magenta, textTransform: 'uppercase' }}>
-                      {sec.title}
-                    </Text>
-                  </View>
-                )}
+              <View key={sIdx} style={{ gap: 8, marginTop: sIdx === 0 ? 0 : 16 }}>
+                {sec.title && <SectionHeader title={sec.title} />}
                 {sec.blocks.map((b, bi) => (
                   <AccordionItem
                     key={bi}
@@ -143,7 +136,9 @@ export default function NativePageScreen() {
           if (!sec.title && sec.blocks.length === 0) return null;
 
           return (
-            <Card key={sIdx} padding={0} border={true} style={{ overflow: 'hidden' }}>
+            <View key={sIdx} style={{ marginTop: sIdx === 0 ? 0 : 8 }}>
+              {sec.title && <SectionHeader title={sec.title} />}
+              <Card padding={0} border={true} style={{ overflow: 'hidden' }}>
               {/* Subtle watermark */}
               <Image source={require('../../assets/images/bcpl-ball.png')} style={{ position: 'absolute', right: -40, bottom: -40, width: 150, height: 150, opacity: c.isDark ? 0.03 : 0.02, transform: [{ rotate: '45deg' }] }} contentFit="contain" />
               {/* Corner accent */}
@@ -154,15 +149,6 @@ export default function NativePageScreen() {
               <View style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 4, backgroundColor: sIdx % 2 === 0 ? c.cyan : c.magenta }} />
               
               <View style={{ padding: 20, paddingLeft: 24 }}>
-                {sec.title && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, borderBottomWidth: 1, borderBottomColor: c.line, paddingBottom: 12, marginBottom: 16 }}>
-                    <LinearGradient colors={['#FF3DA6', '#5B2BF0']} style={{ width: 4, height: '100%', borderRadius: 2 }} />
-                    <Text style={[styles.heading, { color: c.ink, marginBottom: 0 }]}>
-                      {sec.title}
-                    </Text>
-                  </View>
-                )}
-                
                 <View>
                   {sec.blocks.map((block, i) => {
                     const txt = block.hi ? t(block.text, block.hi) : block.text;
@@ -310,6 +296,7 @@ export default function NativePageScreen() {
                   })}</View>
               </View>
             </Card>
+            </View>
           );
         })}
         

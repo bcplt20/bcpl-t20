@@ -33,7 +33,7 @@ export default function ScorerHome() {
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
       <GlassAppBar title={t('Scorer', 'स्कोरर')} />
-      <ScrollView
+      <ScrollView contentInsetAdjustmentBehavior="never" automaticallyAdjustsScrollIndicatorInsets={false}
         contentContainerStyle={{ paddingBottom: bottomNavHeight }}
         refreshControl={
           token ? <RefreshControl refreshing={query.isRefetching} onRefresh={() => query.refetch()} tintColor={c.violet} progressViewOffset={appBarHeight} /> : undefined
