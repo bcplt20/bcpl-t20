@@ -701,6 +701,38 @@ export default function RegisterScreen() {
               {t('Payment of the Phase 1 fee gives you evaluation access — it does not guarantee selection, Auction Pool entry or tournament participation.', 'Phase 1 fee का भुगतान evaluation access देता है — यह selection, Auction Pool में जगह या tournament participation की guarantee नहीं है।')}
             </Text>
 
+            {/* Trust strip — compact factual reassurance (mirrors the website).
+                Facts only: real past-season count, refund policy exists (links to
+                the in-app Refund policy page), secure payment via Cashfree. */}
+            <View style={{ marginTop: 16, padding: 14, borderRadius: 12, borderWidth: 1, borderColor: c.line, backgroundColor: c.card2, gap: 10 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
+                <Feather name="users" size={15} color={c.getAccentText(c.violet)} style={{ marginTop: 1 }} />
+                <Text style={{ color: c.ink, fontSize: 12.5, flex: 1, lineHeight: 18, fontFamily: 'PlusJakartaSans_600SemiBold' }}>
+                  {t('14,000+ players registered last season', 'पिछले season 14,000+ players')}
+                </Text>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
+                <Feather name="rotate-ccw" size={15} color={c.getAccentText(c.cyan)} style={{ marginTop: 1 }} />
+                <Text style={{ color: c.ink, fontSize: 12.5, flex: 1, lineHeight: 18, fontFamily: 'PlusJakartaSans_500Medium' }}>
+                  {t('Refunds follow our ', 'Refunds हमारी ')}
+                  <Text
+                    onPress={() => router.push('/pages/refunds')}
+                    style={{ color: c.getAccentText(c.cyan), fontFamily: 'PlusJakartaSans_700Bold', textDecorationLine: 'underline' }}
+                    testID="reg-trust-refund-link"
+                  >
+                    {t('Refund & Cancellation Policy', 'Refund & Cancellation Policy')}
+                  </Text>
+                  {t('.', 'के अनुसार होते हैं।')}
+                </Text>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
+                <Feather name="lock" size={15} color={c.getAccentText(c.magenta)} style={{ marginTop: 1 }} />
+                <Text style={{ color: c.ink, fontSize: 12.5, flex: 1, lineHeight: 18, fontFamily: 'PlusJakartaSans_500Medium' }}>
+                  {t('Secure payment via Cashfree', 'Cashfree के ज़रिए secure payment')}
+                </Text>
+              </View>
+            </View>
+
             <View style={{ marginTop: 24 }}>
               {primaryBtn(
                 grossFee

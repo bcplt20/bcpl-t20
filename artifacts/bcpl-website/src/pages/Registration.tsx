@@ -222,6 +222,12 @@ export function Registration() {
   // Already-registered players don't need the blank form — show status card only
   const isRegistered = loggedIn && !!regStatus?.registered;
 
+  // A payment was attempted this session but registration is still 'pending' —
+  // i.e. the player came back from the Cashfree checkout without completing.
+  // Used to show a clear "payment not completed — try again" retry message
+  // without re-filling the form.
+  const [paymentIncomplete, setPaymentIncomplete] = useState(false);
+
   // On mount: if already authenticated, fetch registration status and redirect based on it
   useEffect(() => {
     if (isAuthenticated()) {
@@ -232,11 +238,15 @@ export function Registration() {
           const st = s.phase1Status;
           // Auto-redirect to the correct page based on status
           if (st === 'payment_done') {
+            sessionStorage.removeItem('bcpl_p1_pending');
             navigate('/register/upload-video');
           } else if (st === 'video_submitted' || st === 'selected' || st === 'rejected') {
+            sessionStorage.removeItem('bcpl_p1_pending');
             navigate('/register/result');
+          } else if (st === 'pending') {
+            // Left a payment attempt behind but never completed it → retry cue.
+            if (sessionStorage.getItem('bcpl_p1_pending')) setPaymentIncomplete(true);
           }
-          // 'pending' → stay here so user can complete payment
         }
       }).catch(() => {});
     }
@@ -760,8 +770,18 @@ export function Registration() {
                     {/* ── Payment Pending ── */}
                     {regStatus?.phase1Status === 'pending' && (
                       <div style={{ padding:'16px', background:'rgba(251,191,36,0.07)', border:'1px solid rgba(251,191,36,0.3)', borderRadius:10, textAlign:'center' }}>
+                        {/* Payment attempted but not completed — prominent retry cue, no re-fill needed */}
+                        {paymentIncomplete && (
+                          <div style={{ marginBottom:16, padding:'12px 14px', background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.35)', borderRadius:10, textAlign:'left', display:'flex', alignItems:'flex-start', gap:10 }}>
+                            <span style={{ color:'#EF4444', flexShrink:0, marginTop:1, display:'inline-flex' }}><IcoWarn size={18} /></span>
+                            <div>
+                              <div style={{ fontSize:14, fontWeight:800, color:'#EF4444', fontFamily:'Montserrat,sans-serif' }}>{t('Payment not completed — please try again', 'Payment पूरा नहीं हुआ — फिर से कोशिश करें')}</div>
+                              <div style={{ fontSize:12.5, color:'var(--ink-2)', marginTop:4, lineHeight:1.5 }}>{t('Payment was not confirmed. If any amount was debited, it is usually auto-refunded by the bank. Your details are saved — tap below to retry.', 'Payment confirm नहीं हुआ। अगर कोई राशि कटी है तो bank आमतौर पर अपने आप refund कर देता है। आपकी details save हैं — नीचे tap करके फिर से try करें।')}</div>
+                            </div>
+                          </div>
+                        )}
                         <div style={{ color:'#FBB724', marginBottom:8, display:'flex', justifyContent:'center' }}><IcoHourglass size={22} /></div>
-                        <div style={{ fontSize:14, fontWeight:800, color:'#FBB724', fontFamily:'Montserrat,sans-serif' }}>{t('Payment Pending', 'Payment Pending')}</div>
+                        <div style={{ fontSize:14, fontWeight:800, color:'#FBB724', fontFamily:'Montserrat,sans-serif' }}>{t('Payment Pending', 'Payment बाकी है')}</div>
                         <div style={{ fontSize:14, color:'var(--ink-2)', marginTop:6, marginBottom:14 }}>{t('Complete your Phase 1 payment to activate your registration.', 'अपनी registration activate करने के लिए Phase 1 payment पूरा करें।')}</div>
                         {/* DOB backfill: players registered before the age gate existed */}
                         {!regStatus?.dob && (
@@ -797,8 +817,12 @@ export function Registration() {
                             const cf = (window as any).Cashfree({ mode:'production' });
                             cf.checkout({ paymentSessionId: pay.paymentSessionId });
                           } catch(e:any){ alert(e.message); } finally { setPayLoading(false); }
-                        }} style={{ padding:'12px 28px', background:'linear-gradient(135deg,#FF7A29,#C94E0E)', border:'none', borderRadius:10, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:800, fontSize:14, cursor:'pointer', opacity:((!regStatus?.dob && !(dob && dobValid)) || !agreed) ? .5 : 1 }}>
-                          {payLoading ? t('Processing…', 'Processing…') : t('COMPLETE PAYMENT →', 'PAYMENT पूरा करें →')}
+                        }} style={{ width:'100%', maxWidth:340, padding:'16px 28px', background:'linear-gradient(135deg,#FF8A3D,#FF7A29 45%,#D95E10)', border:'none', borderRadius:12, color:'#fff', fontFamily:'Montserrat,sans-serif', fontWeight:900, fontSize:15, letterSpacing:'.06em', cursor:'pointer', boxShadow:'0 8px 24px rgba(255,122,41,.4)', opacity:((!regStatus?.dob && !(dob && dobValid)) || !agreed) ? .5 : 1 }}>
+                          {payLoading
+                            ? t('Processing…', 'Processing…')
+                            : paymentIncomplete
+                              ? t('RETRY PAYMENT →', 'फिर से PAYMENT करें →')
+                              : t('COMPLETE PAYMENT →', 'PAYMENT पूरा करें →')}
                         </button>
                       </div>
                     )}
@@ -1144,6 +1168,30 @@ export function Registration() {
                 <p style={{ fontSize:11, color:'var(--ink-3)', lineHeight:1.5, margin:'0 0 12px' }}>
                   {t('Payment of the Phase 1 fee gives you evaluation access — it does not guarantee selection, Auction Pool entry or tournament participation.', 'Phase 1 fee का भुगतान evaluation access देता है — यह selection, Auction Pool में जगह या tournament participation की guarantee नहीं है।')}
                 </p>
+
+                {/* ── TRUST STRIP — factual reassurance at the point of payment (no hype) ── */}
+                <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.14)', borderRadius:10, padding:'12px 14px', marginBottom:14, display:'grid', gap:9 }}>
+                  <div style={{ display:'flex', alignItems:'flex-start', gap:9, fontSize:12, color:'var(--ink-2)', lineHeight:1.5 }}>
+                    <span style={{ color:'#E8B23D', flexShrink:0, marginTop:1, display:'inline-flex' }}><IcoList size={14} /></span>
+                    <span>{t('Last season, 14,000+ players registered for BCPL.', 'पिछले season, 14,000+ players ने BCPL के लिए register किया।')}</span>
+                  </div>
+                  <div style={{ display:'flex', alignItems:'flex-start', gap:9, fontSize:12, color:'var(--ink-2)', lineHeight:1.5 }}>
+                    <span style={{ color:'#E8B23D', flexShrink:0, marginTop:1, display:'inline-flex' }}><IcoClock size={14} /></span>
+                    <span>{t('Result within 15 days of your video submission.', 'आपके video submission के 15 दिनों के भीतर result।')}</span>
+                  </div>
+                  <div style={{ display:'flex', alignItems:'flex-start', gap:9, fontSize:12, color:'var(--ink-2)', lineHeight:1.5 }}>
+                    <span style={{ color:'#E8B23D', flexShrink:0, marginTop:1, display:'inline-flex' }}><IcoScale size={14} /></span>
+                    <span>
+                      {t('Fees are non-refundable after successful payment, except where the', 'सफल भुगतान के बाद fees non-refundable हैं, सिवाय उन स्थितियों के जो')}{' '}
+                      <Link href="/refunds" style={{ color:'#FF7A29', textDecoration:'none', fontWeight:600 }}>{t('Refund & Cancellation Policy', 'Refund & Cancellation Policy')}</Link>{' '}
+                      {t('expressly provides.', 'में साफ़ लिखी हैं।')}
+                    </span>
+                  </div>
+                  <div style={{ display:'flex', alignItems:'flex-start', gap:9, fontSize:12, color:'var(--ink-2)', lineHeight:1.5 }}>
+                    <span style={{ color:'#E8B23D', flexShrink:0, marginTop:1, display:'inline-flex' }}><IcoLock size={14} /></span>
+                    <span>{t('Payments are processed securely via Cashfree.', 'Payments Cashfree के ज़रिए securely process होते हैं।')}</span>
+                  </div>
+                </div>
 
                 {/* Pay CTA */}
                 <button

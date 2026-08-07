@@ -17,7 +17,7 @@ import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, type Match, type AppBanner, type Team } from '@/lib/api';
+import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, type Match, type AppBanner, type Team } from '@/lib/api';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { teamLogoUri } from '@/app/teams';
@@ -301,6 +301,85 @@ function TeamsStrip() {
   );
 }
 
+/**
+ * Resume banner for a logged-in player whose Phase 1 registration is incomplete
+ * because the entry fee is still unpaid. Tapping "जारी रहें" jumps into the
+ * register screen, which resumes directly on the Confirm & Pay step (see
+ * register.tsx syncStatus).
+ *
+ * COMPLIANCE: legacy carryover players (dashboard `carryover` flag / phase1Status
+ * 'selected' waived) MUST NEVER see a payment prompt — they are hard-excluded.
+ */
+function ResumeRegistrationBanner() {
+  const c = useColors();
+  const router = useRouter();
+  const { t } = useLang();
+  const { token } = useAuth();
+
+  const q = useQuery({
+    queryKey: ['dashboard', token],
+    queryFn: () => getDashboard(token as string),
+    enabled: !!token,
+  });
+
+  const reg = q.data?.registration;
+  // Carryover / waived players are excluded outright — never a payment prompt.
+  if (!reg || reg.carryover === true || reg.phase1Status === 'selected') return null;
+  // Show only when Phase 1 is registered-but-unpaid: payment record pending, or
+  // no payment record yet while the registration status is still 'pending'.
+  const paymentPending = q.data?.phase1Payment?.status === 'pending';
+  const noPaymentYet = !q.data?.phase1Payment && reg.phase1Status === 'pending';
+  if (!paymentPending && !noPaymentYet) return null;
+
+  return (
+    <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
+      <Pressable
+        onPress={() => router.push('/register')}
+        testID="home-resume-registration"
+        style={({ pressed }) => ({ opacity: pressed ? 0.92 : 1, borderRadius: 18 })}
+      >
+        <Card padding={0} style={{ overflow: 'hidden', borderColor: 'rgba(255,61,166,0.45)', borderWidth: 1 }}>
+          <LinearGradient
+            colors={['rgba(124,92,255,0.16)', 'rgba(255,61,166,0.12)']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16 }}>
+            <LinearGradient
+              colors={['#7C5CFF', '#FF3DA6']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' }}
+            >
+              <Feather name="clock" size={20} color="#fff" />
+            </LinearGradient>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, letterSpacing: 1.4, marginBottom: 4 }}>
+                {t('REGISTRATION INCOMPLETE', 'रजिस्ट्रेशन अधूरा')}
+              </Text>
+              <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, lineHeight: 21 }}>
+                {t('Your registration is incomplete — payment is pending', 'आपका registration अधूरा है — payment बाकी है')}
+              </Text>
+            </View>
+          </View>
+          <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+            <View style={{ borderRadius: 14, overflow: 'hidden' }}>
+              <LinearGradient colors={['#7C5CFF', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFill} />
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 13 }}>
+                <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15, letterSpacing: 0.3 }}>
+                  {t('Continue', 'जारी रखें')}
+                </Text>
+                <Feather name="arrow-right" size={17} color="#fff" />
+              </View>
+            </View>
+          </View>
+        </Card>
+      </Pressable>
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   const c = useColors();
   const router = useRouter();
@@ -346,6 +425,8 @@ export default function HomeScreen() {
         <View style={{ height: appBarHeight }} />
 
         <BannerCarousel banners={bannersQ.data?.banners?.length ? bannersQ.data.banners : HARDCODED_BANNERS} />
+
+        {token ? <ResumeRegistrationBanner /> : null}
 
         {token ? (
           <View style={{ paddingHorizontal: 16, marginTop: 16 }}>

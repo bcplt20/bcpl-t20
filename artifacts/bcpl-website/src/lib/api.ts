@@ -376,6 +376,24 @@ export const adminGetStats = () =>
     users: { total:number };
   }>("GET", "/admin/stats");
 
+// Admin conversion funnel — staged counts (all / last 7d / last 30d)
+export type FunnelStage = { all: number; d7: number; d30: number };
+export type ConversionFunnel = {
+  funnel: {
+    draftsStarted: FunnelStage;
+    usersTotal: FunnelStage;
+    registrationsTotal: FunnelStage;
+    phase1Paid: FunnelStage;
+    videoSubmitted: FunnelStage;
+    selected: FunnelStage;
+    phase2Paid: FunnelStage;
+    kycDone: FunnelStage;
+  };
+  carryoverCount: number;
+};
+export const adminGetConversionFunnel = () =>
+  adminReq<ConversionFunnel>("GET", "/admin/conversion-funnel");
+
 // Phase 1 Registrations
 export const adminGetRegistrations = (params?: Record<string, string>) =>
   adminReq<{ registrations: any[]; total: number }>(

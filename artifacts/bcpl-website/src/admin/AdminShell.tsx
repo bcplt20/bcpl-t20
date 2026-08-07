@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import AdminSettingsView, { loadCoAdmins, ALL_SECTIONS } from "./views/AdminSettingsView";
 import type { CoAdmin } from "./views/AdminSettingsView";
 import DashboardView        from "./views/DashboardView";
+import FunnelView           from "./views/FunnelView";
 import UsersView            from "./views/UsersView";
 import FinanceView          from "./views/FinanceView";
 import MarketingView        from "./views/MarketingView";
@@ -46,6 +47,7 @@ type NavGroup = { title: string; items: NavItem[] };
 const NAV: NavGroup[] = [
   { title: "DASHBOARD", items: [
     { id:"dashboard",    label:"Analytics",         icon:"▣", badge:"Live", badgeColor:"#10B981" },
+    { id:"funnel",       label:"Conversion Funnel", icon:"⧗" },
     { id:"forecast",     label:"Forecasting",       icon:"↗" },
   ]},
   { title: "REGISTRATIONS", items: [
@@ -126,6 +128,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "dashboard":      return <DashboardView onNavigate={navigate} refreshTick={autoTick} />;
     case "users":          return <UsersView key={"u"+pk} onNavigate={navigate} initialQuick={payload?.quick} refreshTick={autoTick} />;
     case "finance":        return <FinanceView key={"fin"+pk} onNavigate={navigate} refreshTick={autoTick} />;
+    case "funnel":         return <FunnelView />;
     case "forecast":       return <ForecastView />;
     case "marketing":      return <MarketingView />;
     case "seo":            return <SEOView />;

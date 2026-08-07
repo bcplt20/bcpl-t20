@@ -5,6 +5,7 @@ import { useFees, inr } from "../lib/fees";
 import { SEASON } from "../lib/season";
 import { BCPLFooter } from "../components/BCPLFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import { ResumeBanner } from "../components/ResumeBanner";
 import { useLang } from "../lib/i18n";
 import { FlipCountdown } from "../components/FlipCountdown";
 import { IcoCheck, IcoShield, IcoClock, IcoLock, IcoList, IcoTrophy, IcoPin, IcoBat, IcoBall, IcoStar, IcoFlag, IcoStadium } from "../lib/icons";
@@ -520,6 +521,9 @@ export function Home() {
 
       {/* ══ SHARED HEADER ══ */}
       <SiteHeader active="Home" />
+
+      {/* ══ RESUME NUDGE — helps visitors finish an incomplete registration ══ */}
+      <ResumeBanner />
 
       {/* ══ 1 · CINEMATIC HERO — the dream first ══ */}
       <section style={{ position:"relative", overflow:"hidden", background:"#16223C" }}>

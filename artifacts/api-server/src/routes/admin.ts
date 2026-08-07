@@ -28,6 +28,7 @@ import {
   trialAllocationsTable,
   trialCheckinsTable,
   physicalAssessmentsTable,
+  registrationDraftsTable,
 } from "@workspace/db/schema";
 import { eq, desc, count, and, inArray, lt, lte, gte, isNotNull, ilike, sql } from "drizzle-orm";
 import { sendVideoReminders } from "./video";
@@ -291,6 +292,115 @@ router.get("/stats", async (_req, res) => {
     });
   } catch (err: any) {
     console.error("[admin/stats]", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* ─── GET /api/admin/conversion-funnel ─────────────────────────────
+   Staged conversion counts for the admin funnel view. Each stage is
+   counted for all-time and restricted to the last 7 / 30 days (by the
+   created_at of the row that represents that stage).
+
+   Paid-conversion semantics mirror marketing.ts /funnel:
+     PAID_STATUSES = success | paid, counted as DISTINCT registrations.
+
+   Legacy PAID carryover players (imported "selected" with no real
+   payments — see lib/carryover.ts) inflate the "selected"/phase2 stages
+   without ever paying Phase 1, which would distort paid-conversion math.
+   We do NOT silently subtract them from every stage (they are real
+   players); instead we return carryoverCount so the UI can annotate the
+   funnel and explain the gap between paid and selected. ─────────────── */
+const FUNNEL_PAID = ["success", "paid"];
+
+router.get("/conversion-funnel", async (_req, res) => {
+  try {
+    const now = Date.now();
+    const d7  = new Date(now - 7  * 24 * 3600 * 1000);
+    const d30 = new Date(now - 30 * 24 * 3600 * 1000);
+    const c = sql<number>`count(*)::int`;
+    const cDistinctReg = sql<number>`count(distinct registration_id)::int`;
+
+    // For each stage build [all, 7d, 30d]. Windowed queries add a created_at
+    // filter on the same table that owns the stage.
+    const [
+      // draftsStarted: every autosave draft row
+      [draftsAll], [drafts7], [drafts30],
+      // usersTotal: OTP-verified accounts only
+      [usersAll], [users7], [users30],
+      // registrationsTotal
+      [regsAll], [regs7], [regs30],
+      // phase1Paid: distinct regs with a successful phase1 payment
+      [p1PaidAll], [p1Paid7], [p1Paid30],
+      // videoSubmitted: distinct regs with a submitted skill video
+      [vidAll], [vid7], [vid30],
+      // selected
+      [selAll], [sel7], [sel30],
+      // phase2Paid: distinct regs with a successful phase2 payment
+      [p2PaidAll], [p2Paid7], [p2Paid30],
+      // kycDone: verified KYC records
+      [kycAll], [kyc7], [kyc30],
+      // carryoverCount: legacy paid carryover registrations (consents.legacyCarryover)
+      [carryover],
+    ] = await Promise.all([
+      db.select({ n: c }).from(registrationDraftsTable),
+      db.select({ n: c }).from(registrationDraftsTable).where(gte(registrationDraftsTable.startedAt, d7)),
+      db.select({ n: c }).from(registrationDraftsTable).where(gte(registrationDraftsTable.startedAt, d30)),
+
+      db.select({ n: c }).from(usersTable).where(eq(usersTable.isVerified, true)),
+      db.select({ n: c }).from(usersTable).where(and(eq(usersTable.isVerified, true), gte(usersTable.createdAt, d7))),
+      db.select({ n: c }).from(usersTable).where(and(eq(usersTable.isVerified, true), gte(usersTable.createdAt, d30))),
+
+      db.select({ n: c }).from(registrationsTable),
+      db.select({ n: c }).from(registrationsTable).where(gte(registrationsTable.createdAt, d7)),
+      db.select({ n: c }).from(registrationsTable).where(gte(registrationsTable.createdAt, d30)),
+
+      db.select({ n: cDistinctReg }).from(phase1PaymentsTable).where(inArray(phase1PaymentsTable.status, FUNNEL_PAID)),
+      db.select({ n: cDistinctReg }).from(phase1PaymentsTable).where(and(inArray(phase1PaymentsTable.status, FUNNEL_PAID), gte(phase1PaymentsTable.createdAt, d7))),
+      db.select({ n: cDistinctReg }).from(phase1PaymentsTable).where(and(inArray(phase1PaymentsTable.status, FUNNEL_PAID), gte(phase1PaymentsTable.createdAt, d30))),
+
+      db.select({ n: cDistinctReg }).from(phase1VideosTable),
+      db.select({ n: cDistinctReg }).from(phase1VideosTable).where(gte(phase1VideosTable.submittedAt, d7)),
+      db.select({ n: cDistinctReg }).from(phase1VideosTable).where(gte(phase1VideosTable.submittedAt, d30)),
+
+      db.select({ n: c }).from(registrationsTable).where(eq(registrationsTable.phase1Status, "selected")),
+      db.select({ n: c }).from(registrationsTable).where(and(eq(registrationsTable.phase1Status, "selected"), gte(registrationsTable.createdAt, d7))),
+      db.select({ n: c }).from(registrationsTable).where(and(eq(registrationsTable.phase1Status, "selected"), gte(registrationsTable.createdAt, d30))),
+
+      db.select({ n: cDistinctReg }).from(phase2PaymentsTable).where(inArray(phase2PaymentsTable.status, FUNNEL_PAID)),
+      db.select({ n: cDistinctReg }).from(phase2PaymentsTable).where(and(inArray(phase2PaymentsTable.status, FUNNEL_PAID), gte(phase2PaymentsTable.createdAt, d7))),
+      db.select({ n: cDistinctReg }).from(phase2PaymentsTable).where(and(inArray(phase2PaymentsTable.status, FUNNEL_PAID), gte(phase2PaymentsTable.createdAt, d30))),
+
+      db.select({ n: c }).from(kycRecordsTable).where(eq(kycRecordsTable.status, "verified")),
+      db.select({ n: c }).from(kycRecordsTable).where(and(eq(kycRecordsTable.status, "verified"), gte(kycRecordsTable.verifiedAt, d7))),
+      db.select({ n: c }).from(kycRecordsTable).where(and(eq(kycRecordsTable.status, "verified"), gte(kycRecordsTable.verifiedAt, d30))),
+
+      db.select({ n: c }).from(registrationsTable).where(sql`consents -> 'legacyCarryover' is not null`),
+    ]);
+
+    const stage = (a: { n: number } | undefined, w7: { n: number } | undefined, w30: { n: number } | undefined) => ({
+      all:  Number(a?.n ?? 0),
+      d7:   Number(w7?.n ?? 0),
+      d30:  Number(w30?.n ?? 0),
+    });
+
+    res.json({
+      funnel: {
+        draftsStarted:      stage(draftsAll, drafts7, drafts30),
+        usersTotal:         stage(usersAll, users7, users30),
+        registrationsTotal: stage(regsAll, regs7, regs30),
+        phase1Paid:         stage(p1PaidAll, p1Paid7, p1Paid30),
+        videoSubmitted:     stage(vidAll, vid7, vid30),
+        selected:           stage(selAll, sel7, sel30),
+        phase2Paid:         stage(p2PaidAll, p2Paid7, p2Paid30),
+        kycDone:            stage(kycAll, kyc7, kyc30),
+      },
+      // Legacy paid carryover players (all-time): imported as "selected"
+      // with no Phase-1 payment/video. Excluded from paid-conversion math;
+      // surfaced so the UI can annotate the paid→selected gap.
+      carryoverCount: Number(carryover?.n ?? 0),
+    });
+  } catch (err: any) {
+    console.error("[admin/conversion-funnel]", err);
     res.status(500).json({ error: err.message });
   }
 });
