@@ -151,10 +151,13 @@ router.post("/enquiry", async (req, res) => {
   }
 
   // Best-effort admin alert. NEVER fail the API on email problems — the outbox
-  // retries, and the row above is already durable. Gated by remindersEnabled()
-  // so no mail fires outside production / without the flag.
+  // retries, and the row above is already durable. Real Brevo keys live in dev,
+  // so this alert path is gated on NODE_ENV === "production" as a NON-OVERRIDABLE
+  // condition (REMINDERS_ENABLED cannot force a real send in dev). Outside
+  // production we always dry-run log — regardless of remindersEnabled().
+  const canSendAlert = process.env["NODE_ENV"] === "production" && remindersEnabled();
   try {
-    if (remindersEnabled()) {
+    if (canSendAlert) {
       const to = adminAlertRecipient();
       if (to) {
         const tpl = tplSponsorEnquiry({

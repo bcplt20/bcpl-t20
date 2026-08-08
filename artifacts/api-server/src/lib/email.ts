@@ -534,7 +534,7 @@ export function tplSponsorEnquiry(p: {
         children: `<p style="font-size:14px;color:${COLORS.inkSoft};margin:0;line-height:1.6;">A new sponsorship enquiry has been received. The details are recorded in the admin panel &mdash; please follow up with the contact below.</p>`,
       })}
       ${KeyValueTable(rows)}
-      ${p.message ? NoteBox("Message: " + p.message) : ""}
+      ${p.message ? NoteBox("Message: " + esc(p.message)) : ""}
       ${PrimaryCTA("OPEN ADMIN PANEL", `${SITE_URL}/admin`, COLORS.gold)}
     `),
   };

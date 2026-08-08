@@ -13,7 +13,7 @@
  *
  * Brevo is fully mocked — no real email can fire (keys live in dev).
  */
-import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from "vitest";
 import request from "supertest";
 import { sql } from "drizzle-orm";
 
@@ -143,7 +143,15 @@ describe("POST /api/sponsors/enquiry — rate limit (3/hour per IP)", () => {
 });
 
 describe("admin-alert email gating", () => {
-  it("dispatches a best-effort email when reminders are enabled", async () => {
+  const origEnv = process.env.NODE_ENV;
+  afterEach(() => {
+    if (origEnv === undefined) delete process.env.NODE_ENV;
+    else process.env.NODE_ENV = origEnv;
+    delete process.env.REMINDERS_ENABLED;
+  });
+
+  it("dispatches a best-effort email in production when reminders are enabled", async () => {
+    process.env.NODE_ENV = "production";
     process.env.REMINDERS_ENABLED = "1";
     vi.mocked(email.sendEmail).mockClear();
     __resetEnquiryRateLimit();
@@ -155,10 +163,23 @@ describe("admin-alert email gating", () => {
     const arg = vi.mocked(email.sendEmail).mock.calls[0][0];
     expect(arg.to).toBe("ops@bcplt20.test");
     expect(arg.subject).toContain("sponsorship enquiry");
-    delete process.env.REMINDERS_ENABLED;
+  });
+
+  it("DRY RUN in dev even with REMINDERS_ENABLED=1 (prod-only, non-overridable)", async () => {
+    process.env.NODE_ENV = "development";
+    process.env.REMINDERS_ENABLED = "1";
+    vi.mocked(email.sendEmail).mockClear();
+    __resetEnquiryRateLimit();
+    const r = await request(app).post("/api/sponsors/enquiry")
+      .set("x-forwarded-for", "77.2.0.3").send(payload());
+    expect(r.status).toBe(201);
+    createdIds.push(r.body.id);
+    // dev is a non-overridable dry-run — REMINDERS_ENABLED cannot force a send
+    expect(email.sendEmail).not.toHaveBeenCalled();
   });
 
   it("never fails the API when the email send throws", async () => {
+    process.env.NODE_ENV = "production";
     process.env.REMINDERS_ENABLED = "1";
     vi.mocked(email.sendEmail).mockRejectedValueOnce(new Error("brevo down"));
     __resetEnquiryRateLimit();
@@ -167,7 +188,6 @@ describe("admin-alert email gating", () => {
     expect(r.status).toBe(201);
     expect(r.body.ok).toBe(true);
     createdIds.push(r.body.id);
-    delete process.env.REMINDERS_ENABLED;
   });
 });
 

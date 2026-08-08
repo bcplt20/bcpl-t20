@@ -66,10 +66,10 @@ export const ROLE_VIEWS: Record<AdminRoleName, string[]> = {
   VIDEO_AI_OPERATIONS:["dashboard", "video_review", "selection", "leaderboard", "player_profiles"],
   KYC_TEAM:           ["dashboard", "phase2_kyc", "player_profiles", "fraud"],
   TRIAL_CITY_MANAGER: ["dashboard", "trial_cities", "player_profiles"],
-  CONTENT_TEAM:       ["dashboard", "media", "banners", "cms", "sponsors", "content_cal", "news", "whatsapp_tpl", "seo", "marketing"],
+  CONTENT_TEAM:       ["dashboard", "media", "banners", "cms", "sponsors", "sponsor_enquiries", "content_cal", "news", "whatsapp_tpl", "seo", "marketing"],
   MATCH_OPERATIONS:   ["dashboard", "matches", "live_scoring", "teams", "auction", "contracts", "leaderboard", "news"],
   SUPPORT_TEAM:       ["dashboard", "support", "users", "player_profiles"],
-  FINANCE_TEAM:       ["dashboard", "finance", "forecast", "data_export"],
+  FINANCE_TEAM:       ["dashboard", "finance", "forecast", "data_export", "sponsor_enquiries"],
   /* Trial-day field staff — they work in the mobile staff app (/staff),
      NOT the admin panel. "staff_app" is not an admin panel view, so the
      panel shows them nothing; the /api/staff endpoints gate by role. */

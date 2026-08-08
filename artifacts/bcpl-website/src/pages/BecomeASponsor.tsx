@@ -157,8 +157,8 @@ function SponsorEnquiryForm() {
           {t('Thank you — we\u2019ve received your enquiry.', 'धन्यवाद — आपकी enquiry हमें मिल गई है।')}
         </h3>
         <p className="sp-sec-sub" style={{ margin: '0 auto', maxWidth: 480 }}>
-          {t('Our team will get in touch with you soon to discuss the right partnership for your brand.',
-             'हमारी team जल्द ही आपके brand के लिए सही partnership पर बात करने के लिए संपर्क करेगी।')}
+          {t('Our team will get in touch to discuss the right partnership for your brand.',
+             'हमारी team आपके brand के लिए सही partnership पर बात करने के लिए आपसे संपर्क करेगी।')}
         </p>
       </div>
     );
@@ -421,7 +421,7 @@ export default function BecomeASponsor() {
               </a>
             ) : (
               <p className="sp-note" style={{ margin: 0 }}>
-                {t('The deck is on its way — email us and we\u2019ll send it over.', 'Deck जल्द आ रहा है — हमें email करें, हम भेज देंगे।')}
+                {t('Email us and we\u2019ll send the deck over.', 'हमें email करें, हम deck भेज देंगे।')}
               </p>
             )}
           </div>

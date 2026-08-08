@@ -13,12 +13,13 @@ const STATUS: Array<{ id: EnquiryStatus; label: string; color: string }> = [
 ];
 const colorOf = (s: EnquiryStatus) => STATUS.find(x => x.id === s)?.color ?? "#8593B3";
 
+/* Keys match the server's BUDGET_RANGES vocabulary exactly (case-sensitive). */
 const BUDGET_LABEL: Record<string, string> = {
-  "under-1l": "Under ₹1L",
-  "1-5l": "₹1–5L",
-  "5-15l": "₹5–15L",
-  "15l-plus": "₹15L+",
-  "prefer-not": "Prefer not to say",
+  "under-1L": "Under ₹1L",
+  "1-5L": "₹1–5L",
+  "5-15L": "₹5–15L",
+  "15L-plus": "₹15L+",
+  "custom": "Prefer not to say",
 };
 
 function fmtDate(iso: string): string {
@@ -73,13 +74,13 @@ export default function SponsorEnquiriesView() {
   };
 
   const saveNote = async (row: SponsorEnquiry) => {
-    const note = noteDraft[row.id] ?? row.note ?? "";
-    if (note === (row.note ?? "")) return;
+    const adminNote = noteDraft[row.id] ?? row.adminNote ?? "";
+    if (adminNote === (row.adminNote ?? "")) return;
     setSavingId(row.id);
     const prev = rows;
-    setRows(rs => rs.map(r => r.id === row.id ? { ...r, note } : r));
+    setRows(rs => rs.map(r => r.id === row.id ? { ...r, adminNote } : r));
     try {
-      await updateSponsorEnquiry(row.id, { note });
+      await updateSponsorEnquiry(row.id, { adminNote });
     } catch {
       setRows(prev);
       setErr("Couldn't save note — try again.");
@@ -140,7 +141,7 @@ export default function SponsorEnquiriesView() {
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {filtered.map(row => {
-            const draft = noteDraft[row.id] ?? row.note ?? "";
+            const draft = noteDraft[row.id] ?? row.adminNote ?? "";
             const saving = savingId === row.id;
             return (
               <div key={row.id} style={{ ...card, border: `1px solid ${colorOf(row.status)}40` }}>
@@ -155,7 +156,7 @@ export default function SponsorEnquiriesView() {
                     <div style={{ fontSize: 12, color: "#CBD5E1", marginTop: 6, display: "flex", gap: 14, flexWrap: "wrap" }}>
                       <a href={`tel:${row.phone}`} style={{ color: "#93C5FD", textDecoration: "none" }}>📞 {row.phone}</a>
                       {row.email && <a href={`mailto:${row.email}`} style={{ color: "#93C5FD", textDecoration: "none" }}>✉ {row.email}</a>}
-                      <span style={{ color: "#FFD873" }}>💰 {BUDGET_LABEL[row.budget] ?? row.budget}</span>
+                      <span style={{ color: "#FFD873" }}>💰 {BUDGET_LABEL[row.budgetRange] ?? row.budgetRange}</span>
                     </div>
                   </div>
 
@@ -190,8 +191,8 @@ export default function SponsorEnquiriesView() {
                       rows={2}
                       style={{ flex: 1, resize: "vertical", background: "#1F2B49", border: "1px solid #33436B", borderRadius: 10, padding: "8px 10px", color: "#E2E8F0", fontSize: 12.5, fontFamily: "inherit", outline: "none" }}
                     />
-                    <button onClick={() => void saveNote(row)} disabled={saving || draft === (row.note ?? "")}
-                      style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: draft === (row.note ?? "") ? "#33436B" : "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 11, fontWeight: 800, cursor: draft === (row.note ?? "") ? "default" : "pointer", opacity: saving ? 0.7 : 1, whiteSpace: "nowrap" }}>
+                    <button onClick={() => void saveNote(row)} disabled={saving || draft === (row.adminNote ?? "")}
+                      style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: draft === (row.adminNote ?? "") ? "#33436B" : "linear-gradient(135deg,#FF6B00,#FF8C40)", color: "#fff", fontSize: 11, fontWeight: 800, cursor: draft === (row.adminNote ?? "") ? "default" : "pointer", opacity: saving ? 0.7 : 1, whiteSpace: "nowrap" }}>
                       {saving ? "Saving…" : "Save note"}
                     </button>
                   </div>

@@ -1,42 +1,47 @@
 /**
  * Admin API for Sponsorship Enquiries — leads submitted from the public
- * Sponsorship Hub (POST /api/sponsors/enquiry). The admin endpoints are
- * being built in parallel in the api-server; this client routes through the
- * shared adminReq plumbing (auth headers, token renewal, error shape).
+ * Sponsorship Hub (POST /api/sponsors/enquiry). Routes through the shared
+ * adminReq plumbing (auth headers, token renewal, error shape).
  *
- * Expected server routes (admin):
- *   GET  /admin/sponsors/enquiries            → { enquiries: SponsorEnquiry[] }
- *   PATCH /admin/sponsors/enquiries/:id       → { enquiry: SponsorEnquiry }
- *     body: { status?: EnquiryStatus; note?: string }
+ * Server routes (see api-server/src/routes/sponsorEnquiries.ts):
+ *   GET   /api/sponsors/admin/enquiries[?status=]  → { enquiries, statuses, budgetRanges }
+ *   PATCH /api/sponsors/admin/enquiries/:id        → { ok, enquiry }
+ *     body: { status?: EnquiryStatus; adminNote?: string }
  *
- * All calls are null-safe at the caller (the view degrades to an empty list
- * with a friendly message if the endpoint isn't live yet).
+ * Gated server-side to CONTENT_TEAM / FINANCE_TEAM (SUPER_ADMIN always passes).
+ * The view degrades to an empty list with a friendly message on any error.
  */
 import { adminReq } from "../../lib/adminHttp";
 
 export type EnquiryStatus = "new" | "contacted" | "closed";
+/** Fixed server vocabulary — matches BUDGET_RANGES in the API route. */
+export type BudgetRange = "under-1L" | "1-5L" | "5-15L" | "15L-plus" | "custom";
 
 export type SponsorEnquiry = {
   id: string;
   name: string;
   company: string;
-  designation: string;
+  designation: string | null;
   phone: string;
-  email: string;
-  budget: string;
-  message: string;
+  email: string | null;
+  budgetRange: string;
+  message: string | null;
+  source: string;
   status: EnquiryStatus;
-  note: string;
+  adminNote: string | null;
   createdAt: string; // ISO
 };
 
-export const fetchSponsorEnquiries = () =>
-  adminReq<{ enquiries: SponsorEnquiry[] }>("GET", "/admin/sponsors/enquiries");
+export const fetchSponsorEnquiries = (status?: EnquiryStatus) =>
+  adminReq<{ enquiries: SponsorEnquiry[]; statuses?: string[]; budgetRanges?: string[] }>(
+    "GET",
+    `/sponsors/admin/enquiries${status ? `?status=${encodeURIComponent(status)}` : ""}`,
+  );
 
 export const updateSponsorEnquiry = (
   id: string,
-  patch: { status?: EnquiryStatus; note?: string },
+  patch: { status?: EnquiryStatus; adminNote?: string },
 ) =>
-  adminReq<{ enquiry: SponsorEnquiry }>(
-    "PATCH", `/admin/sponsors/enquiries/${encodeURIComponent(id)}`, patch,
+  adminReq<{ ok: boolean; enquiry: { id: string; status: EnquiryStatus; adminNote: string | null } }>(
+    "PATCH", `/sponsors/admin/enquiries/${encodeURIComponent(id)}`, patch,
   );

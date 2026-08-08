@@ -202,6 +202,21 @@ describe("sponsor enquiry template — compliance grep (internal ops mail)", () 
       expect(re.test(tpl.subject), `subject matched ${re}`).toBe(false);
     }
   });
+  it("HTML-escapes user-supplied message (no injection)", () => {
+    const evil = E.tplSponsorEnquiry({
+      name: '<b>Na"me</b>', company: "Acme <script>alert(1)</script> Ltd",
+      designation: "Head & Co", phone: "9876543210", email: "a@b.com",
+      budgetRange: "custom", message: "<script>alert('xss')</script> & <img src=x onerror=1>",
+      source: "website", receivedAt: new Date(0),
+    });
+    // Raw <script> must never survive into rendered HTML
+    expect(evil.htmlContent).not.toContain("<script>alert('xss')</script>");
+    expect(evil.htmlContent).not.toContain("<img src=x onerror=1>");
+    // Escaped entities must be present instead
+    expect(evil.htmlContent).toContain("&lt;script&gt;");
+    // company also escaped in the visible body
+    expect(evil.htmlContent).not.toContain("<script>alert(1)</script>");
+  });
   it("subject follows the required Hindi format", () => {
     expect(tpl.subject).toBe("नई sponsorship enquiry — Acme Retail Pvt Ltd");
   });
