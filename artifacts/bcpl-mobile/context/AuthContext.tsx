@@ -52,7 +52,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Wipe any cached data from a previous session (queries are keyed on the
     // token, but clearing guarantees a genuinely fresh dashboard for whoever
     // just logged in — no stale KYC/video/payment state from before).
-    queryClient.clear();
+    queryClient.removeQueries({
+      predicate: (query) => !['sponsors', 'app-media', 'live-matches', 'matches', 'points-table', 'teams', 'news'].includes(query.queryKey[0] as string)
+    });
     setToken(newToken);
     setUser(newUser);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ token: newToken, user: newUser }));
@@ -68,7 +70,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await AsyncStorage.removeItem('bcpl-push-token');
       }
     });
-    queryClient.clear();
+    queryClient.removeQueries({
+      predicate: (query) => !['sponsors', 'app-media', 'live-matches', 'matches', 'points-table', 'teams', 'news'].includes(query.queryKey[0] as string)
+    });
     setToken(null);
     setUser(null);
     await AsyncStorage.removeItem(STORAGE_KEY);

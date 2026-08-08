@@ -556,18 +556,7 @@ export default function HomeScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar
-        right={
-          token ? (
-            <Pressable onPress={() => router.push('/notifications' as any)} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1, width: 40, height: 40, borderRadius: 20, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.line })}>
-              <Feather name="bell" size={18} color={c.ink} />
-              {(notifsQ.data?.unreadCount || 0) > 0 && (
-                <View style={{ position: 'absolute', top: 8, right: 10, width: 8, height: 8, borderRadius: 4, backgroundColor: c.magenta, borderWidth: 1, borderColor: c.card2 }} />
-              )}
-            </Pressable>
-          ) : undefined
-        }
-      />
+      <GlassAppBar />
       <ScrollView
         bounces={false}
         overScrollMode="never"

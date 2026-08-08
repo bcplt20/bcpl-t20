@@ -16,7 +16,7 @@ import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang, type Lang } from '@/context/LanguageContext';
-import { getDashboard, getSponsors, SITE_ASSETS, type Sponsor } from '@/lib/api';
+import { getDashboard, getSponsors, getNotifications, SITE_ASSETS, type Sponsor } from '@/lib/api';
 import { Image } from 'expo-image';
 import { useTheme } from '@/context/ThemeContext';
 import { Badge, Card, ErrorView, LoadingView, GlassAppBar, ScreenBackground, GradientTag, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
@@ -68,7 +68,7 @@ function isKycDone(kycStatus?: string | null, phase2Status?: string | null): boo
   return false;
 }
 
-function LangSwitch() {
+function LangSwitch({ unreadCount = 0 }: { unreadCount?: number }) {
   const c = useColors();
   const { lang, setLang, t } = useLang();
   const { token } = useAuth();
@@ -84,20 +84,40 @@ function LangSwitch() {
         <Text style={[styles.cardTitle, { color: c.ink }]}>{t('Preferences', 'प्राथमिकता')}</Text>
       </View>
       {token ? (
-        <Pressable
-          onPress={() => router.push('/profile')}
-          style={({ pressed }) => [styles.prefRow, { borderTopColor: c.line, opacity: pressed ? 0.7 : 1 }]}
-          testID="profile-row"
-        >
-          <View style={[styles.prefIcon, { backgroundColor: c.card2, borderColor: c.line }]}>
-            <Feather name="user" size={18} color={c.getAccentText(c.magenta)} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>{t('Profile', 'प्रोफ़ाइल')}</Text>
-            <Text style={{ color: c.sub, fontSize: 13, marginTop: 2, fontFamily: 'PlusJakartaSans_500Medium' }}>{t('Your registered player details', 'आपकी रजिस्टर्ड खिलाड़ी जानकारी')}</Text>
-          </View>
-          <Feather name="chevron-right" size={18} color={c.sub} />
-        </Pressable>
+        <>
+          <Pressable
+            onPress={() => router.push('/notifications' as any)}
+            style={({ pressed }) => [styles.prefRow, { borderTopColor: c.line, opacity: pressed ? 0.7 : 1 }]}
+          >
+            <View style={[styles.prefIcon, { backgroundColor: c.card2, borderColor: c.line }]}>
+              <Feather name="bell" size={18} color={c.getAccentText(c.cyan)} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>{t('Notifications', 'नोटिफिकेशन')}</Text>
+              <Text style={{ color: c.sub, fontSize: 13, marginTop: 2, fontFamily: 'PlusJakartaSans_500Medium' }}>{t('Inbox & updates', 'इनबॉक्स और अपडेट')}</Text>
+            </View>
+            {unreadCount > 0 ? (
+              <View style={{ backgroundColor: c.magenta, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, marginRight: 8 }}>
+                <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12 }}>{unreadCount}</Text>
+              </View>
+            ) : null}
+            <Feather name="chevron-right" size={18} color={c.sub} />
+          </Pressable>
+          <Pressable
+            onPress={() => router.push('/profile')}
+            style={({ pressed }) => [styles.prefRow, { borderTopWidth: 1, borderTopColor: c.line, opacity: pressed ? 0.7 : 1 }]}
+            testID="profile-row"
+          >
+            <View style={[styles.prefIcon, { backgroundColor: c.card2, borderColor: c.line }]}>
+              <Feather name="user" size={18} color={c.getAccentText(c.magenta)} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 15 }}>{t('Profile', 'प्रोफ़ाइल')}</Text>
+              <Text style={{ color: c.sub, fontSize: 13, marginTop: 2, fontFamily: 'PlusJakartaSans_500Medium' }}>{t('Your registered player details', 'आपकी रजिस्टर्ड खिलाड़ी जानकारी')}</Text>
+            </View>
+            <Feather name="chevron-right" size={18} color={c.sub} />
+          </Pressable>
+        </>
       ) : null}
 
       <Pressable
@@ -415,6 +435,13 @@ export default function ProfileScreen() {
     enabled: !!token,
   });
 
+  const notifsQ = useQuery({ 
+    queryKey: ['notifications', token], 
+    queryFn: () => getNotifications(token as string).catch(() => null), 
+    staleTime: 60 * 1000,
+    enabled: !!token
+  });
+
   if (!ready) return <LoadingView />;
 
   if (!token) {
@@ -449,7 +476,7 @@ export default function ProfileScreen() {
             </Text>
           </Pressable>
           <View style={{ alignSelf: 'stretch', marginTop: 40, gap: 16 }}>
-            <LangSwitch />
+            <LangSwitch unreadCount={notifsQ.data?.unreadCount || 0} />
             <MoreMenu />
             <ContactSupport />
             <SponsorStrip />
@@ -659,7 +686,7 @@ export default function ProfileScreen() {
             </>
           )}
 
-          <LangSwitch />
+          <LangSwitch unreadCount={notifsQ.data?.unreadCount || 0} />
           <MoreMenu />
           <ContactSupport />
 
