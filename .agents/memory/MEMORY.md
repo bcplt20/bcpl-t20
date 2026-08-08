@@ -23,7 +23,7 @@
 - [API field & status traps](api-field-traps.md) — drizzle camelCase; zod .datetime() needs toISOString; role has 2 historic formats; never invent status strings — grep canonical vocab first
 - [Cashfree verification](cashfree-verification.md) — CF_VERIFY_* creds separate from payment keys, prod-only (dev = stub mode); "service unavailable" 502 = payload bug until proven otherwise
 - [V3 design language](v3-design-language.md) — Aug'26 FINAL: LIGHTENED dark navy (owner rejected emerald AND white/ivory); bgs #1B2E52/#24396B, text >=.88 white; admin #243050
-- [Copy compliance rules](copy-compliance-rules.md) — no scout/BCCI/superlative/absolute-promise copy anywhere; 48h result, 30–60s video, 15-day window; grep gate for every new template/page
+- [Copy compliance rules](copy-compliance-rules.md) — no scout/BCCI/superlative/absolute-promise copy anywhere; 15-day result promise (48h internal only), 30–90s video, 15-day window; grep gate for every new template/page
 - [Subagent briefs](subagent-briefs.md) — end multi-page briefs with "complete ALL, do not stop to ask"; verify via git status, not the report
 - [Phase1 worker CAS claims](phase1-worker-cas.md) — workers stamp claim_token, write via casEvalUpdate only; snapshots frozen; tests assert DB end-state, never run counts
 - [Phase1 AI gate](phase1-ai-gate.md) — aiEnabled gates mock AND real; mock blocked in prod without PHASE1_ALLOW_MOCK=1; E2E must PATCH aiEnabled + sleep 31, reset in traps

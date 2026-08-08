@@ -8,7 +8,7 @@ description: Editorial rulebook from the July 2026 legal copy sweep — wording 
 **The rules** (all user-facing surfaces: pages, emails, SMS, WhatsApp, SEO, receipts):
 1. Phase 1 video evaluation is NEVER described as human/scout/team review → "evaluated against BCPL's Phase 1 assessment criteria" / "BCPL's Phase 1 evaluation process".
 2. No BCCI affiliation claims. Sole exception: "Former President, BCCI" as Sourav Ganguly's factual title.
-3. Result timing in marketing copy: "within 48 hours". Refunds page keeps "15 working days or refund" as a deliberate safe outer bound — do NOT "fix" it to 48h.
+3. Result timing (owner order 2026-08-07): "within 15 days of video submission — usually much sooner". NEVER promise 48 hours anywhere user-facing (48h is only the internal target/resultReleaseHours config). Also no hard support/callback SLAs ("within 24 hours") — use "as soon as possible". A 48h deadline ON the user (e.g. complaint-window in TrialRules) is fine.
 4. Video length: 30–90 seconds (changed from 30–60 on 2026-08-06 by owner). Upload window: 15 days (Home journey, receipts, FAQ all standardized to this).
 5. League descriptor: "India's Corporate Cricket League" — never biggest/largest/world's/most trusted. Aspirations must be clearly visionary, not factual.
 6. No absolute promises: no "zero hidden fees ever", "or full refund", "pay & get shortlisted". Phase 2 fee: "payable only if you qualify and choose to proceed."
