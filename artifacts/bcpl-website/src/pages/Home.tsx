@@ -10,6 +10,7 @@ import { useLang } from "../lib/i18n";
 import { FlipCountdown } from "../components/FlipCountdown";
 import { IcoCheck, IcoShield, IcoClock, IcoLock, IcoList, IcoTrophy, IcoPin, IcoBat, IcoBall, IcoStar, IcoFlag, IcoStadium } from "../lib/icons";
 import { MatchCard } from "../components/MatchCard";
+import { LiveMatchBanner } from "../components/LiveMatchBanner";
 import { groupOf } from "../lib/teamMeta";
 
 const PHASE1_DEADLINE = "2027-02-28T23:59:59+05:30";
@@ -1041,6 +1042,8 @@ export function Home() {
         <div className="W" style={{ position:"relative", zIndex:1 }}>
           <div className="slbl">{t("Live Season","लाइव सीज़न")}</div>
           <h2 className="mont" style={{ fontWeight:900, fontSize:"clamp(24px,4vw,44px)", color:"#fff", textTransform:"uppercase", marginBottom:34 }}>{t("Match Center & Leaderboard","मैच सेंटर और लीडरबोर्ड")}</h2>
+
+          <LiveMatchBanner />
 
           <div className="mc-grid">
             {/* ── Matches column ── */}

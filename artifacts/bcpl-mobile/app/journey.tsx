@@ -376,6 +376,28 @@ function JourneyBody({ d }: { d: Dashboard }) {
         </LinearGradient>
       </Card>
 
+      {/* Badges & Profile Card links */}
+      <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
+        <Pressable onPress={() => router.push('/badges' as any)} style={({ pressed }) => ({ flex: 1, backgroundColor: c.card, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: c.line, opacity: pressed ? 0.8 : 1, alignItems: 'center', flexDirection: 'row', gap: 12 })}>
+          <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(0,220,245,0.1)', alignItems: 'center', justifyContent: 'center' }}>
+            <Feather name="award" size={16} color="#00DCF5" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{t('My Badges', 'मेरे बैज')}</Text>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11, marginTop: 2 }}>{t('Achievements', 'अचीवमेंट्स')}</Text>
+          </View>
+        </Pressable>
+        <Pressable onPress={() => router.push('/player-card' as any)} style={({ pressed }) => ({ flex: 1, backgroundColor: c.card, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: c.line, opacity: pressed ? 0.8 : 1, alignItems: 'center', flexDirection: 'row', gap: 12 })}>
+          <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,61,166,0.1)', alignItems: 'center', justifyContent: 'center' }}>
+            <Feather name="user" size={16} color="#FF3DA6" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }}>{t('Player Card', 'प्लेयर कार्ड')}</Text>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11, marginTop: 2 }}>{t('Share profile', 'प्रोफ़ाइल शेयर')}</Text>
+          </View>
+        </Pressable>
+      </View>
+
       {/* Next action — single derived-step banner (mirrors website getBannerConfig).
           For the video step this is the rich VideoTrialCard with a live countdown. */}
       <NextActionBanner step={step} d={d} />

@@ -5,6 +5,7 @@ import { SiteHeader } from '../components/SiteHeader';
 import { getDashboard, getPlayerTrialVenue, getMyResult, type MyResult } from '../lib/api';
 import { getTrialPass, getProfileCompletion, submitProfileBackfill } from '../lib/api';
 import { ReferralCard } from '../components/ReferralCard';
+import { BadgesGrid } from '../components/BadgesGrid';
 import { clearSession, getSession } from '../lib/auth';
 import { useLang } from '../lib/i18n';
 import { formatRole, formatDateLong, formatDateShort, formatTime, formatBatch } from '../lib/format';
@@ -814,6 +815,21 @@ export function PlayerProfile() {
 
               <div className={`mob-tab-content ${activeTab === 'support' ? 'active' : ''}`}>
                 <ReferralCard />
+                <BadgesGrid />
+                {reg?.regNumber && (
+                  <div style={{ background: '#1F3652', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 14, padding: '22px 20px', marginBottom: 18 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 4 }}>
+                      <IcoIdCard size={20} style={{ color: '#FF7A29' }} />
+                      <span style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 16, color: 'rgba(255,255,255,0.94)' }}>{t('Your Player Card', 'आपका प्लेयर कार्ड')}</span>
+                    </div>
+                    <div style={{ fontSize: 12.5, color: 'var(--ink-3)', marginBottom: 14 }}>
+                      {t('Download your Season 5 digital card and share it.', 'अपना Season 5 डिजिटल कार्ड डाउनलोड करें और शेयर करें।')}
+                    </div>
+                    <button onClick={() => setLocation('/player-card')} style={{ background: 'rgba(255,122,41,0.12)', border: '1px solid rgba(255,122,41,0.45)', color: 'var(--orange)', borderRadius: 9, padding: '10px 18px', fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 13, letterSpacing: '.04em', cursor: 'pointer' }}>
+                      {t('OPEN PLAYER CARD →', 'प्लेयर कार्ड खोलें →')}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 

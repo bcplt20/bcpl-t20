@@ -145,9 +145,12 @@ function FloatingAiButton() {
   );
 }
 
+import { usePushNotifications } from '@/hooks/usePushNotifications';
+
 function RootLayoutNav() {
   const { theme } = useTheme();
   const c = THEMES[theme];
+  usePushNotifications();
   return (
     <>
       <StatusBar style={theme === 'stadium' ? 'light' : 'dark'} />

@@ -14,6 +14,7 @@ import { sendEmail, tplKycComplete, tplKycRejected, adminAlertRecipient, tplKycM
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logNotifications } from "../lib/notify";
+import { notifyKycApproved as pushKycApproved, notifyKycRejected as pushKycRejected } from "../lib/notificationEvents";
 import { z } from "zod";
 
 const router = Router();
@@ -107,6 +108,8 @@ export async function markKycVerified(kycId: string, registrationId: string, use
       ]);
       await logNotifications(user.id, "kyc_complete", { email: em, sms: sm, whatsapp: wa });
     })().catch((e) => console.error("[KYC] kyc_complete notify error", e));
+    // In-app inbox + push (own reserve-first dedupe; never throws).
+    void pushKycApproved(user.id, registrationId);
   }
 }
 
@@ -131,6 +134,8 @@ export async function notifyKycRejected(registrationId: string, userId: string, 
     sendWhatsApp({ phone: user.phone, templateName: WA.KYC_REJECTED, bodyValues: [user.name] }),
   ]);
   await logNotifications(userId, "kyc_rejected", { email: em, sms: sm, whatsapp: wa });
+  // In-app inbox + push (own reserve-first dedupe; never throws).
+  void pushKycRejected(userId, registrationId, reason);
 }
 
 // ─── Admin alert: KYC parked for manual review ───────────────────────────────

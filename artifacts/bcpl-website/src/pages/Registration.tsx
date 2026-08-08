@@ -6,7 +6,7 @@ import {
   sendOtp, verifyOtp, saveAuthToken, isAuthenticated,
   registerPhase1, createPhase1Payment, getRegistrationStatus, updateDob,
 } from '@/lib/api';
-import { fireReferralAttribution } from '@/lib/marketingApi';
+import { fireReferralAttribution, saveReferralCode } from '@/lib/marketingApi';
 import { getDraftKey, queueDraftSave, flushDraftSave, resumeDraft } from '@/lib/draftAutosave';
 import { CONSENT_VERSIONS } from '../lib/legalMeta';
 import { useLang } from '../lib/i18n';
@@ -126,6 +126,15 @@ export function Registration() {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   }, [step]);
+
+  /* Capture ?ref=CODE on /register into the 30-day referral store (same store
+     used by the /r/:code landing page) so direct ref-links attribute too. */
+  useEffect(() => {
+    try {
+      const code = new URLSearchParams(window.location.search).get('ref');
+      if (code && /^[A-Za-z0-9_-]{2,30}$/.test(code)) saveReferralCode(code);
+    } catch { /* best-effort */ }
+  }, []);
   const [name, setName]         = useState('');
   const [email, setEmail]       = useState('');
   const [phone, setPhone]       = useState('');

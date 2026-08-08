@@ -10,11 +10,13 @@ import {
 } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
 import {
   getLiveMatch,
   getScorecard,
+  getMatchMoments,
   type LiveInnings,
   type LiveMatch,
   type Match,
@@ -308,11 +310,93 @@ function ScorecardTab({ matchId }: { matchId: string }) {
   );
 }
 
+function MomentsTab({ moments, c }: { moments: any[], c: any }) {
+  const { t } = useLang();
+  
+  if (!moments || moments.length === 0) {
+    return (
+      <Card style={{ alignItems: 'center', paddingVertical: 40 }}>
+        <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 15 }}>
+          {t('No moments captured yet.', 'अभी तक कोई मोमेंट्स नहीं हैं।')}
+        </Text>
+      </Card>
+    );
+  }
+
+  const getMomentColor = (type: string) => {
+    switch (type) {
+      case 'wicket': return '#FF3DA6';
+      case 'six': return '#00DCF5';
+      case 'fifty': return '#B6FF3C';
+      case 'hundred': return '#FFC53D';
+      case 'hat_trick': return '#5B2BF0';
+      default: return c.cyan;
+    }
+  };
+
+  const getMomentIcon = (type: string) => {
+    switch (type) {
+      case 'wicket': return 'target';
+      case 'six': return 'arrow-up-circle';
+      case 'fifty': return 'award';
+      case 'hundred': return 'star';
+      case 'hat_trick': return 'zap';
+      default: return 'play-circle';
+    }
+  };
+
+  return (
+    <View style={{ gap: 16 }}>
+      {moments.map((m, i) => (
+        <Card key={i} padding={16} border={true} style={{ overflow: 'hidden' }}>
+          <LinearGradient colors={[`${getMomentColor(m.type)}1A`, 'transparent']} style={StyleSheet.absoluteFill} />
+          
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
+            <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: getMomentColor(m.type), alignItems: 'center', justifyContent: 'center' }}>
+              <Feather name={getMomentIcon(m.type) as any} size={20} color="#fff" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                <Text style={{ color: getMomentColor(m.type), fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1 }}>
+                  {m.type.replace('_', ' ')}
+                </Text>
+                {m.over !== undefined && m.ball !== undefined && (
+                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
+                    Ov {m.over}.{m.ball}
+                  </Text>
+                )}
+              </View>
+              <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, lineHeight: 22 }}>
+                {t(m.text, m.textHi || m.text)}
+              </Text>
+              {m.caption ? (
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, marginTop: 4 }}>
+                  {t(m.caption, m.captionHi || m.caption)}
+                </Text>
+              ) : null}
+            </View>
+          </View>
+          
+          {m.clipUrl ? (
+            <Pressable style={({ pressed }) => ({ marginTop: 16, height: 180, borderRadius: 12, overflow: 'hidden', backgroundColor: c.card2, opacity: pressed ? 0.9 : 1, borderWidth: 1, borderColor: c.line })}>
+              {/* If web, can use video tag; otherwise just simulate for now or use expo-av */}
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <Feather name="play-circle" size={48} color={c.sub} />
+                <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13, marginTop: 8 }}>Watch Clip</Text>
+              </View>
+            </Pressable>
+          ) : null}
+        </Card>
+      ))}
+    </View>
+  );
+}
+
 export default function MatchDetailScreen() {
   const c = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const matchId = String(id);
-  const [tab, setTab] = useState<'live' | 'scorecard'>('live');
+  const [tab, setTab] = useState<'live' | 'scorecard' | 'moments'>('live');
   const queryClient = useQueryClient();
   
   const appBarHeight = useAppBarHeight();
@@ -351,6 +435,16 @@ export default function MatchDetailScreen() {
     },
   });
 
+  const momentsQ = useQuery({
+    queryKey: ['match-moments', matchId],
+    queryFn: () => getMatchMoments(matchId).catch(() => null),
+    enabled: !!matchId,
+    refetchInterval: (query) => {
+      const s = liveQ.data?.status;
+      return s === 'live' ? 30_000 : false;
+    }
+  });
+
   const live = liveQ.data;
   const isLive = live?.status === 'live';
 
@@ -380,7 +474,7 @@ export default function MatchDetailScreen() {
             </View>
 
             <View style={[styles.tabs, { backgroundColor: c.card2, borderColor: c.line, borderWidth: 1 }]}>
-              {(['live', 'scorecard'] as const).map((t) => (
+              {(['live', 'scorecard', 'moments'] as const).map((t) => (
                 <Pressable
                   key={t}
                   onPress={() => setTab(t)}
@@ -398,13 +492,13 @@ export default function MatchDetailScreen() {
                       letterSpacing: 0.3,
                     }}
                   >
-                    {t === 'live' ? 'Live Score' : 'Scorecard'}
+                    {t === 'live' ? 'Live Score' : t === 'scorecard' ? 'Scorecard' : 'Moments'}
                   </Text>
                 </Pressable>
               ))}
             </View>
 
-            {tab === 'live' ? <LiveTab live={live} /> : <ScorecardTab matchId={matchId} />}
+            {tab === 'live' ? <LiveTab live={live} /> : tab === 'scorecard' ? <ScorecardTab matchId={matchId} /> : <MomentsTab moments={momentsQ.data?.moments || []} c={c} />}
           </>
         ) : null}
       </ScrollView>

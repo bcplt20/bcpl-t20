@@ -4,6 +4,7 @@ import { BCPLFooter } from "../components/BCPLFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { Skel, SkelRows } from "../components/Skel";
 import { getCommunityScorecard, type CommunityScorecard } from "../lib/api";
+import { MatchMoments, MatchDayPoll } from "../components/MatchExtras";
 import { useLang } from "../lib/i18n";
 
 /* ─── Palette (LIGHTENED DARK theme — mirrors MatchCenter) ─────────── */
@@ -77,11 +78,11 @@ export function Scorecard() {
         .finally(() => { if (!cancelled) setLoaded(true); });
     };
     load();
-    // Poll every 5s while the match is not completed. Once status flips to
+    // Poll every 10s while the match is not completed. Once status flips to
     // "completed", this effect re-runs (status is a dependency) and the guard
     // below skips scheduling a new interval, so polling stops.
     if (status === "completed") return () => { cancelled = true; };
-    const iv = setInterval(load, 5000);
+    const iv = setInterval(load, 10000);
     return () => { cancelled = true; clearInterval(iv); };
   }, [id, status]);
 
@@ -191,6 +192,12 @@ export function Scorecard() {
                     {m.resultDesc}
                   </div>
                 )}
+
+                {/* Match moments (highlights + optional clips) */}
+                <MatchMoments matchId={id} live={isLive} />
+
+                {/* Inline match-day fan poll (only if an open poll exists) */}
+                <MatchDayPoll />
 
                 {/* Recent balls (latest innings) */}
                 {latest && latest.recentBalls.length > 0 && (

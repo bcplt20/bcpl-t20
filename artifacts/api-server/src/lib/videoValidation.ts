@@ -22,6 +22,7 @@ import { eq, and, ne, lt, notExists, isNotNull } from "drizzle-orm";
 import { headS3Object, getDownloadPresignedUrl } from "./s3";
 import { getPhase1Config } from "./phase1Config";
 import { sendEmail, tplVideoReuploadRequired } from "./email";
+import { notifyVideoValidationFailed } from "./notificationEvents";
 import { sendSms } from "./sms";
 import { logger } from "./logger";
 
@@ -375,6 +376,8 @@ export async function failVideoForReupload(
     sendEmail({ to: row.user.email, toName: row.user.name, ...email }),
     sendSms(row.user.phone, "BCPL: We could not accept your trial video. " + reasonLine + " Upload again at bcplt20.com -BCPL"),
   ]);
+  // In-app inbox + push (own reserve-first dedupe keyed on reason; never throws).
+  void notifyVideoValidationFailed(row.user.id, registrationId, reasonLine);
   return true;
 }
 

@@ -11,6 +11,7 @@ import { eq, and, or, isNull, sql } from "drizzle-orm";
 import { requireAuth, type AuthRequest } from "../middlewares/auth";
 import { createOrder, getPaymentStatus, extractPaymentMethod, cashfreeMode } from "../lib/cashfree";
 import { sendEmail, tplPhase1Receipt, tplPhase2Receipt } from "../lib/email";
+import { notifyPhase2Paid } from "../lib/notificationEvents";
 import { buildInvoicePdf } from "../lib/invoicePdf";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
@@ -331,6 +332,7 @@ async function notifyPhase2Success(
   amount: number,
   regNumber?: string | null,
   invoice?: { txnId: string; paidAt: Date | string; role?: string | null },
+  registrationId?: string,
 ) {
   // Show the real sequential player ID (BCPL-DEL-1 style) when we have it —
   // mirrors the phase-1 receipt. WhatsApp bodyValues stay at [name, amount]
@@ -352,6 +354,8 @@ async function notifyPhase2Success(
     sendWhatsApp({ phone: user.phone, templateName: WA.PHASE2_RECEIPT, bodyValues: [user.name, `₹${amount}`] }),
   ]);
   await logNotifications(user.id, "phase2_receipt", { email: em, sms: sm, whatsapp: wa });
+  // In-app inbox + push (own reserve-first dedupe; never throws).
+  if (registrationId) void notifyPhase2Paid(user.id, registrationId);
 }
 
 // ── PHASE 1 ──────────────────────────────────────────────────────────────────
@@ -703,7 +707,7 @@ router.post("/phase2/verify", requireAuth, async (req: AuthRequest, res) => {
     ))
     .returning({ id: registrationsTable.id });
 
-  if (flipped[0]) notifyPhase2Success(user, parseInt(pay.amount), reg.regNumber, { txnId: pay.cashfreeOrderId || pay.id, paidAt: pay.paidAt ?? new Date(), role: reg.role });
+  if (flipped[0]) notifyPhase2Success(user, parseInt(pay.amount), reg.regNumber, { txnId: pay.cashfreeOrderId || pay.id, paidAt: pay.paidAt ?? new Date(), role: reg.role }, reg.id);
 
   res.json({ success: true, registrationId: reg.id });
 });
@@ -825,7 +829,7 @@ router.post("/webhook", async (req, res) => {
               .innerJoin(usersTable, eq(registrationsTable.userId, usersTable.id))
               .where(eq(phase2PaymentsTable.cashfreeOrderId, orderId)).limit(1);
             if (rows[0]) {
-              notifyPhase2Success(rows[0].user, parseInt(rows[0].pay.amount), rows[0].reg.regNumber, { txnId: rows[0].pay.cashfreeOrderId || rows[0].pay.id, paidAt: rows[0].pay.paidAt ?? new Date(), role: rows[0].reg.role })
+              notifyPhase2Success(rows[0].user, parseInt(rows[0].pay.amount), rows[0].reg.regNumber, { txnId: rows[0].pay.cashfreeOrderId || rows[0].pay.id, paidAt: rows[0].pay.paidAt ?? new Date(), role: rows[0].reg.role }, rows[0].reg.id)
                 .catch((e) => console.error("[WEBHOOK] phase2 notify error", e));
             }
           }

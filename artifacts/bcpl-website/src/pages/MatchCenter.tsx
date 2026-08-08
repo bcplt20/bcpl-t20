@@ -7,6 +7,7 @@ import { getMatches, getPointsTable, getScorecard, getTeams } from '../lib/api';
 import { useLang } from '../lib/i18n';
 import { IcoBat, IcoTrophy, IcoPin, IcoStar } from '../lib/icons';
 import { MatchCountdown, stageMeta } from '../components/MatchCard';
+import { LiveMatchBanner } from '../components/LiveMatchBanner';
 import { BALL_LOGO, groupOf } from '../lib/teamMeta';
 
 /* ─── Palette (LIGHTENED DARK theme) ─────────────────────────────── */
@@ -452,6 +453,7 @@ export function MatchCenter() {
       {/* MATCHES — recessed strip */}
       <section style={{ padding: "clamp(56px,9vw,110px) 0", background: PANEL_2 }}>
         <div className="wrap">
+          <LiveMatchBanner />
           <div className="section-label">Matches</div>
           <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 36px)", color: "#fff", marginBottom: 24, textTransform: "uppercase" }}>
             SEASON 4 MATCHES

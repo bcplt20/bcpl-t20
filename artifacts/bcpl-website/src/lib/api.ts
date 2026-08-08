@@ -1073,3 +1073,69 @@ export const adminGetMvpPointsConfig = () =>
     "GET", "/settings/admin/mvp_points_config");
 export const adminPutMvpPointsConfig = (value: MvpPointsConfig) =>
   adminReq<{ success: boolean }>("PUT", "/settings/admin/mvp_points_config", { value });
+
+/* ─── Growth: notifications inbox (player JWT) ─────────────────────── */
+export type InboxItem = {
+  id: string; type: string; title: string; body: string;
+  data: unknown; readAt: string | null; createdAt: string;
+};
+export const getNotifications = () =>
+  req<{ notifications: InboxItem[]; unreadCount: number }>("GET", "/user/notifications");
+export const markNotificationsRead = (ids?: string[]) =>
+  req<{ ok: boolean }>("POST", "/user/notifications/read", ids && ids.length ? { ids } : {});
+
+/* ─── Growth: Refer & Earn card (player JWT) ──────────────────────── */
+export type ReferralInfo = {
+  code: string; link: string;
+  totalRegistered: number; totalPaid: number;
+  rewardStatus: "none" | "eligible" | "granted";
+  qualifiedNeeded: number;
+};
+export const getReferralInfo = () => req<ReferralInfo>("GET", "/user/referral");
+
+/* ─── Growth: achievement badges (player JWT) ─────────────────────── */
+export type BadgeItem = {
+  id: string; earned: boolean; earnedAt: string | null;
+  title: string; titleHi: string; desc: string; descHi: string; icon: string;
+};
+export const getBadges = () => req<{ badges: BadgeItem[] }>("GET", "/user/badges");
+
+/* ─── Live matches strip (public) ─────────────────────────────────── */
+export type LiveInnings = {
+  number: number; battingTeam: string; totalRuns: number; totalWickets: number;
+  overs: number; balls: number; target: number | null; status: string;
+};
+export type LiveMatch = {
+  matchId: string; matchNo: number; team1: string; team2: string;
+  venue: string | null; stage: string | null; scheduledAt: string;
+  status: string; isLive: boolean; winner: string | null;
+  resultDesc: string | null; innings: LiveInnings[];
+};
+export const getLiveNow = (season = 5) =>
+  req<{ matches: LiveMatch[] }>("GET", `/matches/live-now?season=${season}`);
+
+/* ─── Match moments (public) ──────────────────────────────────────── */
+export type MatchMoment = {
+  inningsNumber: number; over: number; ball: number;
+  type: "wicket" | "six" | "fifty" | "hundred" | "hat_trick";
+  batter: string | null; bowler: string | null;
+  text: string; textHi: string; clipUrl?: string;
+};
+export const getMatchMoments = (matchId: string) =>
+  req<{ moments: MatchMoment[] }>("GET", `/matches/${matchId}/moments`);
+
+/* ─── Admin: referrals leaderboard (adminReq / session token) ─────── */
+export type AdminReferrer = {
+  code: string; name: string; phone: string | null; clicks: number;
+  createdAt: string; totalRegistered: number; totalPaid: number;
+  rewardStatus: "none" | "eligible" | "granted";
+};
+export type AdminReferralsResponse = {
+  referrers: AdminReferrer[];
+  totals: {
+    referrers: number; activeReferrers: number; totalRegistered: number;
+    totalPaid: number; eligible: number; granted: number;
+  };
+};
+export const adminGetReferrals = () =>
+  adminReq<AdminReferralsResponse>("GET", "/admin/referrals");

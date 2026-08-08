@@ -49,3 +49,8 @@ export * from "./notification_outbox";
 export * from "./trial_ops";
 // Final 600 selection engine — auditable selection batches + members
 export * from "./selection";
+// Growth — Expo push tokens + in-app notification inbox
+export * from "./push_tokens";
+export * from "./notifications_inbox";
+// Growth — admin-attached match highlight clips (moments are derived)
+export * from "./match_moments";

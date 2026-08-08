@@ -20,10 +20,13 @@ import { db }           from "@workspace/db";
 import {
   matchesTable, inningsTable, deliveriesTable, matchXITable,
 } from "@workspace/db/schema";
-import { eq, and, desc, asc, inArray, sql } from "drizzle-orm";
+import { eq, and, or, desc, asc, inArray, sql, gte, lt } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/adminAuth";
 import { pgCauseOf }    from "../lib/pgErrors";
 import { z }            from "zod";
+import { buildMatchMoments } from "../lib/matchMoments";
+import { matchMomentsTable } from "@workspace/db/schema";
+import { logger }       from "../lib/logger";
 
 const router = Router();
 
@@ -134,6 +137,60 @@ router.get("/", async (req, res) => {
   res.json({ matches: rows });
 });
 
+// GET /api/matches/live-now — today's + in-progress matches (compact summary).
+// "live now" = status live/innings2/toss_done/xi_selected, plus anything
+// scheduled for today. Read-only summary for a home-screen strip.
+// MUST be declared before "/:id" so the literal path wins over the param route.
+router.get("/live-now", async (req, res) => {
+  const season = Number(req.query.season) || 5;
+  const now = new Date();
+  const dayStart = new Date(now); dayStart.setUTCHours(0, 0, 0, 0);
+  const dayEnd = new Date(dayStart); dayEnd.setUTCDate(dayEnd.getUTCDate() + 1);
+
+  const liveStatuses = ["live", "innings2", "toss_done", "xi_selected"];
+  const matches = await db.select().from(matchesTable)
+    .where(and(
+      eq(matchesTable.season, season),
+      or(
+        inArray(matchesTable.status, liveStatuses),
+        and(gte(matchesTable.scheduledAt, dayStart), lt(matchesTable.scheduledAt, dayEnd)),
+      ),
+    ))
+    .orderBy(asc(matchesTable.scheduledAt), asc(matchesTable.matchNo));
+
+  const summaries = await Promise.all(matches.map(async (m) => {
+    const innings = await db.select().from(inningsTable)
+      .where(eq(inningsTable.matchId, m.id))
+      .orderBy(asc(inningsTable.inningsNumber));
+    const isLive = liveStatuses.includes(m.status);
+    return {
+      matchId: m.id,
+      matchNo: m.matchNo,
+      team1: m.team1,
+      team2: m.team2,
+      venue: m.venue,
+      stage: m.stage,
+      scheduledAt: m.scheduledAt,
+      status: m.status,
+      isLive,
+      winner: m.winner,
+      resultDesc: m.resultDesc,
+      innings: innings.map((i) => ({
+        number: i.inningsNumber,
+        battingTeam: i.battingTeam,
+        totalRuns: i.totalRuns,
+        totalWickets: i.totalWickets,
+        overs: i.overs,
+        balls: i.balls,
+        target: i.target,
+        status: i.status,
+      })),
+    };
+  }));
+
+  res.json({ matches: summaries });
+});
+
 // GET /api/matches/:id
 router.get("/:id", async (req, res) => {
   const [match] = await db.select().from(matchesTable).where(eq(matchesTable.id, String(req.params.id))).limit(1);
@@ -212,7 +269,58 @@ router.get("/:id/scorecard", async (req, res) => {
   res.json({ match, scorecards });
 });
 
+// GET /api/matches/:id/moments — key highlights DERIVED from deliveries
+// (wickets, sixes, fifties/hundreds, hat-tricks) + any admin-attached clips.
+router.get("/:id/moments", async (req, res) => {
+  const moments = await buildMatchMoments(String(req.params.id));
+  if (moments === null) return void res.status(404).json({ error: "Match not found" });
+  res.json({ moments });
+});
+
 /* ─── Admin routes ───────────────────────────────────── */
+
+// PATCH /api/matches/admin/matches/:id/moments — attach (or clear) a highlight
+// clip URL to a specific (innings, over, ball). Moments themselves are derived;
+// this only pins an optional video to a ball. Pass clipUrl:"" to remove.
+const momentClipBody = z.object({
+  inningsNumber: z.number().int().min(1).max(4),
+  overNumber:    z.number().int().min(0).max(49), // 0-based, matches deliveries
+  ballInOver:    z.number().int().min(1).max(9),
+  clipUrl:       z.string().trim().url().max(1000).or(z.literal("")),
+  caption:       z.string().trim().max(200).optional(),
+});
+router.patch("/admin/matches/:id/moments", requireAdmin, async (req, res) => {
+  const matchId = String(req.params.id);
+  const parsed = momentClipBody.safeParse(req.body);
+  if (!parsed.success) {
+    return void res.status(400).json({ error: parsed.error.issues[0]?.message ?? "Invalid moment clip" });
+  }
+  const [match] = await db.select({ id: matchesTable.id }).from(matchesTable).where(eq(matchesTable.id, matchId)).limit(1);
+  if (!match) return void res.status(404).json({ error: "Match not found" });
+
+  const { inningsNumber, overNumber, ballInOver, clipUrl, caption } = parsed.data;
+  try {
+    if (clipUrl === "") {
+      await db.delete(matchMomentsTable).where(and(
+        eq(matchMomentsTable.matchId, matchId),
+        eq(matchMomentsTable.inningsNumber, inningsNumber),
+        eq(matchMomentsTable.overNumber, overNumber),
+        eq(matchMomentsTable.ballInOver, ballInOver),
+      ));
+      return void res.json({ ok: true, cleared: true });
+    }
+    await db.insert(matchMomentsTable)
+      .values({ matchId, inningsNumber, overNumber, ballInOver, clipUrl, caption: caption ?? null })
+      .onConflictDoUpdate({
+        target: [matchMomentsTable.matchId, matchMomentsTable.inningsNumber, matchMomentsTable.overNumber, matchMomentsTable.ballInOver],
+        set: { clipUrl, caption: caption ?? null, updatedAt: new Date() },
+      });
+    res.json({ ok: true });
+  } catch (e) {
+    logger.error({ err: e }, "attach match moment clip failed");
+    res.status(500).json({ error: "Could not attach clip" });
+  }
+});
 
 const matchCreateBody = z.object({
   matchNo:     z.number().int().positive(),

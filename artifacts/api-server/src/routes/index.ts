@@ -37,6 +37,7 @@ import { newsRouter, adminNewsRouter } from "./news";
 import communityRouter from "./community";
 import mvpRouter from "./mvp";
 import { fanPollsRouter, adminFanPollsRouter } from "./polls";
+import growthRouter, { adminGrowthRouter } from "./growth";
 
 const router: IRouter = Router();
 
@@ -49,6 +50,7 @@ router.use("/video",         videoRouter);
 router.use("/kyc",           kycRouter);
 router.use("/user",          userRouter);
 router.use("/user",          userTrialsRouter); // trial pass (Stage 4)
+router.use("/user",          growthRouter);     // push tokens, inbox, referral card, badges
 // Phase 1 result (100-point score, city/role rank) — BCPL Player Journey
 router.use("/results",       resultsRouter);
 // League
@@ -79,6 +81,7 @@ router.use("/admin/selection", adminSelectionRouter); // Final 600 selection eng
 router.use("/admin/ai",      adminAiRouter); // AI match-report drafting
 router.use("/admin/news",    adminNewsRouter); // news CRUD + AI article drafts
 router.use("/admin/polls",   adminFanPollsRouter); // fan voting admin (CONTENT_TEAM)
+router.use("/admin",         adminGrowthRouter); // referrals overview (growth)
 router.use("/admin",         adminRouter);
 router.use("/ai",            aiRouter);      // BCPL AI chat + feedback
 router.use("/news",          newsRouter);    // public news articles

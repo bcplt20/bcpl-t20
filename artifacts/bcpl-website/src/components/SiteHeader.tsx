@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { NavUser, useAuthUser } from "./NavUser";
+import { NotificationBell } from "./NotificationBell";
 import { getNextAction } from "../lib/api";
 import { useLang } from "../lib/i18n";
 
@@ -241,6 +242,7 @@ export function SiteHeader({ active }: { active?: string }) {
             </div>
             <div style={{ flex: "0 0 auto", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 14 }}>
               <LangToggle />
+              {user && <NotificationBell />}
               <NavUser variant="desktop" />
               {user ? (
                 <>
@@ -265,6 +267,7 @@ export function SiteHeader({ active }: { active?: string }) {
           <div className="sh-mobbar">
             <Logo />
             <div className="sh-mobright">
+              {user && <NotificationBell />}
               <NavUser variant="icon" />
               {user ? (
                 <button

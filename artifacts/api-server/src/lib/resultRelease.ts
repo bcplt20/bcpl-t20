@@ -27,6 +27,7 @@ import { getPhase1Config, type Phase1Config } from "./phase1Config";
 import { casEvalUpdate } from "./evalClaims";
 import { sendEmail, tplPhase1ResultReady } from "./email";
 import { sendSms } from "./sms";
+import { notifyPhase1Result } from "./notificationEvents";
 import { normalizeRole } from "./phase1Roles";
 import { logger } from "./logger";
 
@@ -189,6 +190,8 @@ async function processRelease(evalRow: EvalRow, cfg: Phase1Config, out: ReleaseR
       for (const r of results) {
         if (r.status === "rejected") logger.warn({ err: r.reason, evalId: evalRow.id }, "phase1 result notification send failed");
       }
+      // In-app inbox + push (own reserve-first dedupe; never throws).
+      void notifyPhase1Result(row.userId, evalRow.registrationId, qualified);
     }
 
     const applied = await casEvalUpdate(evalRow.id, runToken, {

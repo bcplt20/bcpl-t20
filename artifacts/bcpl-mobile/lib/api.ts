@@ -54,6 +54,9 @@ export interface AuthUser {
   name: string;
   phone: string;
   email?: string | null;
+  regNumber?: string | null;
+  avatar?: string | null;
+  role?: string | null;
 }
 
 export function sendOtp(
@@ -1003,6 +1006,36 @@ export interface Sponsor {
 
 export function getSponsors(): Promise<{ sponsors: Sponsor[] }> {
   return apiFetch('/sponsors');
+}
+
+export function registerPushToken(token: string, platform?: string): Promise<void> {
+  return apiFetch('/user/push-token', { method: 'POST', body: { token, platform } });
+}
+export function unregisterPushToken(token: string): Promise<void> {
+  return apiFetch('/user/push-token', { method: 'DELETE', body: { token } });
+}
+
+export function getNotifications(): Promise<{ notifications: any[]; unreadCount: number }> {
+  return apiFetch('/user/notifications');
+}
+export function markNotificationsRead(ids?: string[]): Promise<void> {
+  return apiFetch('/user/notifications/read', { method: 'POST', body: { ids } });
+}
+
+export function getReferral(): Promise<{ code: string; link: string; totalRegistered: number; totalPaid: number; rewardStatus: 'none' | 'eligible' | 'granted'; qualifiedNeeded: number }> {
+  return apiFetch('/user/referral');
+}
+
+export function getBadges(): Promise<{ badges: any[] }> {
+  return apiFetch('/user/badges');
+}
+
+export function getLiveMatches(): Promise<{ matches: any[] }> {
+  return apiFetch('/matches/live-now');
+}
+
+export function getMatchMoments(id: string): Promise<{ moments: any[] }> {
+  return apiFetch(`/matches/${id}/moments`);
 }
 
 // Public site assets (news images etc.) always come from the live site.

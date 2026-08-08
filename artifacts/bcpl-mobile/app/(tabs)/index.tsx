@@ -17,7 +17,7 @@ import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang } from '@/context/LanguageContext';
-import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, getAppMedia, type Match, type AppBanner, type Team, getSponsors, getTeamGroup, type AppMediaItem } from '@/lib/api';
+import { getDashboard, getMatches, getPointsTable, getTeams, SITE_ASSETS, getAppBanners, getAppMedia, type Match, type AppBanner, type Team, getSponsors, getTeamGroup, type AppMediaItem, getNotifications, getLiveMatches } from '@/lib/api';
 import * as WebBrowser from 'expo-web-browser';
 import { NEWS_ARTICLES } from '@/data/news';
 import { Card, TeamLogo, GlassAppBar, ScreenBackground, SectionHeader, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
@@ -507,6 +507,9 @@ export default function HomeScreen() {
   const sponsorsQ = useQuery({ queryKey: ['sponsors'], queryFn: getSponsors, staleTime: 5 * 60 * 1000 });
   const mediaQ = useQuery({ queryKey: ['app-media'], queryFn: getAppMedia, staleTime: 5 * 60 * 1000 });
 
+  const liveMatchesQ = useQuery({ queryKey: ['live-matches'], queryFn: () => getLiveMatches().catch(() => null), refetchInterval: 10000 });
+  const liveMatch = liveMatchesQ.data?.matches?.find((m: any) => m.isLive);
+
   const matches = matchesQ.data?.matches ?? [];
   const featured = pickFeatured(matches);
   
@@ -542,10 +545,23 @@ export default function HomeScreen() {
     return groups;
   }, [sponsorsQ.data?.sponsors]);
 
+  const notifsQ = useQuery({ queryKey: ['notifications'], queryFn: () => getNotifications().catch(() => null), staleTime: 60 * 1000 });
+
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       <ScreenBackground />
-      <GlassAppBar />
+      <GlassAppBar
+        right={
+          token ? (
+            <Pressable onPress={() => router.push('/notifications' as any)} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1, width: 40, height: 40, borderRadius: 20, backgroundColor: c.card2, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: c.line })}>
+              <Feather name="bell" size={18} color={c.ink} />
+              {(notifsQ.data?.unreadCount || 0) > 0 && (
+                <View style={{ position: 'absolute', top: 8, right: 10, width: 8, height: 8, borderRadius: 4, backgroundColor: c.magenta, borderWidth: 1, borderColor: c.card2 }} />
+              )}
+            </Pressable>
+          ) : undefined
+        }
+      />
       <ScrollView
         bounces={false}
         overScrollMode="never"
@@ -567,6 +583,41 @@ export default function HomeScreen() {
       >
         <View style={{ height: appBarHeight + 16 }} />
         <ProfileBackfillCard />
+
+        {React.useMemo(() => liveMatch ? (
+          <View style={{ paddingHorizontal: 16, marginBottom: 16 }}>
+            <Pressable onPress={() => router.push(`/match/${liveMatch.matchId}`)} style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}>
+              <Card padding={16} style={{ overflow: 'hidden', borderWidth: 1, borderColor: '#FF3DA6' }}>
+                <LinearGradient colors={['rgba(255,61,166,0.15)', 'rgba(255,61,166,0.02)', 'transparent']} style={StyleSheet.absoluteFill} />
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#FF3DA6' }} />
+                    <Text style={{ color: '#FF3DA6', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12, letterSpacing: 1, textTransform: 'uppercase' }}>
+                      {t('LIVE NOW', 'अभी लाइव')}
+                    </Text>
+                  </View>
+                  <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 11 }}>Match {liveMatch.matchNo}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <View style={{ flex: 1, alignItems: 'center' }}>
+                    <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }} numberOfLines={1}>{liveMatch.team1}</Text>
+                  </View>
+                  <View style={{ paddingHorizontal: 16 }}>
+                    <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12 }}>VS</Text>
+                  </View>
+                  <View style={{ flex: 1, alignItems: 'center' }}>
+                    <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }} numberOfLines={1}>{liveMatch.team2}</Text>
+                  </View>
+                </View>
+                <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: c.line, alignItems: 'center' }}>
+                  <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 13 }}>
+                    {t('Tap to follow live score & moments', 'लाइव स्कोर और मोमेंट्स देखने के लिए टैप करें')}
+                  </Text>
+                </View>
+              </Card>
+            </Pressable>
+          </View>
+        ) : null, [liveMatch, c, t])}
 
         <BannerCarousel banners={bannersQ.data?.banners?.length ? bannersQ.data.banners : HARDCODED_BANNERS} />
 
@@ -645,6 +696,30 @@ export default function HomeScreen() {
             </View>
           </View>
         ), [c, t])}
+
+        {token && React.useMemo(() => (
+          <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
+            <Pressable onPress={() => router.push('/refer' as any)} style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}>
+              <Card padding={24} style={{ overflow: 'hidden', borderWidth: 1, borderColor: `${c.violet}30` }}>
+                <LinearGradient colors={[`${c.violet}1A`, `${c.magenta}05`, 'transparent']} style={StyleSheet.absoluteFill} />
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                  <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: c.magenta, alignItems: 'center', justifyContent: 'center' }}>
+                    <Feather name="gift" size={24} color="#fff" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, marginBottom: 4 }}>
+                      {t('Refer & Earn', 'रेफर करें और कमाएं')}
+                    </Text>
+                    <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 18 }}>
+                      {t('Invite 3 friends to win exclusive BCPL training gear.', '3 दोस्तों को आमंत्रित करें और खास BCPL किट जीतें।')}
+                    </Text>
+                  </View>
+                  <Feather name="chevron-right" size={20} color={c.sub} />
+                </View>
+              </Card>
+            </Pressable>
+          </View>
+        ), [c, t, token])}
 
         {React.useMemo(() => (
           <View style={{ paddingHorizontal: 16, paddingTop: 32 }}>

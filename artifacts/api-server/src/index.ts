@@ -27,6 +27,10 @@ import { recordJobRun } from "./lib/heartbeat";
 import { reconcileAbandonedPayments } from "./lib/reconcilePayments";
 import { sendPaymentReminders, remindersEnabled } from "./lib/reminders";
 import { sendKycManualReviewReminders } from "./lib/kycReminders";
+import { ensurePushTables } from "./lib/push";
+import { ensureMatchMomentsTable } from "./lib/matchMoments";
+import { sendIncompleteRegistrationReminders } from "./lib/incompleteReminders";
+import { sendTrialDayReminders } from "./lib/trialReminders";
 
 const port = Number(process.env["PORT"] ?? "8080");
 
@@ -61,6 +65,8 @@ async function start() {
       await ensureRefundsTables(); // Stage 5 finance refunds
       await ensureUserAvatarColumn(); // profile avatar (preset id or uploaded photo)
       await ensureRegistrationClassificationColumn(); // player playing-style classification
+      await ensurePushTables(); // Growth — Expo push tokens + in-app notification inbox
+      await ensureMatchMomentsTable(); // Growth — admin-attached match highlight clips
       logger.info("startup migrations ensured");
       break;
     } catch (e) {
@@ -117,6 +123,20 @@ async function reminderTick(): Promise<void> {
   } catch (e) {
     tickOk = false; tickErr = e;
     logger.error({ err: e }, "KYC manual-review reminder sweep failed");
+  }
+  try {
+    const i = await sendIncompleteRegistrationReminders({ dryRun });
+    if (i.candidates > 0) logger.info(i, "incomplete-registration reminders processed");
+  } catch (e) {
+    tickOk = false; tickErr = e;
+    logger.error({ err: e }, "Incomplete-registration reminder sweep failed");
+  }
+  try {
+    const t = await sendTrialDayReminders({ dryRun });
+    if (t.candidates > 0) logger.info(t, "trial-day reminders processed");
+  } catch (e) {
+    tickOk = false; tickErr = e;
+    logger.error({ err: e }, "Trial-day reminder sweep failed");
   }
   recordJobRun("reminder-sweep", tickOk, tickErr, SIX_HOURS);
 }

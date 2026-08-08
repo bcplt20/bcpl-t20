@@ -200,6 +200,21 @@ function MoreMenu() {
       <View>
         <Card padding={16} border={true}>
           <IconRow 
+            icon="gift" title={t('Refer & Earn', 'रेफर करें और कमाएं')} subtitle={t('Invite friends, win gear', 'दोस्तों को बुलाएं, किट जीतें')}
+            colors={['#FFC53D', '#FF8A3D']} onPress={() => router.push('/refer' as any)} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 12, marginLeft: 50 }} />
+          <IconRow 
+            icon="award" title={t('My Badges', 'मेरे बैज')} subtitle={t('Achievements earned', 'जीते गए अचीवमेंट्स')}
+            colors={['#00DCF5', '#5B2BF0']} onPress={() => router.push('/badges' as any)} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 12, marginLeft: 50 }} />
+          <IconRow 
+            icon="user" title={t('Player Card', 'प्लेयर कार्ड')} subtitle={t('Share your profile', 'अपनी प्रोफ़ाइल शेयर करें')}
+            colors={['#FF3DA6', '#5B2BF0']} onPress={() => router.push('/player-card' as any)} 
+          />
+          <View style={{ height: 1, backgroundColor: c.line, marginVertical: 12, marginLeft: 50 }} />
+          <IconRow 
             icon="image" title={t('Media', 'मीडिया')} subtitle={t('Photos, Videos & Shorts', 'फ़ोटोज़, वीडियोज़ और शॉर्ट्स')}
             colors={['#FF3DA6', '#FF8A3D']} onPress={() => router.push('/media')} 
           />

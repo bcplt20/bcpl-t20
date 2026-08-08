@@ -12,6 +12,7 @@ import { sendEmail, tplVideoSubmitted, tplVideoReminder } from "../lib/email";
 import { sendSms } from "../lib/sms";
 import { sendWhatsApp, WA } from "../lib/whatsapp";
 import { logNotifications } from "../lib/notify";
+import { notify } from "../lib/push";
 import { logger } from "../lib/logger";
 import { normalizeRole, ROLE_LABELS } from "../lib/phase1Roles";
 import { isClassificationComplete } from "../lib/classification";
@@ -396,6 +397,17 @@ export async function sendVideoReminders(opts?: { dryRun?: boolean }): Promise<n
       sendWhatsApp({ phone: user.phone, templateName: WA.VIDEO_REMINDER, bodyValues: [user.name, daysLeft.toString()] }),
     ]);
     await logNotifications(user.id, "video_reminder_d" + daysLeft, { email: em, sms: sm, whatsapp: wa });
+    // In-app inbox + push — bilingual "N दिन बाकी" (own reserve-first dedupe).
+    void notify({
+      userId: user.id,
+      type: "video_deadline",
+      title: "Upload your trial video / ट्रायल वीडियो अपलोड करें",
+      body:
+        `Only ${daysLeft} day${daysLeft === 1 ? "" : "s"} left to upload your trial video. Upload at bcplt20.com.\n` +
+        `आपके ट्रायल वीडियो अपलोड करने में ${daysLeft} दिन बाकी। bcplt20.com पर अपलोड करें।`,
+      data: { registrationId: reg.id, screen: "video", daysLeft },
+      dedupeKey: "video_deadline_" + reg.id + "_d" + daysLeft,
+    });
     logger.info({ registrationId: reg.id, daysLeft }, "phase1 video reminder sent");
     sent++;
   }
