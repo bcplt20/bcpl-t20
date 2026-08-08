@@ -57,28 +57,6 @@ function TeamBadge({ name, color, logo, size = 32 }: { name: string; color: stri
   );
 }
 
-/* Form guide dots — W (green) / L (red) / N (grey) coloured pills. */
-function FormGuide({ form }: { form: string[] }) {
-  if (!form || form.length === 0) return null;
-  const last5 = form.slice(-5);
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-      {last5.map((r, i) => {
-        const res = (r || "").toUpperCase();
-        const bg = res === "W" ? GREEN : res === "L" ? RED : "#8A94A8";
-        return (
-          <span key={i} title={res === "W" ? "Won" : res === "L" ? "Lost" : "No result"} style={{
-            width: 18, height: 18, borderRadius: "50%", background: bg,
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
-            fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 10, color: "#0C1D33",
-            flexShrink: 0,
-          }}>{res}</span>
-        );
-      })}
-    </div>
-  );
-}
-
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap');
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -90,26 +68,45 @@ const CSS = `
 .shimmer-gold { background: linear-gradient(90deg,#E8B23D,#FFD873,#E8B23D); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s linear infinite; }
 @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
 
-/* Sticky-team-column table with horizontal scroll on mobile */
-.pts-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-.pts-table { width: 100%; border-collapse: collapse; min-width: 720px; }
-.pts-header th { padding: 13px 14px; text-align: center; font-family: var(--font-head); font-weight: 700; font-size: 11px; color: #E8B23D; text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; background: ${PANEL_2}; border-bottom: 2px solid ${LINE}; }
-.pts-header th.left { text-align: left; }
+/* Fit-to-width table — NO horizontal scroll at any width (owner request).
+   Condensed columns (P W L NRR Pts) so the whole table fits 390px screens. */
+.pts-table-wrap { overflow-x: hidden; }
+.pts-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.pts-header th { padding: 12px 4px; text-align: center; font-family: var(--font-head); font-weight: 700; font-size: 11px; color: #E8B23D; text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; background: ${PANEL_2}; border-bottom: 2px solid ${LINE}; }
+.pts-header th.left { text-align: left; padding-left: 12px; }
 .pts-row { border-bottom: 1px solid ${LINE_SOFT}; transition: background 0.15s; }
 .pts-row:hover { background: rgba(255,122,41,0.08); }
-.pts-row td { padding: 14px; font-family: Inter, sans-serif; font-size: 15px; color: ${TXT2}; text-align: center; white-space: nowrap; }
+.pts-row td { padding: 11px 4px; font-family: Inter, sans-serif; font-size: 14px; color: ${TXT2}; text-align: center; white-space: nowrap; }
+.pts-row td.left { text-align: left; padding-left: 12px; }
 .pts-row.qualify td { background: rgba(49,197,107,0.09); }
 .pts-row.qualify:hover td { background: rgba(49,197,107,0.15); }
 .pts-row.qualify-last td { border-bottom: 2px solid rgba(49,197,107,0.6); }
 
-/* Sticky team column (first two cols) for horizontal scroll on mobile */
-.pts-table th.stick, .pts-table td.stick { position: sticky; left: 0; z-index: 2; background: ${PANEL}; }
-.pts-header th.stick { background: ${PANEL_2}; }
-.pts-row:hover td.stick { background: #2A407A; }
-.pts-row.qualify td.stick { background: #274568; }
-.pts-row.qualify:hover td.stick { background: #2C4C6E; }
-.pts-table th.stick-pos, .pts-table td.stick-pos { left: 0; min-width: 46px; }
-.pts-table th.stick-team, .pts-table td.stick-team { left: 46px; box-shadow: 6px 0 12px -8px rgba(0,0,0,.45); text-align: left !important; }
+/* Column widths: position + team flex, stats are compact fixed cells. */
+.pts-table col.c-pos  { width: 30px; }
+.pts-table col.c-team { width: auto; }
+.pts-table col.c-stat { width: 34px; }
+.pts-table col.c-nrr  { width: 58px; }
+.pts-table col.c-pts  { width: 42px; }
+.pts-teamname { font-family: var(--font-head); font-weight: 800; font-size: 14px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media(min-width:560px){
+  .pts-header th { font-size: 12px; letter-spacing: .1em; padding: 13px 8px; }
+  .pts-row td { font-size: 15px; padding: 13px 8px; }
+  .pts-table col.c-pos  { width: 46px; }
+  .pts-table col.c-stat { width: 48px; }
+  .pts-table col.c-nrr  { width: 80px; }
+  .pts-table col.c-pts  { width: 60px; }
+  .pts-teamname { font-size: 16px; }
+}
+
+/* Group tabs — V3 pill style, only the active group's table is shown. */
+.pts-tabs { display: flex; gap: 10px; margin-bottom: 24px; }
+.pts-tab { flex: 1; max-width: 240px; cursor: pointer; font-family: var(--font-head); font-weight: 800; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: ${TXT2}; background: ${PANEL}; border: 1px solid ${LINE}; border-radius: 14px; padding: 14px 16px; text-align: center; transition: background .18s, border-color .18s, color .18s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.pts-tab:hover { border-color: rgba(255,122,41,0.5); color: #fff; }
+.pts-tab.on { color: #fff; background: linear-gradient(135deg, rgba(255,122,41,0.22), rgba(232,178,61,0.12)); border-color: ${ORANGE}; box-shadow: 0 6px 20px rgba(255,122,41,0.22); }
+.pts-tab .cnt { font-size: 12px; font-weight: 700; color: ${TXT3}; }
+.pts-tab.on .cnt { color: #FFD873; }
+@media(min-width:560px){ .pts-tab { font-size: 17px; padding: 15px 20px; } }
 
 .qz-note { display: inline-flex; align-items: center; gap: 8px; font-family: Inter, sans-serif; font-size: 13px; color: ${TXT3}; }
 .qz-swatch { width: 12px; height: 12px; border-radius: 3px; background: rgba(49,197,107,0.6); }
@@ -157,6 +154,7 @@ export function PointsTable() {
   const { t } = useLang();
   const [groupA, setGroupA] = useState<TeamRow[]>([]);
   const [groupB, setGroupB] = useState<TeamRow[]>([]);
+  const [activeGroup, setActiveGroup] = useState<'A' | 'B'>('A');
   
   const [teamColors, setTeamColors] = useState<Record<string, string>>({});
   const [teamLogos,  setTeamLogos]  = useState<Record<string, string>>({});
@@ -240,64 +238,64 @@ export function PointsTable() {
     }).catch(() => {});
   }, []);
 
-  const renderTable = (title: string, rows: TeamRow[]) => {
-    if (rows.length === 0) return null;
-    
+  const renderTable = (rows: TeamRow[]) => {
+    if (rows.length === 0) {
+      return (
+        <div style={{ background: PANEL, border: `1px solid ${LINE}`, borderRadius: 20, padding: "40px 24px", textAlign: "center", color: TXT3, fontSize: 15 }}>
+          {t("No standings for this group yet.", "इस group के लिए अभी standings नहीं हैं।")}
+        </div>
+      );
+    }
+
     const showQualifyLine = rows.length > QUALIFY_TOP;
 
     return (
-      <div style={{ marginBottom: 40 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-          <span style={{ width: 5, height: 26, borderRadius: 3, background: `linear-gradient(180deg, ${ORANGE}, ${GOLD})`, flexShrink: 0 }} />
-          <h2 style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 24, color: "#fff", textTransform: "uppercase", letterSpacing: "0.06em", margin: 0 }}>
-            {title}
-          </h2>
-          <span style={{ fontFamily: "var(--font-head)", fontWeight: 700, fontSize: 12, color: TXT3, letterSpacing: ".06em", textTransform: "uppercase" }}>
-            {rows.length} {t("Teams", "टीमें")}
-          </span>
-        </div>
-        <div style={{ background: PANEL, border: `1px solid ${LINE}`, borderRadius: 20, overflow: "hidden", boxShadow: "0 12px 34px rgba(0,0,0,.28)", marginBottom: 16 }}>
-          <div className="pts-table-wrap">
-            <table className="pts-table">
-              <thead>
-                <tr className="pts-header">
-                  <th className="stick stick-pos">#</th>
-                  <th className="left stick stick-team">{t("Team", "टीम")}</th>
-                  <th>{t("P", "P")}</th>
-                  <th>{t("W", "W")}</th>
-                  <th>{t("L", "L")}</th>
-                  <th>{t("NR", "NR")}</th>
-                  <th>{t("NRR", "NRR")}</th>
-                  <th className="left">{t("Form", "फॉर्म")}</th>
-                  <th>{t("Pts", "Pts")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, i) => {
-                  const inZone = row.pos <= QUALIFY_TOP;
-                  const isZoneLast = showQualifyLine && row.pos === QUALIFY_TOP;
-                  return (
-                    <tr key={i} className={`pts-row${inZone ? " qualify" : ""}${isZoneLast ? " qualify-last" : ""}`}>
-                      <td className="stick stick-pos"><PosBadge pos={row.pos} /></td>
-                      <td className="stick stick-team">
-                        <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
-                          <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} size={50} />
-                          <div style={{ fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 16, color: "#fff" }}>{row.name}</div>
-                        </div>
-                      </td>
-                      <td>{row.p}</td>
-                      <td style={{ color: GREEN, fontWeight: 700 }}>{row.w}</td>
-                      <td style={{ color: RED }}>{row.l}</td>
-                      <td style={{ color: TXT3 }}>{row.nr}</td>
-                      <td style={{ fontFamily: "var(--font-head)", fontWeight: 700, color: row.nrr.startsWith("+") ? GREEN : RED }}>{row.nrr}</td>
-                      <td style={{ textAlign: "left" }}><FormGuide form={row.form} /></td>
-                      <td style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 18, color: ORANGE }}>{row.pts}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+      <div style={{ background: PANEL, border: `1px solid ${LINE}`, borderRadius: 20, overflow: "hidden", boxShadow: "0 12px 34px rgba(0,0,0,.28)", marginBottom: 16 }}>
+        <div className="pts-table-wrap">
+          <table className="pts-table">
+            <colgroup>
+              <col className="c-pos" />
+              <col className="c-team" />
+              <col className="c-stat" />
+              <col className="c-stat" />
+              <col className="c-stat" />
+              <col className="c-nrr" />
+              <col className="c-pts" />
+            </colgroup>
+            <thead>
+              <tr className="pts-header">
+                <th>#</th>
+                <th className="left">{t("Team", "टीम")}</th>
+                <th>{t("P", "P")}</th>
+                <th>{t("W", "W")}</th>
+                <th>{t("L", "L")}</th>
+                <th>{t("NRR", "NRR")}</th>
+                <th>{t("Pts", "Pts")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => {
+                const inZone = row.pos <= QUALIFY_TOP;
+                const isZoneLast = showQualifyLine && row.pos === QUALIFY_TOP;
+                return (
+                  <tr key={i} className={`pts-row${inZone ? " qualify" : ""}${isZoneLast ? " qualify-last" : ""}`}>
+                    <td><PosBadge pos={row.pos} size={26} /></td>
+                    <td className="left">
+                      <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
+                        <TeamBadge name={row.name} color={color(row.name)} logo={logoOf(row.name)} size={34} />
+                        <div className="pts-teamname">{row.name}</div>
+                      </div>
+                    </td>
+                    <td>{row.p}</td>
+                    <td style={{ color: GREEN, fontWeight: 700 }}>{row.w}</td>
+                    <td style={{ color: RED }}>{row.l}</td>
+                    <td style={{ fontFamily: "var(--font-head)", fontWeight: 700, color: row.nrr.startsWith("+") ? GREEN : RED }}>{row.nrr}</td>
+                    <td style={{ fontFamily: "var(--font-head)", fontWeight: 900, fontSize: 17, color: ORANGE }}>{row.pts}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     );
@@ -349,11 +347,29 @@ export function PointsTable() {
           </div>
         )}
 
-        {/* IPL-STYLE STANDINGS TABLE */}
+        {/* IPL-STYLE STANDINGS — one group at a time via tabs (no horizontal scroll) */}
         {!isEmpty && (
           <>
-            {renderTable(t("Group A", "ग्रुप A"), groupA)}
-            {renderTable(t("Group B", "ग्रुप B"), groupB)}
+            <div className="pts-tabs" role="tablist" aria-label={t("Select group", "Group चुनें")}>
+              {(["A", "B"] as const).map(g => {
+                const on = activeGroup === g;
+                const count = (g === "A" ? groupA : groupB).length;
+                return (
+                  <button
+                    key={g}
+                    role="tab"
+                    aria-selected={on}
+                    className={`pts-tab${on ? " on" : ""}`}
+                    onClick={() => setActiveGroup(g)}
+                  >
+                    {g === "A" ? t("Group A", "ग्रुप A") : t("Group B", "ग्रुप B")}
+                    <span className="cnt">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {renderTable(activeGroup === "A" ? groupA : groupB)}
             
             {/* Qualification zone legend */}
             <div className="qz-note" style={{ marginBottom: 8 }}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Platform,
   RefreshControl,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Pressable,
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
@@ -16,20 +17,22 @@ import { useLang } from '@/context/LanguageContext';
 import { LinearGradient } from 'expo-linear-gradient';
 
 /** One group's standings table (mirrors website's Group A / Group B split). */
-function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]; qualify: number }) {
+function GroupTable({ title, rows, qualify, hideTitle }: { title: string; rows: PointsRow[]; qualify: number, hideTitle?: boolean }) {
   const c = useColors();
   return (
     <View style={{ marginBottom: 28 }}>
-      <View style={styles.groupHead}>
-        <LinearGradient
-          colors={[`${c.cyan}33`, `${c.cyan}05`]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={[styles.groupChip, { borderColor: c.getAccentText(c.cyan) }]}
-        >
-          <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 1.5 }}>{title}</Text>
-        </LinearGradient>
-      </View>
+      {!hideTitle && (
+        <View style={styles.groupHead}>
+          <LinearGradient
+            colors={[`${c.cyan}33`, `${c.cyan}05`]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.groupChip, { borderColor: c.getAccentText(c.cyan) }]}
+          >
+            <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 1.5 }}>{title}</Text>
+          </LinearGradient>
+        </View>
+      )}
       <Card padding={0} border={true}>
         <View style={[styles.row, styles.headRow, { backgroundColor: c.card2, borderBottomWidth: 1, borderBottomColor: c.line }]}>
           <Text style={[styles.pos, { color: c.sub, fontSize: 11 }]}>#</Text>
@@ -37,8 +40,8 @@ function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]
           <Text style={[styles.num, { color: c.sub, fontSize: 11 }]}>P</Text>
           <Text style={[styles.num, { color: c.sub, fontSize: 11 }]}>W</Text>
           <Text style={[styles.num, { color: c.sub, fontSize: 11 }]}>L</Text>
-          <Text style={[styles.nrr, { color: c.sub, fontSize: 11 }]}>NRR</Text>
           <Text style={[styles.pts, { color: c.sub, fontSize: 11 }]}>PTS</Text>
+          <Text style={[styles.nrr, { color: c.sub, fontSize: 11 }]}>NRR</Text>
         </View>
         {rows.map((t, i) => (
           <View
@@ -63,10 +66,10 @@ function GroupTable({ title, rows, qualify }: { title: string; rows: PointsRow[]
             <Text style={[styles.num, { color: c.ink }]}>{t.played}</Text>
             <Text style={[styles.num, { color: c.getAccentText(c.mint), fontFamily: 'PlusJakartaSans_600SemiBold' }]}>{t.won}</Text>
             <Text style={[styles.num, { color: c.getAccentText(c.coral), fontFamily: 'PlusJakartaSans_600SemiBold' }]}>{t.lost}</Text>
-            <Text style={[styles.nrr, { color: typeof t.nrr === 'number' && t.nrr > 0 ? c.getAccentText(c.mint) : c.sub }]}>
-              {typeof t.nrr === 'number' ? (t.nrr > 0 ? `+${t.nrr.toFixed(2)}` : t.nrr.toFixed(2)) : t.nrr}
-            </Text>
             <Text style={[styles.pts, { color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14 }]}>{t.points}</Text>
+            <Text style={[styles.nrr, { color: typeof t.nrr === 'number' && t.nrr > 0 ? c.getAccentText(c.mint) : c.sub }]}>
+              {typeof t.nrr === 'number' ? (t.nrr > 0 ? `+${t.nrr.toFixed(3)}` : t.nrr.toFixed(3)) : t.nrr}
+            </Text>
           </View>
         ))}
       </Card>
@@ -79,6 +82,7 @@ export default function PointsScreen() {
   const { t } = useLang();
   const appBarHeight = useAppBarHeight();
   const bottomNavHeight = useBottomNavHeight();
+  const [activeTab, setActiveTab] = useState<'A' | 'B'>('A');
   
   const q = useQuery({ queryKey: ['points'], queryFn: getPointsTable, refetchInterval: 120_000 });
   const matchesQ = useQuery({ queryKey: ['matches'], queryFn: getMatches });
@@ -108,15 +112,44 @@ export default function PointsScreen() {
             <EmptyView icon="bar-chart-2" text={t('Points table will appear once Season 5 begins', 'पॉइंट्स टेबल सीज़न 5 शुरू होते ही यहाँ दिखेगी')} />
           ) : grouped ? (
             <>
-              <GroupTable title="GROUP A" rows={groupA} qualify={2} />
-              <GroupTable title="GROUP B" rows={groupB} qualify={2} />
+              <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
+                <Pressable
+                  onPress={() => setActiveTab('A')}
+                  style={({ pressed }) => ({
+                    flex: 1, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center',
+                    backgroundColor: activeTab === 'A' ? c.cyan : c.card2,
+                    borderWidth: 1, borderColor: activeTab === 'A' ? c.cyan : c.line,
+                    opacity: pressed ? 0.8 : 1
+                  })}
+                >
+                  <Text style={{ color: activeTab === 'A' ? '#000' : c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>{t('Group A', 'ग्रुप A')}</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setActiveTab('B')}
+                  style={({ pressed }) => ({
+                    flex: 1, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center',
+                    backgroundColor: activeTab === 'B' ? c.cyan : c.card2,
+                    borderWidth: 1, borderColor: activeTab === 'B' ? c.cyan : c.line,
+                    opacity: pressed ? 0.8 : 1
+                  })}
+                >
+                  <Text style={{ color: activeTab === 'B' ? '#000' : c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>{t('Group B', 'ग्रुप B')}</Text>
+                </Pressable>
+              </View>
+
+              {activeTab === 'A' ? (
+                <GroupTable title="GROUP A" rows={groupA} qualify={2} hideTitle />
+              ) : (
+                <GroupTable title="GROUP B" rows={groupB} qualify={2} hideTitle />
+              )}
+              
               <Text style={{ color: c.sub, fontSize: 12, paddingHorizontal: 4, paddingBottom: 6, textAlign: 'center' }}>
-                {t('Top 2 teams from each group qualify for the playoffs', 'हर ग्रुप की टॉप 2 टीमें प्लेऑफ़ में जाती हैं')}
+                {t('Top 2 teams from this group qualify for the playoffs', 'इस ग्रुप की टॉप 2 टीमें प्लेऑफ़ में जाती हैं')}
               </Text>
             </>
           ) : (
             <>
-              <GroupTable title="STANDINGS" rows={table} qualify={4} />
+              <GroupTable title="STANDINGS" rows={table} qualify={4} hideTitle />
               <Text style={{ color: c.sub, fontSize: 12, paddingHorizontal: 4, paddingBottom: 6, textAlign: 'center' }}>
                 {t('Top 4 teams qualify for the playoffs', 'टॉप 4 टीमें प्लेऑफ़ में जाती हैं')}
               </Text>
