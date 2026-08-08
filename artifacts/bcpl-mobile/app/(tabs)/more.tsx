@@ -16,7 +16,7 @@ import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { useLang, type Lang } from '@/context/LanguageContext';
-import { getDashboard, getSponsors, type Sponsor } from '@/lib/api';
+import { getDashboard, getSponsors, SITE_ASSETS, type Sponsor } from '@/lib/api';
 import { Image } from 'expo-image';
 import { useTheme } from '@/context/ThemeContext';
 import { Badge, Card, ErrorView, LoadingView, GlassAppBar, ScreenBackground, GradientTag, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
@@ -345,19 +345,48 @@ function SponsorStrip() {
   const c = useColors();
   const q = useQuery({ queryKey: ['sponsors'], queryFn: getSponsors });
 
+  // Group by category/tier to mirror the logic on the home screen
+  const groups = React.useMemo(() => {
+    if (!q.data?.sponsors) return [];
+    const grps: { label: string; items: typeof q.data.sponsors }[] = [];
+    q.data.sponsors.forEach(s => {
+      const label = (s as any).category || s.tier || 'Partners';
+      let group = grps.find(g => g.label.toLowerCase() === label.toLowerCase());
+      if (!group) {
+        group = { label, items: [] };
+        grps.push(group);
+      }
+      group.items.push(s);
+    });
+    return grps;
+  }, [q.data?.sponsors]);
+
   return (
     <Card padding={0} border={true}>
-      <View style={{ padding: 20, paddingBottom: 12 }}>
+      <View style={{ padding: 20, paddingBottom: 12, alignItems: 'center' }}>
         <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 12 }]}>Our Sponsors</Text>
       </View>
-      {q.data?.sponsors && q.data.sponsors.length > 0 && (
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16, paddingHorizontal: 20, paddingBottom: 20 }}>
-          {q.data.sponsors.map((s) => (
-            <Pressable key={s.id} onPress={() => s.url && Linking.openURL(s.url)}>
-              <View style={{ backgroundColor: c.card2, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: c.line }}>
-                <Image source={{ uri: `https://bcplt20.com${s.logo}` }} style={{ width: 80, height: 40 }} contentFit="contain" />
+      {groups.length > 0 && (
+        <View style={{ paddingHorizontal: 20, paddingBottom: 20, gap: 20 }}>
+          {groups.map((g, gi) => (
+            <View key={g.label} style={{ alignItems: 'center' }}>
+              <Text style={{ color: c.getAccentText(c.amber), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>
+                {g.label}
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 }}>
+                {g.items.map((s) => (
+                  <Pressable key={s.name + (s as any).category} onPress={() => s.url && Linking.openURL(s.url)}>
+                    <View style={{ backgroundColor: c.isDark ? c.card2 : '#1B2E52', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: c.line, alignItems: 'center', justifyContent: 'center', minWidth: 100 }}>
+                      {s.logo ? (
+                        <Image source={{ uri: s.logo.startsWith('http') ? s.logo : `${SITE_ASSETS}/${s.logo.replace(/^\//, '')}` }} style={{ height: 40, width: 100 }} contentFit="contain" />
+                      ) : (
+                        <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, color: '#FFFFFF', textAlign: 'center' }}>{s.name}</Text>
+                      )}
+                    </View>
+                  </Pressable>
+                ))}
               </View>
-            </Pressable>
+            </View>
           ))}
         </View>
       )}

@@ -893,11 +893,11 @@ export default function HomeScreen() {
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: isTop ? 16 : 12 }}>
                       {g.items.map((s, i) => {
                         const inner = (
-                          <View style={{ backgroundColor: c.isDark ? c.card2 : '#1B2E52', borderRadius: 12, paddingHorizontal: logoH * 0.4, paddingVertical: logoH * 0.3, borderWidth: 1, borderColor: c.line }}>
+                          <View style={{ backgroundColor: c.isDark ? c.card2 : '#1B2E52', borderRadius: 12, paddingHorizontal: logoH * 0.4, paddingVertical: logoH * 0.3, borderWidth: 1, borderColor: c.line, alignItems: 'center', justifyContent: 'center' }}>
                             {s.logo ? (
-                              <Image source={{ uri: s.logo }} style={{ height: logoH, width: logoH * 3, maxWidth: 200 }} contentFit="contain" cachePolicy="memory-disk" />
+                              <Image source={{ uri: s.logo.startsWith('http') ? s.logo : `${SITE_ASSETS}/${s.logo.replace(/^\//, '')}` }} style={{ height: logoH, width: logoH * 3, maxWidth: 200 }} contentFit="contain" cachePolicy="memory-disk" />
                             ) : (
-                              <Text style={{ fontFamily: 'PlusJakartaSans_700Bold', fontSize: logoH * 0.4, color: '#FFFFFF' }}>{s.name}</Text>
+                              <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: logoH * 0.4, color: '#FFFFFF', textAlign: 'center' }}>{s.name}</Text>
                             )}
                           </View>
                         );
