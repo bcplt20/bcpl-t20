@@ -16,6 +16,7 @@ import sponsorsRouter from "./sponsors";
 import sponsorEnquiriesRouter, { adminSponsorEnquiriesRouter } from "./sponsorEnquiries";
 import galleryRouter  from "./gallery";
 import appBannersRouter from "./appBanners";
+import appDownloadRouter from "./appDownload";
 import appMediaRouter  from "./appMedia";
 import videosRouter   from "./videos";
 import feesRouter     from "./fees";
@@ -66,6 +67,7 @@ router.use("/sponsors/admin", adminSponsorEnquiriesRouter); // sponsorship enqui
 router.use("/sponsors",      sponsorsRouter); // public sanitized sponsor list
 router.use("/sponsors",      sponsorEnquiriesRouter); // public "become a sponsor" enquiry form
 router.use("/gallery",       galleryRouter);  // public match photos/videos (admin-opted folders)
+router.use("/app",           appDownloadRouter); // public APK download redirect (permanent URL)
 router.use("/app-banners",   appBannersRouter); // public mobile-app promo banners
 router.use("/app-media",     appMediaRouter); // public mobile-app curated photos & videos
 router.use("/videos",        videosRouter);   // public season-4 auction videos/highlights
