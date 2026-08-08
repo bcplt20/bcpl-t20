@@ -14,16 +14,20 @@ export default function DevLogin() {
 
   useEffect(() => {
     if (!__DEV__ || Platform.OS !== 'web') return;
-    const { token, uid, name, phone, to } = params;
-    if (!token || !uid) return;
+    const { token, uid, name, phone, to, theme } = params as Record<string, string | undefined>;
     try {
-      window.localStorage.setItem(
-        'bcpl_mobile_auth_v1',
-        JSON.stringify({ token, user: { id: uid, name: name || 'Player', phone: phone || '' } }),
-      );
-      window.location.replace(String(to || '/journey'));
+      if (theme === 'stadium' || theme === 'light') {
+        window.localStorage.setItem('bcpl-theme', theme);
+      }
+      if (token && uid) {
+        window.localStorage.setItem(
+          'bcpl_mobile_auth_v1',
+          JSON.stringify({ token, user: { id: uid, name: name || 'Player', phone: phone || '' } }),
+        );
+      }
+      if (token || theme) window.location.replace(String(to || '/journey'));
     } catch {}
-  }, [params.token]);
+  }, [params.token, (params as Record<string, string | undefined>).theme]);
 
   if (!__DEV__) return null;
   return (
