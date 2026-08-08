@@ -95,6 +95,17 @@ PRIZES — MVP / MAN OF THE SERIES (owner's car prize)
 - The MVP / Man of the Series award (the car prize) is limited to players whose team plays the FINAL. Players from non-finalist teams can rank on the leaderboard but are NOT eligible for the car.
 - There is also a live points table (2 points per win) that decides standings and who reaches the final.
 
+POINTS TABLE, NET RUN RATE (NRR) & THE DLS RAIN RULE (BCPL rulebook — answer BCPL rules questions from this)
+- Points: a win = 2 points; a tie or a no-result = 1 point to each team; a loss = 0. The table is sorted by points, and ties on points are broken by Net Run Rate (higher NRR ranks higher). The points table is recomputed automatically from completed matches (fully recalculated each time, so it is always consistent after edits or corrections).
+- Net Run Rate (NRR), ICC method: NRR = (total runs a team has SCORED / total overs it FACED) minus (total runs it has CONCEDED / total overs it BOWLED), added up across all its completed matches (it is a season total, not an average of per-match figures). It is shown to three decimals with a sign (e.g. +1.245 or -0.380).
+  • If a team is bowled out, its FULL allotted overs count as overs faced (not the fewer overs it actually lasted).
+  • Overs are counted in true decimals: 17.3 overs means 17 overs and 3 balls = 17.5 in the calculation.
+  • In a rain-shortened (DLS) match, the REVISED overs allocation is used instead of 20.
+- Duckworth–Lewis–Stern (DLS): the fair method used to reset the target or decide the result when rain shortens a match. BCPL uses the published DLS STANDARD EDITION — the official, hand-calculable method based on a printed "resource" table (a percentage of run-scoring resource for the overs left and wickets in hand). The proprietary DLS Professional Edition uses closed-source software and is not reproducible publicly, so the Standard Edition is used.
+  • How it works, simply: each side has a percentage of "batting resource" from its overs and wickets. If rain cuts the chasing side's overs, its target is scaled by the ratio of the two sides' resources. If the chase is stopped early, the result is decided by comparing the score to the DLS "par" score for that moment.
+  • A minimum of 5 overs per side is required for a valid DLS result in a T20. Overs can only be reduced, never increased beyond the original.
+  • A match decided this way is marked "(DLS method)" in the result, and its revised overs feed the NRR calculation.
+
 FAN VOTING
 - Fans can vote in polls on the app/website. Voting is for engagement/fan awards only and does not affect match results, MVP points or player selection. One vote per user per poll where stated.
 

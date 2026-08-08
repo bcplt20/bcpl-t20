@@ -9,6 +9,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AuthProvider } from '@/context/AuthContext';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
+import { AssistantOverlay, toggleAssistant, useAssistantState } from '@/components/AssistantOverlay';
 import { THEMES } from '@/hooks/useColors';
 import {
   useFonts,
@@ -43,7 +44,7 @@ function FloatingAiButton() {
   const insets = useSafeAreaInsets();
   const segments = useSegments();
 
-  const isAssistant = segments[segments.length - 1] === 'assistant';
+  const isAssistant = useAssistantState();
 
   // If we are in the tabs group, float above the bottom tab bar.
   // The tab bar is strictly 68px tall.
@@ -95,12 +96,7 @@ function FloatingAiButton() {
   }));
 
   const handlePress = () => {
-    if (isAssistant) {
-      if (router.canGoBack()) router.back();
-      else router.replace('/');
-    } else {
-      router.push('/assistant');
-    }
+    toggleAssistant();
   };
 
   return (
@@ -179,7 +175,6 @@ function RootLayoutNav() {
         <Stack.Screen name="phase2-pay" options={{ title: 'Phase 2', headerShown: false }} />
         <Stack.Screen name="result" options={{ title: 'Phase 1 Result', headerShown: false }} />
         <Stack.Screen name="trial-pass" options={{ title: 'Trial Pass', headerShown: false }} />
-        <Stack.Screen name="assistant" options={{ presentation: 'modal', title: 'BCPL AI', headerShown: false }} />
         <Stack.Screen name="vote" options={{ title: 'Fan Voting', headerShown: false }} />
         <Stack.Screen name="mvp" options={{ title: 'MVP Race', headerShown: false }} />
         <Stack.Screen name="pay-webview" options={{ title: 'Payment', headerShown: false, gestureEnabled: false }} />
@@ -193,6 +188,7 @@ function RootLayoutNav() {
         <Stack.Screen name="scorer/[id]" options={{ title: 'Scoring', headerShown: false }} />
       </Stack>
       <FloatingAiButton />
+      <AssistantOverlay />
     </>
   );
 }

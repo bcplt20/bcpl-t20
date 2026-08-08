@@ -879,6 +879,36 @@ export const getTrialPass = () => req<TrialPassData>("GET", "/user/trial-pass");
 export type AiChatMsg = { role: "user" | "assistant"; text: string };
 export const aiChat = (messages: AiChatMsg[]) =>
   req<{ reply: string }>("POST", "/ai/chat", { messages });
+
+/* Voice transcription — POST audio blob to /api/ai/transcribe (multipart).
+   Endpoint is being built in parallel; this is wired null-safely so callers
+   can gracefully handle 404 / not-yet-deployed. Returns the recognised text
+   (server may return { text } or { transcript } — both are accepted). */
+export const transcribeAudio = async (
+  audio: Blob,
+  lang?: string,
+): Promise<{ text: string }> => {
+  const form = new FormData();
+  const ext = audio.type.includes("mp4") ? "mp4"
+    : audio.type.includes("ogg") ? "ogg"
+    : audio.type.includes("wav") ? "wav" : "webm";
+  form.append("audio", audio, `speech.${ext}`);
+  if (lang) form.append("lang", lang);
+  const token = getStoredToken();
+  const res = await fetch(`${BASE}/api/ai/transcribe`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    body: form,
+  });
+  if (!res.ok) {
+    const errJson = await res.json().catch(() => ({}));
+    const e = new Error((errJson as any).error ?? res.statusText) as Error & { status?: number };
+    e.status = res.status;
+    throw e;
+  }
+  const data = await res.json().catch(() => ({} as any));
+  return { text: String((data as any).text ?? (data as any).transcript ?? "") };
+};
 export type AiTip = { en: string; hi: string };
 export const getAiFeedback = () => req<{ tips: AiTip[] }>("GET", "/ai/feedback");
 

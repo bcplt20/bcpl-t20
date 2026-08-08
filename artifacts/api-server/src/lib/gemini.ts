@@ -196,6 +196,44 @@ export async function generateText(args: {
   return text;
 }
 
+/**
+ * Multimodal audio transcription (short clips only). Sends the audio INLINE as
+ * base64 in a single generateContent call — the clip is NEVER uploaded to the
+ * Files API nor persisted anywhere. Prompt asks for verbatim plain text;
+ * Hindi / Hinglish / English are all acceptable. Returns the raw transcript.
+ *
+ * `audioBase64` must be the raw base64 (no data: URI prefix). Keep clips short
+ * (the caller enforces ~60s / 5MB); inline requests are capped by Gemini.
+ */
+export async function transcribeAudio(args: {
+  model: string;
+  audioBase64: string;
+  mimeType: string;
+  timeoutMs?: number;
+}): Promise<string> {
+  const prompt = "Transcribe this audio clip VERBATIM. The speaker may use Hindi, Hinglish (Hindi in Latin script) or English — transcribe exactly what is said in the language/script actually spoken. Return ONLY the plain transcript text, with no quotes, labels, timestamps, translation or commentary. If the audio has no intelligible speech, return an empty string.";
+  const res = await fetch(BASE + "/v1beta/models/" + args.model + ":generateContent?key=" + apiKey(), {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      contents: [{
+        role: "user",
+        parts: [
+          { inline_data: { mime_type: args.mimeType, data: args.audioBase64 } },
+          { text: prompt },
+        ],
+      }],
+      generationConfig: { temperature: 0, maxOutputTokens: 1024 },
+    }),
+    signal: AbortSignal.timeout(args.timeoutMs ?? 60_000),
+  });
+  if (!res.ok) throw new Error("gemini transcribe failed: " + res.status + " " + (await res.text()).slice(0, 300));
+  const j = (await res.json()) as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
+  const text = (j.candidates?.[0]?.content?.parts ?? []).map((p) => p.text ?? "").join("").trim();
+  // Empty transcript (silence / no speech) is a valid outcome, not an error.
+  return text;
+}
+
 /** Parse + schema-validate a JSON reply; retries are the caller's concern. */
 export function parseStructured<T>(schema: z.ZodType<T>, raw: string): T {
   const cleaned = raw.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "");

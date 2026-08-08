@@ -65,6 +65,20 @@ app.use((_req, res, next) => {
 
 app.use(express.json({
   limit: "1mb",
+  // The AI voice-transcription route accepts a base64 audio clip (~5MB → ~6.7MB
+  // of JSON) and installs its OWN larger, route-scoped json parser. Skip the
+  // global 1mb parser there so it isn't rejected before reaching the route.
+  type: (req) => {
+    const ct = req.headers["content-type"] || "";
+    if (!ct.includes("application/json")) return false;
+    // EXACT match for POST /api/ai/transcribe only — that route installs its own
+    // larger, guarded json parser. Strip the query string and compare the path
+    // precisely so no other route accidentally bypasses the global 1mb limit.
+    const method = (req.method || "").toUpperCase();
+    const path = (req.url || "").split("?")[0];
+    if (method === "POST" && path === "/api/ai/transcribe") return false;
+    return true;
+  },
   verify: (req, _res, buf) => {
     // Capture the raw body for webhook signature verification
     (req as express.Request & { rawBody?: Buffer }).rawBody = buf;

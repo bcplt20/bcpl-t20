@@ -393,6 +393,10 @@ export function aiChat(token: string | null | undefined, messages: AiChatMsg[]):
   return apiFetch('/ai/chat', { method: 'POST', body: { messages }, ...(token ? { token } : {}) });
 }
 
+export function aiTranscribe(token: string | null | undefined, audioBase64: string, mimeType: string): Promise<{ text: string, lang: string }> {
+  return apiFetch('/ai/transcribe', { method: 'POST', body: { audioBase64, mimeType }, ...(token ? { token } : {}) });
+}
+
 // ── Public news articles (DB-backed, merged with the static archive) ────────
 export interface ApiNewsArticle {
   id: string; slug: string; tag: string; title: string; titleHi: string;
