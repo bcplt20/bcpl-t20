@@ -28,6 +28,8 @@ import {
 } from '@/lib/api';
 import { Card, ScreenBackground, GlassAppBar, useAppBarHeight } from '@/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
+import { SITE_ASSETS } from '@/lib/api';
 import { computeAge } from '@/lib/age';
 
 const CITIES = [
@@ -41,12 +43,14 @@ const CONSENT = { termsVersion: '2.1', privacyVersion: '2.1' };
 
 // Role labels + fees mirror the website ROLES config (Batsman / Bowler /
 // Wicket-Keeper / All-Rounder; phase-2 trial fee shown per role).
-const ROLES: { id: PlayerRole; en: string; hi: string; fee: number; phase2: number }[] = [
-  { id: 'bat', en: 'Batsman', hi: 'बल्लेबाज़', fee: 299, phase2: 2000 },
-  { id: 'bowl', en: 'Bowler', hi: 'गेंदबाज़', fee: 299, phase2: 2000 },
-  { id: 'wk', en: 'Wicket Keeper', hi: 'विकेट कीपर', fee: 299, phase2: 2000 },
-  { id: 'ar', en: 'All-Rounder', hi: 'ऑल-राउंडर', fee: 399, phase2: 3000 },
+const ROLES: { id: PlayerRole; en: string; hi: string; fee: number; phase2: number; img: string }[] = [
+  { id: 'bat', en: 'Batsman', hi: 'बल्लेबाज़', fee: 299, phase2: 2000, img: 'card-batsman.jpg' },
+  { id: 'bowl', en: 'Bowler', hi: 'गेंदबाज़', fee: 299, phase2: 2000, img: 'card-bowler.jpg' },
+  { id: 'wk', en: 'Wicket Keeper', hi: 'विकेट कीपर', fee: 299, phase2: 2000, img: 'card-wicketkeeper.jpg' },
+  { id: 'ar', en: 'All-Rounder', hi: 'ऑल-राउंडर', fee: 399, phase2: 3000, img: 'card-allrounder.jpg' },
 ];
+// Same role imagery the website uses (served from prod; cached on-device).
+const ROLE_IMG = `${SITE_ASSETS}/bcpl-assets/roles/`;
 
 // Step order is IDENTICAL to the website register wizard:
 //   1 Your Details (name/email/phone/DOB) → 2 Your Role → 3 Trial City →
@@ -509,30 +513,46 @@ export default function RegisterScreen() {
                   <Pressable
                     key={r.id}
                     onPress={() => setRole(r.id)}
-                    style={[styles.chip, {
+                    style={[styles.roleCard, {
                       borderColor: isActive ? c.magenta : c.line,
-                      backgroundColor: isActive ? 'rgba(255,26,117,0.15)' : c.card,
                     }]}
                     testID={`role-${r.id}`}
                   >
+                    <Image
+                      source={{ uri: ROLE_IMG + r.img }}
+                      style={StyleSheet.absoluteFill}
+                      contentFit="cover"
+                      contentPosition={{ top: '20%', left: '50%' }}
+                      cachePolicy="memory-disk"
+                      transition={200}
+                    />
+                    {/* Bottom scrim so text stays readable over the photo */}
+                    <LinearGradient
+                      colors={['rgba(11,18,38,0)', 'rgba(11,18,38,0.55)', 'rgba(11,18,38,0.92)']}
+                      start={{ x: 0, y: 0.25 }}
+                      end={{ x: 0, y: 1 }}
+                      style={StyleSheet.absoluteFill}
+                    />
                     {isActive ? (
                       <LinearGradient
-                        colors={['rgba(255,26,117,0.2)', 'rgba(255,26,117,0)']}
+                        colors={['rgba(255,26,117,0.35)', 'rgba(255,26,117,0)']}
                         start={{ x: 0, y: 0 }}
-                        end={{ x: 0, y: 1 }}
+                        end={{ x: 0, y: 0.6 }}
                         style={StyleSheet.absoluteFill}
                       />
                     ) : null}
-                    <Text style={{ color: isActive ? c.getAccentText(c.magenta) : c.ink, fontFamily: isActive ? 'Inter_800ExtraBold' : 'Inter_600SemiBold', fontSize: 16 }}>
-                      {t(r.en, r.hi)}
-                    </Text>
-                    <Text style={{ color: isActive ? c.getAccentText(c.magenta) : c.sub, fontSize: 13, marginTop: 6, fontFamily: 'PlusJakartaSans_600SemiBold' }}>₹{r.fee} <Text style={{ fontSize: 11 }}>{t('+ GST · PHASE 1', '+ GST · PHASE 1')}</Text></Text>
-                    <Text style={{ color: isActive ? c.getAccentText(c.magenta) : c.sub, fontSize: 12, marginTop: 4, fontFamily: 'PlusJakartaSans_500Medium' }}>
-                      {t('Phase 2 Trial Fee ₹', 'Phase 2 Trial Fee ₹')}{r.phase2.toLocaleString()}{t(' + GST — after Phase 1 qualification.', ' + GST — Phase 1 qualification के बाद।')}
-                    </Text>
+                    <View style={{ flex: 1, justifyContent: 'flex-end', padding: 12 }}>
+                      <Text style={{ color: '#FFFFFF', fontFamily: 'Inter_800ExtraBold', fontSize: 16, textShadowColor: 'rgba(0,0,0,0.5)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 }}>
+                        {t(r.en, r.hi)}
+                      </Text>
+                      <Text style={{ color: 'rgba(255,255,255,0.95)', fontSize: 13, marginTop: 4, fontFamily: 'PlusJakartaSans_700Bold' }}>₹{r.fee} <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)' }}>{t('+ GST · PHASE 1', '+ GST · PHASE 1')}</Text></Text>
+                      <Text style={{ color: 'rgba(255,255,255,0.78)', fontSize: 11, marginTop: 3, fontFamily: 'PlusJakartaSans_500Medium' }}>
+                        {t('Phase 2 Trial Fee ₹', 'Phase 2 Trial Fee ₹')}{r.phase2.toLocaleString()}{t(' + GST', ' + GST')}
+                      </Text>
+                    </View>
 
                     {isActive && (
-                      <View style={{ position: 'absolute', top: -10, right: -10, width: 28, height: 28, borderRadius: 14, backgroundColor: c.magenta, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: c.card, shadowColor: c.magenta, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 8, elevation: 4 }}>
+                      <View style={{ position: 'absolute', top: 10, right: 10, width: 28, height: 28, borderRadius: 14, backgroundColor: c.magenta, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#FFFFFF', shadowColor: c.magenta, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 8, elevation: 4 }}>
                         <Feather name="check" size={16} color="#fff" />
                       </View>
                     )}
@@ -540,6 +560,9 @@ export default function RegisterScreen() {
                 );
               })}
             </View>
+            <Text style={{ color: c.sub, fontSize: 12, marginTop: 14, fontFamily: 'PlusJakartaSans_500Medium', textAlign: 'center' }}>
+              {t('Phase 2 fee applies only after Phase 1 qualification.', 'Phase 2 fee सिर्फ Phase 1 qualification के बाद लगती है।')}
+            </Text>
             <View style={{ marginTop: 16 }}>
               {primaryBtn(t('Continue', 'आगे बढ़ें'), onSelectRole, 'reg-role')}
             </View>
@@ -926,6 +949,15 @@ const styles = StyleSheet.create({
     minWidth: '46%',
     flexGrow: 1,
     overflow: 'visible',
+  },
+  roleCard: {
+    borderWidth: 2,
+    borderRadius: 16,
+    minWidth: '46%',
+    flexGrow: 1,
+    aspectRatio: 0.85,
+    overflow: 'hidden',
+    backgroundColor: '#0B1226',
   },
   cityChip: {
     borderWidth: 1,

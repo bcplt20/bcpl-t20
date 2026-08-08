@@ -424,15 +424,26 @@ function JourneyBody({ d }: { d: Dashboard }) {
       ) : null}
 
       {/* Physical trial detail */}
-      {d.trial?.venue ? (
+      {d.trial ? (
         <Card style={{ marginTop: 12 }}>
           <Text style={[styles.detailTitle, { color: c.ink }]}>{t('Physical trial', 'फिजिकल ट्रायल')}</Text>
-          <DetailRow label={t('Venue', 'वेन्यू')} value={d.trial.venue.name} />
-          {d.trial.venue.city ? <DetailRow label={t('City', 'शहर')} value={d.trial.venue.city} /> : null}
-          {d.trial.venue.address ? <DetailRow label={t('Address', 'पता')} value={d.trial.venue.address} /> : null}
+          {d.trial.venue ? null : (
+            <Text style={{ color: c.sub, fontSize: 12, marginTop: 4, fontFamily: 'PlusJakartaSans_500Medium' }}>{t('Details on your trial pass', 'विवरण आपके trial pass पर')}</Text>
+          )}
+          {d.trial.venue ? <DetailRow label={t('Venue', 'वेन्यू')} value={d.trial.venue.name} /> : null}
+          {d.trial.venue?.city ? <DetailRow label={t('City', 'शहर')} value={d.trial.venue.city} /> : null}
+          {d.trial.venue?.address ? <DetailRow label={t('Address', 'पता')} value={d.trial.venue.address} /> : null}
           {d.trial.slot?.date ? <DetailRow label={t('Date', 'तारीख')} value={fmtDate(d.trial.slot.date) ?? d.trial.slot.date} /> : null}
           {d.trial.slot?.reportingTime ? <DetailRow label={t('Reporting time', 'रिपोर्टिंग समय')} value={d.trial.slot.reportingTime} /> : null}
           {d.trial.slot?.batch ? <DetailRow label={t('Batch', 'बैच')} value={d.trial.slot.batch} /> : null}
+          {/* Trial pass (QR) — website parity: /trial-pass screen already exists in the app */}
+          <Pressable
+            onPress={() => router.push('/trial-pass')}
+            style={({ pressed }) => [styles.primaryBtn, { marginTop: 14, opacity: pressed ? 0.85 : 1 }]}
+            testID="journey-trial-pass"
+          >
+            <Text style={{ color: '#FFFFFF', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>{t('View Trial Pass (QR)', 'Trial Pass देखें (QR)')}</Text>
+          </Pressable>
         </Card>
       ) : null}
 
