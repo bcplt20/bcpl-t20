@@ -702,7 +702,7 @@ export default function HomeScreen() {
           </View>
         ), [c, t])}
 
-        {token && React.useMemo(() => (
+        {React.useMemo(() => !token ? null : (
           <View style={{ paddingHorizontal: 16, marginTop: 32 }}>
             <Pressable onPress={() => router.push('/refer' as any)} style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}>
               <Card padding={24} style={{ overflow: 'hidden', borderWidth: 1, borderColor: `${c.violet}30` }}>

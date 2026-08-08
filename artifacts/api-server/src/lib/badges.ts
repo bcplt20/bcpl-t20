@@ -35,9 +35,9 @@ const DEFS: Def[] = [
   { id: "video_uploaded", icon: "video", title: "Video Submitted", titleHi: "वीडियो जमा", desc: "Uploaded your trial video", descHi: "ट्रायल वीडियो अपलोड किया" },
   { id: "trial_done", icon: "flag", title: "Trial Attended", titleHi: "ट्रायल पूरा", desc: "Completed your physical trial", descHi: "अपना फ़िज़िकल ट्रायल पूरा किया" },
   { id: "phase2_paid", icon: "credit-card", title: "Phase 2 Cleared", titleHi: "Phase 2 पूरा", desc: "Completed Phase 2 payment", descHi: "Phase 2 भुगतान पूरा किया" },
-  { id: "kyc_verified", icon: "shield-check", title: "KYC Verified", titleHi: "KYC सत्यापित", desc: "Your KYC is verified", descHi: "आपका KYC सत्यापित है" },
-  { id: "first_vote", icon: "vote", title: "First Vote", titleHi: "पहला वोट", desc: "Cast your first fan vote", descHi: "अपना पहला फैन वोट दिया" },
-  { id: "voter_x5", icon: "megaphone", title: "Super Fan", titleHi: "सुपर फैन", desc: "Voted in 5 fan polls", descHi: "5 फैन पोल में वोट किया" },
+  { id: "kyc_verified", icon: "shield", title: "KYC Verified", titleHi: "KYC सत्यापित", desc: "Your KYC is verified", descHi: "आपका KYC सत्यापित है" },
+  { id: "first_vote", icon: "check-square", title: "First Vote", titleHi: "पहला वोट", desc: "Cast your first fan vote", descHi: "अपना पहला फैन वोट दिया" },
+  { id: "voter_x5", icon: "volume-2", title: "Super Fan", titleHi: "सुपर फैन", desc: "Voted in 5 fan polls", descHi: "5 फैन पोल में वोट किया" },
   { id: "referral_1", icon: "user-plus", title: "First Referral", titleHi: "पहला रेफरल", desc: "1 friend paid via your code", descHi: "आपके कोड से 1 दोस्त ने भुगतान किया" },
   { id: "referral_3", icon: "users", title: "Recruiter", titleHi: "रिक्रूटर", desc: "3 friends paid via your code", descHi: "आपके कोड से 3 दोस्तों ने भुगतान किया" },
 ];
