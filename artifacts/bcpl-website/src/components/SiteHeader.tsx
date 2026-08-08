@@ -101,16 +101,25 @@ const CSS = `
   .sh-mobright{display:flex;align-items:center;gap:6px;flex-shrink:0;}
   /* Wings are content-sized (flex:0 0 auto in JSX) so the centre nav gets ALL
      leftover space — the old symmetric flex:1 wings starved the links and
-     "About" slid under the language toggle at 1024–1366px. Link size steps
-     down at 1024 so every label fits without overlap. */
-  @media(min-width:1024px){
-    .sh-deskbar{display:flex;align-items:center;height:var(--sh-h);gap:14px;}
-    .sh-desk{display:flex;gap:10px;align-items:center;justify-content:center;flex:1 1 0;min-width:0;}
-    .sh-link{font-size:14px;letter-spacing:.075em;}
+     "About" slid under the language toggle at 1024–1366px.
+
+     HARDENING (owner report, laptop/Chrome, Hindi): the 10-item nav in Hindi
+     is wider than English, so at 1024–1179px it wrapped to a second row and,
+     because the deskbar height is fixed at var(--sh-h), the wrapped links spilled
+     ONTO the hero content beneath. Two-part fix:
+       1) The desktop nav only turns on from 1180px — below that we stay on the
+          hamburger bar, so the long Hindi labels always have room. This raises
+          the previous 1024px breakpoint.
+       2) .sh-desk is nowrap + overflow-clipped and link size/gap are clamp()-driven,
+          so links shrink to fit the available row instead of ever wrapping. */
+  @media(min-width:1180px){
+    .sh-deskbar{display:flex;align-items:center;height:var(--sh-h);gap:12px;}
+    .sh-desk{display:flex;flex-wrap:nowrap;gap:clamp(8px,1.1vw,20px);align-items:center;justify-content:center;flex:1 1 0;min-width:0;overflow:hidden;}
+    .sh-link{font-size:clamp(12.5px,1.02vw,15.5px);letter-spacing:.06em;}
     .sh-mobbar{display:none;}
   }
-  @media(min-width:1280px){.sh-deskbar{gap:16px;}.sh-desk{gap:20px;}.sh-link{font-size:15.5px;letter-spacing:.09em;}}
-  @media(min-width:1440px){.sh-desk{gap:26px;}}
+  @media(min-width:1280px){.sh-deskbar{gap:16px;}.sh-desk{gap:clamp(14px,1.3vw,22px);}.sh-link{letter-spacing:.08em;}}
+  @media(min-width:1440px){.sh-desk{gap:26px;}.sh-link{font-size:15.5px;letter-spacing:.09em;}}
 
   /* SEASON 5 sits centered UNDER the logo (stacked lockup — fits every phone).
      padding-left mirrors the letter-spacing so the text is optically centered
@@ -219,12 +228,18 @@ export function SiteHeader({ active }: { active?: string }) {
 
       <nav style={{
         position: "sticky", top: 0, zIndex: 200,
-        background: scrolled ? "rgba(16,32,59,.88)" : "transparent",
-        backdropFilter: scrolled ? "blur(18px) saturate(1.5)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(18px) saturate(1.5)" : "none",
+        /* Even at rest (scrolled=false) the bar keeps a faint top-down glass
+           scrim + light blur so nav text never visually collides with page
+           content sliding beneath it (owner-reported overlap). It deepens into
+           the full dark glass once scrolled. */
+        background: scrolled
+          ? "rgba(16,32,59,.88)"
+          : "linear-gradient(180deg, rgba(16,32,59,.55) 0%, rgba(16,32,59,.22) 60%, rgba(16,32,59,0) 100%)",
+        backdropFilter: scrolled ? "blur(18px) saturate(1.5)" : "blur(6px) saturate(1.2)",
+        WebkitBackdropFilter: scrolled ? "blur(18px) saturate(1.5)" : "blur(6px) saturate(1.2)",
         borderBottom: scrolled ? "1px solid rgba(255,255,255,0.18)" : "1px solid transparent",
         boxShadow: scrolled ? "0 8px 32px rgba(0,0,0,.35)" : "none",
-        transition: "background .3s, border-color .3s, box-shadow .3s",
+        transition: "background .3s, border-color .3s, box-shadow .3s, backdrop-filter .3s",
       }}>
         <div className="sh-W">
 
