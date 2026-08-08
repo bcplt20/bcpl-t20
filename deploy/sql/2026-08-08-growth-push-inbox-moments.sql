@@ -40,6 +40,9 @@ CREATE TABLE IF NOT EXISTS notifications_inbox (
 );
 CREATE INDEX IF NOT EXISTS notifications_inbox_user_idx
   ON notifications_inbox (user_id, created_at);
+-- Prod par table pehle se thi lekin dedupe_key column nahi tha (runtime ensure
+-- baad me aaya) — pehle column, tab hi partial unique index ban sakta hai.
+ALTER TABLE notifications_inbox ADD COLUMN IF NOT EXISTS dedupe_key varchar(160);
 CREATE UNIQUE INDEX IF NOT EXISTS notifications_inbox_dedupe_uq
   ON notifications_inbox (dedupe_key) WHERE dedupe_key IS NOT NULL;
 
