@@ -110,7 +110,7 @@ function FloatingAiButton() {
         alignItems: 'center',
         justifyContent: 'center',
     }} pointerEvents="box-none">
-      <Animated.View style={[{ position: 'absolute', width: 56, height: 56, borderRadius: 28, backgroundColor: c.cyan }, glowStyle]} pointerEvents="none" />
+      <Animated.View style={[{ position: 'absolute', width: 56, height: 56, borderRadius: 28, backgroundColor: '#F5B63F' }, glowStyle]} pointerEvents="none" />
       <Pressable
         onPress={handlePress}
         style={({ pressed }) => ({
@@ -120,21 +120,21 @@ function FloatingAiButton() {
           alignItems: 'center',
           justifyContent: 'center',
           transform: [{ scale: pressed ? 0.92 : 1 }],
-          shadowColor: c.violet,
+          shadowColor: '#F7C24A',
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.6,
           shadowRadius: 16,
           elevation: 12,
         })}
       >
-        <LinearGradient colors={['#5B2BF0', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 28 }} />
+        <LinearGradient colors={['#F7C24A', '#F5B63F', '#EE7A2E']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 28 }} />
         <LinearGradient colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0)']} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }} style={{ ...StyleSheet.absoluteFillObject, borderRadius: 28 }} />
         
         <Animated.View style={crossStyle} pointerEvents="none">
-          <Feather name="x" size={26} color="#fff" />
+          <Feather name="x" size={26} color="#1B2E52" />
         </Animated.View>
         <Animated.View style={sparkleStyle} pointerEvents="none">
-          <Ionicons name="sparkles" size={24} color="#fff" />
+          <Ionicons name="sparkles" size={24} color="#1B2E52" />
         </Animated.View>
       </Pressable>
     </View>

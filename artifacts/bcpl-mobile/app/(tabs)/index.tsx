@@ -797,7 +797,7 @@ export default function HomeScreen() {
 
                 {isGrouped ? (
                   <>
-                    {(activeTab === 'A' ? groupA : groupB).slice(0, 4).map((t, i) => (
+                    {(activeTab === 'A' ? groupA : groupB).map((t, i) => (
                       <View key={t.team} style={[styles.pointsRow, i > 0 && { borderTopWidth: 1, borderTopColor: c.line }]}>
                         <View style={[styles.medal, { backgroundColor: i < 2 ? '#FFC53D' : '#9E9BD1' }]}>
                           <Text style={[styles.medalText, { color: c.card }]}>{i + 1}</Text>

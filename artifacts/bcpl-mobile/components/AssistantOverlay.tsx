@@ -30,14 +30,14 @@ function Bubble({ role, text, dim }: { role: 'user' | 'assistant'; text: string;
     <View style={{ alignSelf: user ? 'flex-end' : 'flex-start', maxWidth: '85%', marginBottom: 10, opacity: dim ? 0.7 : 1, flexDirection: 'row', alignItems: 'flex-end', gap: 8 }}>
       {!user && (
         <View style={{ width: 28, height: 28, borderRadius: 14, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-          <LinearGradient colors={['#5B2BF0', '#00DCF5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
-          <Ionicons name="sparkles" size={14} color="#fff" />
+          <LinearGradient colors={['#F7C24A', '#F5B63F', '#EE7A2E']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+          <Ionicons name="sparkles" size={14} color="#1B2E52" />
         </View>
       )}
       <View style={{ flexShrink: 1, borderRadius: 18, borderBottomRightRadius: user ? 4 : 18, borderBottomLeftRadius: user ? 18 : 4, overflow: 'hidden' }}>
         {user ? (
-          <LinearGradient colors={['#5B2BF0', '#FF3DA6']} start={{x:0, y:0}} end={{x:1, y:1}} style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
-            <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14.5, lineHeight: 22 }}>{text}</Text>
+          <LinearGradient colors={['#F7C24A', '#F5B63F', '#EE7A2E']} start={{x:0, y:0}} end={{x:1, y:1}} style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
+            <Text style={{ color: '#1B2E52', fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14.5, lineHeight: 22 }}>{text}</Text>
           </LinearGradient>
         ) : (
           <View style={{ backgroundColor: c.card, borderWidth: 1, borderColor: c.line, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 18, borderBottomLeftRadius: 4 }}>
@@ -61,13 +61,13 @@ function TypingIndicator() {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8, marginBottom: 10 }}>
       <View style={{ width: 28, height: 28, borderRadius: 14, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-        <LinearGradient colors={['#5B2BF0', '#00DCF5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
-        <Ionicons name="sparkles" size={14} color="#fff" />
+        <LinearGradient colors={['#F7C24A', '#F5B63F', '#EE7A2E']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+        <Ionicons name="sparkles" size={14} color="#1B2E52" />
       </View>
       <View style={{ backgroundColor: c.card, borderWidth: 1, borderColor: c.line, paddingHorizontal: 16, paddingVertical: 14, borderRadius: 18, borderBottomLeftRadius: 4, flexDirection: 'row', gap: 4, height: 42, alignItems: 'center' }}>
-        <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.cyan }, useAnimatedStyle(() => ({ opacity: d1.value }))]} />
-        <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.cyan }, useAnimatedStyle(() => ({ opacity: d2.value }))]} />
-        <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.cyan }, useAnimatedStyle(() => ({ opacity: d3.value }))]} />
+        <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#F5B63F' }, useAnimatedStyle(() => ({ opacity: d1.value }))]} />
+        <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#F5B63F' }, useAnimatedStyle(() => ({ opacity: d2.value }))]} />
+        <Animated.View style={[{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#F5B63F' }, useAnimatedStyle(() => ({ opacity: d3.value }))]} />
       </View>
     </View>
   );
@@ -260,12 +260,13 @@ export function AssistantOverlay() {
     <Modal visible={isOpen} animationType="slide" transparent={true} onRequestClose={() => setIsOpen(false)}>
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         {/* Header */}
-        <LinearGradient colors={['rgba(91, 43, 240, 0.2)', 'transparent']} style={{ paddingTop: insets.top, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: c.line }}>
+        <LinearGradient colors={['rgba(247, 194, 74, 0.2)', 'transparent']} style={{ paddingTop: insets.top, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: c.line }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 16 }}>
             <View style={{ flex: 1 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: 'rgba(0, 220, 245, 0.1)', alignItems: 'center', justifyContent: 'center' }}>
-                  <Ionicons name="sparkles" size={16} color="#00DCF5" />
+                <View style={{ width: 28, height: 28, borderRadius: 14, overflow: 'hidden', backgroundColor: 'rgba(247, 194, 74, 0.1)', alignItems: 'center', justifyContent: 'center' }}>
+                  <LinearGradient colors={['#F7C24A', '#F5B63F', '#EE7A2E']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+                  <Ionicons name="sparkles" size={16} color="#1B2E52" />
                 </View>
                 <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20 }}>BCPL AI</Text>
               </View>
@@ -291,9 +292,9 @@ export function AssistantOverlay() {
                   <Pressable
                     key={en}
                     onPress={() => setInput(lang === 'hi' ? hi : en)}
-                    style={({ pressed }) => ({ backgroundColor: c.card2, borderWidth: 1, borderColor: c.cyan, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7, opacity: pressed ? 0.7 : 1 })}
+                    style={({ pressed }) => ({ backgroundColor: c.card2, borderWidth: 1, borderColor: '#F5B63F', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7, opacity: pressed ? 0.7 : 1 })}
                   >
-                    <Text style={{ color: c.getAccentText(c.cyan), fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12.5 }}>{t(en, hi)}</Text>
+                    <Text style={{ color: c.getAccentText('#F5B63F'), fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12.5 }}>{t(en, hi)}</Text>
                   </Pressable>
                 ))}
               </View>
@@ -335,8 +336,8 @@ export function AssistantOverlay() {
                   <Feather name="mic" size={20} color={c.ink} />
                 </Pressable>
                 <Pressable onPress={send} disabled={busy || !input.trim()} style={{ borderRadius: 14, overflow: 'hidden', opacity: busy || !input.trim() ? 0.5 : 1 }}>
-                  <LinearGradient colors={['#7C5CFF', '#FF3DA6']} style={{ minWidth: 48, minHeight: 48, flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Feather name="send" size={18} color="#fff" />
+                  <LinearGradient colors={['#F7C24A', '#F5B63F', '#EE7A2E']} style={{ minWidth: 48, minHeight: 48, flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <Feather name="send" size={18} color="#1B2E52" />
                   </LinearGradient>
                 </Pressable>
               </View>

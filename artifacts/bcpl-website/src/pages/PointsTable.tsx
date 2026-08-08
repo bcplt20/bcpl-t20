@@ -104,8 +104,6 @@ const CSS = `
 .pts-tab { flex: 1; max-width: 240px; cursor: pointer; font-family: var(--font-head); font-weight: 800; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; color: ${TXT2}; background: ${PANEL}; border: 1px solid ${LINE}; border-radius: 14px; padding: 14px 16px; text-align: center; transition: background .18s, border-color .18s, color .18s; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .pts-tab:hover { border-color: rgba(255,122,41,0.5); color: #fff; }
 .pts-tab.on { color: #fff; background: linear-gradient(135deg, rgba(255,122,41,0.22), rgba(232,178,61,0.12)); border-color: ${ORANGE}; box-shadow: 0 6px 20px rgba(255,122,41,0.22); }
-.pts-tab .cnt { font-size: 12px; font-weight: 700; color: ${TXT3}; }
-.pts-tab.on .cnt { color: #FFD873; }
 @media(min-width:560px){ .pts-tab { font-size: 17px; padding: 15px 20px; } }
 
 .qz-note { display: inline-flex; align-items: center; gap: 8px; font-family: Inter, sans-serif; font-size: 13px; color: ${TXT3}; }
@@ -353,7 +351,6 @@ export function PointsTable() {
             <div className="pts-tabs" role="tablist" aria-label={t("Select group", "Group चुनें")}>
               {(["A", "B"] as const).map(g => {
                 const on = activeGroup === g;
-                const count = (g === "A" ? groupA : groupB).length;
                 return (
                   <button
                     key={g}
@@ -363,7 +360,6 @@ export function PointsTable() {
                     onClick={() => setActiveGroup(g)}
                   >
                     {g === "A" ? t("Group A", "ग्रुप A") : t("Group B", "ग्रुप B")}
-                    <span className="cnt">{count}</span>
                   </button>
                 );
               })}
