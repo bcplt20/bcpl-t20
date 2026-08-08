@@ -132,6 +132,32 @@ describe("GET /api/user/referral", () => {
     expect(after.body.rewardStatus).toBe("eligible");
   });
 
+  it("blocks cross-account self-referral (second account, same phone)", async () => {
+    const referrer = await mkUser();
+    const card = await getReferralCard(referrer.token);
+    const code = card.body.code as string;
+    codes.push(code);
+
+    // Second account for the same person: same 10-digit phone, +91 prefix.
+    const [u2] = await db.insert(usersTable).values({
+      name: `Ref Twin ${suffix}`,
+      phone: `+91${referrer.user.phone}`.slice(0, 15),
+      email: `ref-twin-${suffix}@test.bcpl`,
+      isVerified: true,
+    }).returning();
+    userIds.push(u2.id);
+    const twinToken = signToken({ userId: u2.id, phone: u2.phone });
+    const reg = await mkReg(u2.id, { paid: true });
+    const attr = await request(app).post("/api/marketing/attribute")
+      .set("Authorization", `Bearer ${twinToken}`).send({ registrationId: reg.id, code });
+    expect(attr.status).toBe(200);
+    expect(attr.body.attributed).toBe(false);
+
+    const after = await getReferralCard(referrer.token);
+    expect(after.body.totalRegistered).toBe(0);
+    expect(after.body.totalPaid).toBe(0);
+  });
+
   it("becomes 'granted' once an admin records a grant", async () => {
     const referrer = await mkUser();
     const card = await getReferralCard(referrer.token);

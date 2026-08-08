@@ -205,6 +205,19 @@ router.post("/attribute", requireAuth, async (req: AuthRequest, res) => {
     res.json({ ok: true, attributed: false });
     return;
   }
+  if (rc.userId) {
+    // Cross-account self-referral guard: block when the code owner and the new
+    // registrant share the same verified phone (second account, same person).
+    const [[owner], [self]] = await Promise.all([
+      db.select({ phone: usersTable.phone }).from(usersTable).where(eq(usersTable.id, rc.userId)),
+      db.select({ phone: usersTable.phone }).from(usersTable).where(eq(usersTable.id, req.user!.userId)),
+    ]);
+    const norm = (p: string | null | undefined) => (p ?? "").replace(/\D/g, "").slice(-10);
+    if (owner?.phone && self?.phone && norm(owner.phone) === norm(self.phone)) {
+      res.json({ ok: true, attributed: false });
+      return;
+    }
+  }
 
   // First code wins (registration_id UNIQUE).
   await db.execute(
