@@ -105,11 +105,14 @@ export function Download() {
     );
   };
 
-  const FEATURES: Array<[string, string, string, string, string]> = [
-    ["\uD83C\uDFCF", "Your player journey", "आपकी player journey", "Track registration, trials and results in one place.", "Registration, trials और results एक ही जगह देखें।"],
-    ["\uD83D\uDCCA", "Live scores & MVP", "Live scores और MVP", "Follow match centre, points table and the MVP leaderboard.", "Match centre, points table और MVP leaderboard follow करें।"],
-    ["\uD83C\uDFAB", "Digital trial pass", "Digital trial pass", "Your venue, slot and pass — always in your pocket.", "आपका venue, slot और pass — हमेशा आपकी जेब में।"],
-    ["\uD83D\uDD14", "Instant updates", "तुरंत updates", "Get notified about trials, auction and your team.", "Trials, auction और अपनी team की जानकारी तुरंत पाएँ।"],
+  const fIcon = (d: React.ReactNode) => (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
+  );
+  const FEATURES: Array<[React.ReactNode, string, string, string, string]> = [
+    [fIcon(<><path d="M4 20 14.5 9.5" /><path d="m13 8 3 3" /><circle cx="18.5" cy="5.5" r="2.5" /></>), "Your player journey", "आपकी player journey", "Track registration, trials and results in one place.", "Registration, trials और results एक ही जगह देखें।"],
+    [fIcon(<><path d="M3 3v18h18" /><path d="M7 15v3" /><path d="M12 10v8" /><path d="M17 6v12" /></>), "Live scores & MVP", "Live scores और MVP", "Follow match centre, points table and the MVP leaderboard.", "Match centre, points table और MVP leaderboard follow करें।"],
+    [fIcon(<><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1a2 2 0 0 0 0 4v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1a2 2 0 0 0 0-4Z" /><path d="M13 7v2" /><path d="M13 12v1" /><path d="M13 16v1" /></>), "Digital trial pass", "Digital trial pass", "Your venue, slot and pass — always in your pocket.", "आपका venue, slot और pass — हमेशा आपकी जेब में।"],
+    [fIcon(<><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></>), "Instant updates", "तुरंत updates", "Get notified about trials, auction and your team.", "Trials, auction और अपनी team की जानकारी तुरंत पाएँ।"],
   ];
 
   return (
