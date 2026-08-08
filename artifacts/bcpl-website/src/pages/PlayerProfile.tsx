@@ -412,6 +412,12 @@ export function PlayerProfile() {
   const [, setLocation] = useLocation();
   const { t, lang } = useLang();
 
+  // The logged-in bottom nav (Home / Journey / Card / Profile / Refer & Earn)
+  // switches these tabs IN-PAGE (no route change), so App-level ScrollToTop
+  // never fires — tapping a tab while scrolled down left the new tab scrolled
+  // to the bottom. Reset scroll to top instantly on every tab switch.
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); }, [activeTab]);
+
   useEffect(() => {
     const session = getSession();
     if (!session) { setLocation('/register'); return; }
@@ -608,9 +614,21 @@ export function PlayerProfile() {
                         const p1Pay = data?.phase1Payment;
                         const p1PayLine = p1Pay && (p1Pay.status === 'paid' || p1Pay.status === 'success' || p1Pay.status === 'captured' || p1Paid)
                           ? `${fmtAmt(p1Pay.amount)} · ${p1Pay.paidAt ? formatDateShort(p1Pay.paidAt) : 'Paid'}` : '';
-                        const vidDone = Boolean(data?.video?.submitted);
-                        const vidLabel = vidDone ? 'SUBMITTED' : 'PENDING';
+                        // Legacy carryover players skip Phase-1 payment + the skill
+                        // video entirely — their card must show both as COMPLETED and
+                        // NEVER show a "PENDING" video state or any upload prompt.
+                        const vidDone = carryover || Boolean(data?.video?.submitted);
+                        const vidLabel = carryover ? 'COMPLETED' : vidDone ? 'SUBMITTED' : 'PENDING';
                         const vidColor = vidDone ? '#22C55E' : '#E8B23D';
+                        // Season-5 status rows. Legacy: fixed "Phase 1 Entry —
+                        // COMPLETED" + "Trial Video — COMPLETED" (no fee/amount, no
+                        // pending). Current-season: existing paid/submitted logic.
+                        const p1EntryRow = carryover
+                          ? `<div class="row"><span class="label">Phase 1 Entry</span><span class="chip" style="background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.5);color:#4ADE80">COMPLETED</span></div>`
+                          : (p1PayLine ? `<div class="row"><span class="label">Phase 1 Entry</span><span class="chip" style="background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.5);color:#4ADE80">PAID · ${p1PayLine}</span></div>` : '');
+                        const vidRow = (carryover || p1PayLine)
+                          ? `<div class="row"><span class="label">Trial Video</span><span class="chip" style="background:${vidDone ? 'rgba(34,197,94,0.14)' : 'rgba(232,178,61,0.14)'};border:1px solid ${vidColor};color:${vidColor}">${vidLabel}</span></div>`
+                          : '';
                         const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BCPL Player ID — ${user?.name ?? ''}</title>
 <style>
   *{box-sizing:border-box}
@@ -649,8 +667,8 @@ export function PlayerProfile() {
       <div class="row"><span class="label">Email</span><span class="val">${user?.email || '—'}</span></div>
     </div>
     <div class="panel"><div class="ptitle">Season 5 Status</div>
-      ${p1PayLine ? `<div class="row"><span class="label">Phase 1 Entry</span><span class="chip" style="background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.5);color:#4ADE80">PAID · ${p1PayLine}</span></div>` : ''}
-      ${p1PayLine ? `<div class="row"><span class="label">Trial Video</span><span class="chip" style="background:${vidDone ? 'rgba(34,197,94,0.14)' : 'rgba(232,178,61,0.14)'};border:1px solid ${vidColor};color:${vidColor}">${vidLabel}</span></div>` : ''}
+      ${p1EntryRow}
+      ${vidRow}
       <div class="row"><span class="label">Trial City</span><span class="val">${reg.trialCity}</span></div>
     </div>
   </div>

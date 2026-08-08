@@ -70,10 +70,21 @@ function StaffRoute() {
   );
 }
 
-// Scroll to top on every route change
+// Scroll to top on every route change — EXCEPT hash/anchor navigations
+// (#section: the browser handles the in-page jump) and browser back/forward
+// (native scroll restoration should win). Instant, never smooth.
 function ScrollToTop() {
   const [location] = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [location]);
+  useEffect(() => {
+    // Skip when the URL targets an in-page anchor — let the browser jump to it.
+    if (typeof window !== 'undefined' && window.location.hash) return;
+    // Skip on back/forward so the browser restores the previous scroll position.
+    const nav = (typeof performance !== 'undefined' && performance.getEntriesByType)
+      ? (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)
+      : undefined;
+    if (nav?.type === 'back_forward') return;
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [location]);
   return null;
 }
 
