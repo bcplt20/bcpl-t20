@@ -75,6 +75,20 @@ body {
 
 :focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; border-radius: 4px; }
 
+/* ── iOS auto-zoom guard ──────────────────────────────────────────────
+   iOS Safari zooms the page when a focused form control's font-size is
+   <16px (autofocus counts too — e.g. the register page focuses the name
+   field on mount). Force every text control to >=16px on phones so tapping
+   a CTA into a form never zooms in and forces a pinch-out. We do NOT use
+   user-scalable=no (accessibility) — users can still pinch-zoom manually. */
+@media (max-width: 767.98px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 /* ── shared layout helpers (new V3 sections use these) ───────────── */
 .v3-wrap { max-width: var(--container); margin: 0 auto; padding: 0 20px; }
 @media (min-width: 768px)  { .v3-wrap { padding: 0 32px; } }

@@ -28,9 +28,9 @@ function getSpeechRecognitionCtor(): (new () => SpeechRecognitionLike) | null {
  */
 
 /** Classic "AI sparkle" mark — instantly reads as AI help. */
-function SparkleIcon({ size = 26 }: { size?: number }) {
+function SparkleIcon({ size = 26, fill = "#fff" }: { size?: number; fill?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="#fff" aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} aria-hidden="true">
       <path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6-5.6-1.9 5.6-1.9L12 2.5z" />
       <path d="M19.5 14.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6z" opacity="0.9" />
       <path d="M5 15.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z" opacity="0.75" />
@@ -42,19 +42,24 @@ function SparkleIcon({ size = 26 }: { size?: number }) {
    sticky register bar (.srg-bar, z900, visible <1024px for logged-out users
    — logged-in html gets .bcpl-authed and the bar unmounts). */
 const FAB_CSS = `
-.bcplai-fab{position:fixed;right:18px;bottom:18px;z-index:1000;width:58px;height:58px;border-radius:50%;border:1px solid rgba(126,235,255,0.35);cursor:pointer;padding:0;background:linear-gradient(140deg,#16305F 0%,#1E4B8F 55%,#2E6FD6 100%);box-shadow:0 10px 28px rgba(9,20,44,0.55),0 0 0 3px rgba(46,111,214,0.18);display:flex;align-items:center;justify-content:center;transition:transform .18s ease, box-shadow .18s ease;}
-.bcplai-fab:hover{transform:scale(1.06);box-shadow:0 14px 34px rgba(9,20,44,0.6),0 0 0 4px rgba(46,111,214,0.24);}
+/* Gold→orange launcher: pops against the site's navy so the AI is instantly
+   visible. Dark-navy icon inside for strong contrast (passes AA on the light
+   gold). A soft pulsing halo (box-shadow ring, no reveal animation) draws the
+   eye without moving layout. */
+.bcplai-fab{position:fixed;right:18px;bottom:18px;z-index:1000;width:58px;height:58px;border-radius:50%;border:1px solid rgba(255,224,150,0.6);cursor:pointer;padding:0;background:linear-gradient(140deg,#F7C24A 0%,#F5B63F 45%,#EE7A2E 100%);box-shadow:0 10px 28px rgba(238,122,46,0.5),0 0 0 3px rgba(245,182,63,0.22);display:flex;align-items:center;justify-content:center;transition:transform .18s ease, box-shadow .18s ease;animation:bcplaiHalo 2.4s ease-in-out infinite;}
+.bcplai-fab:hover{transform:scale(1.06);box-shadow:0 14px 34px rgba(238,122,46,0.6),0 0 0 5px rgba(245,182,63,0.3);}
 .bcplai-fab:active{transform:scale(.96);}
-.bcplai-badge{position:fixed;right:12px;bottom:60px;z-index:1000;pointer-events:none;background:linear-gradient(135deg,#2E6FD6,#7FC4FF);color:#08152C;font-size:10px;font-weight:900;letter-spacing:1px;padding:3px 8px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,0.35);}
-.bcplai-panel{position:fixed;right:14px;bottom:88px;z-index:1900;width:min(400px,calc(100vw - 28px));height:min(576px,calc(100vh - 130px));display:flex;flex-direction:column;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#12244A 0%,#0E1D3D 100%);border:1px solid rgba(126,196,255,0.18);box-shadow:0 22px 66px rgba(4,10,26,0.62);animation:bcplaiPop .22s cubic-bezier(.2,.8,.3,1);transform-origin:bottom right;}
+@keyframes bcplaiHalo{0%,100%{box-shadow:0 10px 28px rgba(238,122,46,0.5),0 0 0 0 rgba(245,182,63,0.5);}55%{box-shadow:0 12px 32px rgba(238,122,46,0.58),0 0 0 12px rgba(245,182,63,0);}}
+.bcplai-badge{position:fixed;right:12px;bottom:60px;z-index:1000;pointer-events:none;background:linear-gradient(135deg,#FFE49A,#F5B63F);color:#3A1D05;font-size:10px;font-weight:900;letter-spacing:1px;padding:3px 8px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.35);}
+.bcplai-panel{position:fixed;right:14px;bottom:88px;z-index:1900;width:min(400px,calc(100vw - 28px));height:min(576px,calc(100vh - 130px));display:flex;flex-direction:column;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#12244A 0%,#0E1D3D 100%);border:1px solid rgba(245,182,63,0.3);box-shadow:0 22px 66px rgba(4,10,26,0.62);animation:bcplaiPop .22s cubic-bezier(.2,.8,.3,1);transform-origin:bottom right;}
 @keyframes bcplaiPop{from{opacity:0;transform:translateY(14px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}
 .bcplai-msg{animation:bcplaiMsgIn .24s ease;}
 @keyframes bcplaiMsgIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 .bcplai-body{scrollbar-width:thin;scrollbar-color:rgba(126,196,255,.28) transparent;}
 .bcplai-body::-webkit-scrollbar{width:6px;}
 .bcplai-body::-webkit-scrollbar-thumb{background:rgba(126,196,255,.22);border-radius:6px;}
-.bcplai-chip{border-radius:999px;border:1px solid rgba(126,196,255,0.34);background:rgba(46,111,214,0.16);color:#CFE4FF;font-size:12px;font-weight:600;padding:7px 12px;cursor:pointer;white-space:nowrap;transition:background .16s, border-color .16s, transform .12s;}
-.bcplai-chip:hover{background:rgba(46,111,214,0.3);border-color:rgba(126,196,255,0.62);}
+.bcplai-chip{border-radius:999px;border:1px solid rgba(245,182,63,0.5);background:rgba(245,182,63,0.12);color:#FBDFA0;font-size:12px;font-weight:600;padding:7px 12px;cursor:pointer;white-space:nowrap;transition:background .16s, border-color .16s, transform .12s;}
+.bcplai-chip:hover{background:rgba(245,182,63,0.22);border-color:rgba(247,194,74,0.85);}
 .bcplai-chip:active{transform:scale(.95);}
 .bcplai-chip:disabled{opacity:.45;cursor:not-allowed;}
 .bcplai-chiprow{display:flex;gap:8px;overflow-x:auto;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.16);scrollbar-width:none;}
@@ -64,13 +69,13 @@ const FAB_CSS = `
 .bcplai-typing i:nth-child(2){animation-delay:.18s;}
 .bcplai-typing i:nth-child(3){animation-delay:.36s;}
 @keyframes bcplaiDot{0%,80%,100%{transform:translateY(0);opacity:.4;}40%{transform:translateY(-4px);opacity:1;}}
-.bcplai-mic{position:relative;flex-shrink:0;width:44px;border-radius:14px;border:1px solid rgba(126,196,255,0.22);background:rgba(255,255,255,0.06);color:#CFE4FF;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .16s, border-color .16s, transform .12s;}
-.bcplai-mic:hover{background:rgba(46,111,214,0.24);border-color:rgba(126,196,255,0.5);}
+.bcplai-mic{position:relative;flex-shrink:0;width:44px;border-radius:14px;border:1px solid rgba(245,182,63,0.3);background:rgba(255,255,255,0.06);color:#FBDFA0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .16s, border-color .16s, transform .12s;}
+.bcplai-mic:hover{background:rgba(245,182,63,0.2);border-color:rgba(247,194,74,0.7);}
 .bcplai-mic:active{transform:scale(.94);}
 .bcplai-mic:disabled{opacity:.5;cursor:not-allowed;}
 .bcplai-mic.rec{background:linear-gradient(135deg,#E23B4E,#FF6A78);border-color:rgba(255,120,132,0.8);color:#fff;animation:bcplaiRec 1.15s ease-in-out infinite;}
 @keyframes bcplaiRec{0%,100%{box-shadow:0 0 0 0 rgba(226,59,78,0.55);}50%{box-shadow:0 0 0 8px rgba(226,59,78,0);}}
-@media(prefers-reduced-motion:reduce){.bcplai-panel,.bcplai-msg{animation:none;}.bcplai-typing i{animation:none;}.bcplai-mic.rec{animation:none;}}
+@media(prefers-reduced-motion:reduce){.bcplai-panel,.bcplai-msg,.bcplai-fab{animation:none;}.bcplai-typing i{animation:none;}.bcplai-mic.rec{animation:none;}}
 /* Logged-out: clear the mobile sticky register bar. */
 @media(max-width:1023.98px){
   html:not(.bcpl-authed) .bcplai-fab{bottom:calc(92px + env(safe-area-inset-bottom,0px));}
@@ -319,9 +324,9 @@ export default function AiHelper() {
       {/* Launcher — AI sparkle mark on the brand gradient */}
       <button aria-label="BCPL AI" onClick={() => setOpen((o) => !o)} className="bcplai-fab">
         {open ? (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B2E52" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
         ) : (
-          <SparkleIcon size={30} />
+          <SparkleIcon size={30} fill="#1B2E52" />
         )}
       </button>
       {/* "AI" badge on the launcher */}
@@ -331,19 +336,19 @@ export default function AiHelper() {
       {open && (
         <div className="bcplai-panel">
           {/* Header */}
-          <div className="bcplai-header" style={{ position: "relative", padding: "14px 16px", background: "linear-gradient(120deg,#12305F 0%,#1B4A8C 55%,#2E6FD6 100%)", borderBottom: "1px solid rgba(126,196,255,0.16)", flexShrink: 0 }}>
+          <div className="bcplai-header" style={{ position: "relative", padding: "14px 16px", background: "linear-gradient(120deg,#F7C24A 0%,#F5B63F 45%,#EE7A2E 100%)", borderBottom: "1px solid rgba(120,60,10,0.22)", flexShrink: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#2E6FD6,#7FC4FF)", border: "1px solid rgba(255,255,255,0.24)", boxShadow: "0 4px 14px rgba(46,111,214,0.45)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <SparkleIcon size={22} />
+              <span style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#1B2E52,#24396B)", border: "1px solid rgba(255,255,255,0.4)", boxShadow: "0 4px 14px rgba(27,46,82,0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <SparkleIcon size={22} fill="#F7C24A" />
               </span>
               <div>
-                <div style={{ color: "#fff", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 900, fontSize: 19, letterSpacing: ".06em", lineHeight: 1.1 }}>
-                  BCPL <span style={{ background: "linear-gradient(90deg,#9FD0FF,#7FEBFF,#CFE4FF)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>AI</span>
+                <div style={{ color: "#231204", fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 900, fontSize: 19, letterSpacing: ".06em", lineHeight: 1.1 }}>
+                  BCPL <span style={{ color: "#1B2E52" }}>AI</span>
                 </div>
-                <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.78)" }}>{t("Official BCPL assistant — ask by voice or text", "BCPL का आधिकारिक सहायक — बोलकर या लिखकर पूछें")}</div>
+                <div style={{ fontSize: 11.5, color: "rgba(45,24,4,0.82)", fontWeight: 600 }}>{t("Official BCPL assistant — ask by voice or text", "BCPL का आधिकारिक सहायक — बोलकर या लिखकर पूछें")}</div>
               </div>
-              <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 5, fontSize: 10, fontWeight: 800, color: "#7FEBFF", letterSpacing: 1 }}>
-                <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22E39B", boxShadow: "0 0 8px #22E39B" }} />
+              <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 5, fontSize: 10, fontWeight: 900, color: "#12401F", letterSpacing: 1 }}>
+                <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#0E7A3A", boxShadow: "0 0 8px rgba(14,122,58,0.8)" }} />
                 {t("ONLINE", "ऑनलाइन")}
               </span>
               {/* Prominent close */}
@@ -352,7 +357,7 @@ export default function AiHelper() {
                 onClick={() => setOpen(false)}
                 aria-label={t("Close", "बंद करें")}
                 title={t("Close", "बंद करें")}
-                style={{ width: 32, height: 32, flexShrink: 0, borderRadius: 10, border: "1px solid rgba(255,255,255,0.28)", background: "rgba(255,255,255,0.12)", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                style={{ width: 32, height: 32, flexShrink: 0, borderRadius: 10, border: "1px solid rgba(35,18,4,0.35)", background: "rgba(35,18,4,0.14)", color: "#231204", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
@@ -403,14 +408,14 @@ export default function AiHelper() {
               placeholder={recording ? t("Listening…", "सुन रहा हूँ…") : t("Ask BCPL AI…", "BCPL AI से पूछें…")}
               maxLength={1200}
               style={{
-                flex: 1, borderRadius: 14, border: "1px solid rgba(126,196,255,0.20)",
+                flex: 1, borderRadius: 14, border: "1px solid rgba(245,182,63,0.28)",
                 background: "rgba(255,255,255,0.07)", color: "#fff", padding: "11px 14px",
                 fontSize: 14, outline: "none",
               }}
             />
             <button onClick={() => send()} disabled={busy || !input.trim()} aria-label={t("Send", "भेजें")} style={{
               borderRadius: 14, border: "none", padding: "0 16px", cursor: "pointer",
-              background: "linear-gradient(135deg,#2E6FD6,#7FC4FF)", color: "#08152C", fontWeight: 800, fontSize: 13,
+              background: "linear-gradient(135deg,#F7C24A,#EE7A2E)", color: "#231204", fontWeight: 900, fontSize: 13,
               opacity: busy || !input.trim() ? 0.5 : 1,
             }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
@@ -430,16 +435,17 @@ function Bubble({ role, text, typing }: { role: "user" | "assistant"; text?: str
   return (
     <div className="bcplai-msg" style={{ display: "flex", gap: 8, alignSelf: user ? "flex-end" : "flex-start", maxWidth: "88%" }}>
       {!user && (
-        <span style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg,#2E6FD6,#7FC4FF)", border: "1px solid rgba(255,255,255,0.18)", boxShadow: "0 3px 10px rgba(46,111,214,0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, alignSelf: "flex-end" }}>
-          <SparkleIcon size={16} />
+        <span style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg,#F7C24A,#EE7A2E)", border: "1px solid rgba(255,255,255,0.22)", boxShadow: "0 3px 10px rgba(238,122,46,0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, alignSelf: "flex-end" }}>
+          <SparkleIcon size={16} fill="#1B2E52" />
         </span>
       )}
       <div style={{
         padding: typing ? "11px 14px" : "9px 13px", borderRadius: 16,
-        background: user ? "linear-gradient(135deg,#2E6FD6,#3F86E8)" : "rgba(255,255,255,0.08)",
-        color: "#fff", fontSize: 13.5, lineHeight: 1.55, whiteSpace: "pre-wrap",
-        border: user ? "none" : "1px solid rgba(126,196,255,0.12)",
-        boxShadow: user ? "0 4px 14px rgba(46,111,214,0.38)" : "none",
+        background: user ? "linear-gradient(135deg,#F7C24A,#EE7A2E)" : "rgba(255,255,255,0.08)",
+        color: user ? "#231204" : "#fff", fontSize: 13.5, lineHeight: 1.55, whiteSpace: "pre-wrap",
+        fontWeight: user ? 600 : 400,
+        border: user ? "none" : "1px solid rgba(245,182,63,0.16)",
+        boxShadow: user ? "0 4px 14px rgba(238,122,46,0.32)" : "none",
         borderBottomRightRadius: user ? 5 : 16,
         borderBottomLeftRadius: user ? 16 : 5,
       }}>
