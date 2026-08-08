@@ -564,9 +564,14 @@ export function MatchCenter() {
       <section style={{ padding: "clamp(56px,9vw,110px) 0", background: PAGE }}>
         <div className="wrap">
           <div className="section-label">Standings</div>
-          <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 36px)", color: "#fff", marginBottom: 24, textTransform: "uppercase" }}>
-            POINTS TABLE — SEASON 4
-          </h2>
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 24 }}>
+            <h2 className="section-title" style={{ fontSize: "clamp(22px, 4vw, 36px)", color: "#fff", margin: 0, textTransform: "uppercase" }}>
+              POINTS TABLE — SEASON 4
+            </h2>
+            <Link href="/points-table" style={{ display: "inline-flex", alignItems: "center", gap: 6, color: GOLD, fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 13, letterSpacing: ".06em", textTransform: "uppercase", textDecoration: "none", whiteSpace: "nowrap" }}>
+              {t("View full standings", "पूरी अंक तालिका देखें")} →
+            </Link>
+          </div>
 
           {!groups && (
             <div style={{ textAlign: "center", padding: "clamp(48px,8vw,72px) 24px", background: PANEL, borderRadius: 20, border: `1px solid ${LINE}`, boxShadow: "0 12px 34px rgba(0,0,0,.28)" }}>

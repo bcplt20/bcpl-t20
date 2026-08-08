@@ -36,23 +36,40 @@ const LINKS: NavItem[] = [
   { key: "About",     en: "About",     hi: "परिचय",      href: "/about" },
 ];
 
-/* Mobile menu lists the fuller map — the top bar stays minimal. */
-const MOB_LINKS: NavItem[] = [
-  { key: "Home",      en: "Home",         hi: "होम",           href: "/" },
-  { key: "Teams",     en: "Teams",        hi: "टीमें",          href: "/teams" },
-  { key: "Players",   en: "Players",      hi: "खिलाड़ी",        href: "/players" },
-  { key: "Trials",    en: "Trials",       hi: "ट्रायल्स",       href: "/trust" },
-  { key: "Matches",   en: "Match Centre", hi: "मैच सेंटर",      href: "/match-center" },
-  { key: "Standings", en: "Standings",    hi: "अंक तालिका",     href: "/points-table" },
-  { key: "Vote",      en: "Fan Voting",   hi: "फैन वोटिंग",     href: "/vote" },
-  { key: "MVP",       en: "MVP Leaderboard", hi: "MVP लीडरबोर्ड", href: "/mvp" },
-  { key: "Auction",   en: "Auction",      hi: "ऑक्शन",          href: "/auction/live" },
-  { key: "News",      en: "News",         hi: "न्यूज़",          href: "/news" },
-  { key: "Photos",    en: "Photos",       hi: "फ़ोटो",          href: "/photos" },
-  { key: "Videos",    en: "Videos",       hi: "वीडियो",         href: "/videos" },
-  { key: "Sponsor",   en: "Become a Sponsor", hi: "स्पॉन्सर बनें", href: "/become-a-sponsor" },
-  { key: "About",     en: "About BCPL",   hi: "BCPL परिचय",     href: "/about" },
-  { key: "Contact",   en: "Contact",      hi: "संपर्क",         href: "/contact" },
+/* Mobile menu — consolidated (~12 entries) under subtle section headings.
+   - Media merges News + Photos + Videos into one entry. There is no /media
+     hub route and the News page has no media tabs, so Media links to /news
+     (the primary media page) per the approved fallback.
+   - Standings is removed as its own entry: it lives inside Match Centre. */
+type NavSection = { key: string; en: string; hi: string; items: NavItem[] };
+const MOB_SECTIONS: NavSection[] = [
+  {
+    key: "League", en: "League", hi: "लीग",
+    items: [
+      { key: "Home",    en: "Home",         hi: "होम",       href: "/" },
+      { key: "Teams",   en: "Teams",        hi: "टीमें",      href: "/teams" },
+      { key: "Players", en: "Players",      hi: "खिलाड़ी",    href: "/players" },
+      { key: "Trials",  en: "Trials",       hi: "ट्रायल्स",   href: "/trust" },
+      { key: "Matches", en: "Match Centre", hi: "मैच सेंटर",  href: "/match-center" },
+      { key: "Auction", en: "Auction",      hi: "ऑक्शन",      href: "/auction/live" },
+    ],
+  },
+  {
+    key: "Fans", en: "Fans", hi: "फैन्स",
+    items: [
+      { key: "Vote",  en: "Fan Vote",        hi: "फैन वोट",      href: "/vote" },
+      { key: "MVP",   en: "MVP Leaderboard", hi: "MVP लीडरबोर्ड", href: "/mvp" },
+      { key: "Media", en: "Media",           hi: "मीडिया",       href: "/news" },
+    ],
+  },
+  {
+    key: "More", en: "More", hi: "और",
+    items: [
+      { key: "Sponsor", en: "Become a Sponsor", hi: "स्पॉन्सर बनें", href: "/become-a-sponsor" },
+      { key: "About",   en: "About BCPL",       hi: "BCPL परिचय",   href: "/about" },
+      { key: "Contact", en: "Contact",          hi: "संपर्क",       href: "/contact" },
+    ],
+  },
 ];
 
 /* Pages pass legacy `active` names — map them onto V4 nav keys. */
@@ -146,8 +163,11 @@ const CSS = `
 
   .sh-mob{position:fixed;inset:0;background:rgba(16,31,57,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);z-index:1500;display:flex;flex-direction:column;padding:16px 28px calc(28px + env(safe-area-inset-bottom,0px));overflow-y:auto;animation:shMobIn .22s ease;}
   @keyframes shMobIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-  .sh-moblink{padding:13px 0;border-bottom:1px solid rgba(255,255,255,0.18);font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;font-size:24px;letter-spacing:.05em;color:rgba(255,255,255,0.88);text-transform:uppercase;cursor:pointer;text-decoration:none;display:block;}
+  .sh-moblink{padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.12);font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:800;font-size:21px;letter-spacing:.05em;color:rgba(255,255,255,0.88);text-transform:uppercase;cursor:pointer;text-decoration:none;display:block;}
   .sh-moblink:active,.sh-moblink:hover{color:#FF7A29;}
+  /* Subtle, non-clickable section headings that group the consolidated menu. */
+  .sh-mobhead{margin:18px 0 4px;font-family:'Inter','Mukta',sans-serif;font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,0.42);user-select:none;}
+  .sh-mobhead:first-child{margin-top:6px;}
   .sh-mobsupport{display:flex;gap:12px;margin-top:18px;}
   .sh-mobsupport a{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1px solid rgba(255,255,255,0.2);border-radius:12px;color:rgba(255,255,255,0.88);font-family:'Inter','Mukta',sans-serif;font-weight:600;font-size:14px;text-decoration:none;background:rgba(255,255,255,.03);}
 
@@ -319,10 +339,15 @@ export function SiteHeader({ active }: { active?: string }) {
             <button onClick={() => setMenuOpen(false)} aria-label="Close menu" style={{ background: "none", border: "none", color: "#fff", fontSize: 30, cursor: "pointer", lineHeight: 1, width: 44, height: 44 }}>✕</button>
           </div>
 
-          {MOB_LINKS.map(l => (
-            <Link key={l.key} href={l.href} className="sh-moblink" onClick={() => setMenuOpen(false)} style={{ color: activeKey === l.key ? "#FF7A29" : undefined }}>
-              {t(l.en, l.hi)}
-            </Link>
+          {MOB_SECTIONS.map(sec => (
+            <div key={sec.key}>
+              <div className="sh-mobhead">{t(sec.en, sec.hi)}</div>
+              {sec.items.map(l => (
+                <Link key={l.key} href={l.href} className="sh-moblink" onClick={() => setMenuOpen(false)} style={{ color: activeKey === l.key ? "#FF7A29" : undefined }}>
+                  {t(l.en, l.hi)}
+                </Link>
+              ))}
+            </div>
           ))}
 
           <div style={{ padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.18)" }}>
