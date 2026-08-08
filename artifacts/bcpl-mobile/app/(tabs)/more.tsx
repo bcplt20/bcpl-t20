@@ -141,12 +141,12 @@ function LangSwitch({ unreadCount = 0 }: { unreadCount?: number }) {
           </Text>
           <Pressable
             onPress={toggleTheme}
-            style={{ flexDirection: 'row', backgroundColor: c.card2, borderRadius: 20, padding: 4, borderWidth: 1, borderColor: c.line }}
+            style={{ flexDirection: 'row', backgroundColor: c.card2, borderRadius: 999, padding: 3, borderWidth: 1, borderColor: c.line, overflow: 'hidden' }}
           >
-            <View style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: theme === 'stadium' ? c.card : 'transparent' }}>
+            <View style={{ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 999, backgroundColor: theme === 'stadium' ? c.card : 'transparent' }}>
               <Feather name="moon" size={14} color={theme === 'stadium' ? c.cyan : c.sub} />
             </View>
-            <View style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: theme === 'light' ? c.card : 'transparent' }}>
+            <View style={{ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 999, backgroundColor: theme === 'light' ? c.card : 'transparent' }}>
               <Feather name="sun" size={14} color={theme === 'light' ? c.orange : c.sub} />
             </View>
           </Pressable>
