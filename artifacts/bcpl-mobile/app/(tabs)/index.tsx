@@ -545,7 +545,12 @@ export default function HomeScreen() {
     return groups;
   }, [sponsorsQ.data?.sponsors]);
 
-  const notifsQ = useQuery({ queryKey: ['notifications'], queryFn: () => getNotifications().catch(() => null), staleTime: 60 * 1000 });
+  const notifsQ = useQuery({ 
+    queryKey: ['notifications', token], 
+    queryFn: () => getNotifications(token as string).catch(() => null), 
+    staleTime: 60 * 1000,
+    enabled: !!token
+  });
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>

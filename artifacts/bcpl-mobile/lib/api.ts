@@ -1015,19 +1015,19 @@ export function unregisterPushToken(token: string): Promise<void> {
   return apiFetch('/user/push-token', { method: 'DELETE', body: { token } });
 }
 
-export function getNotifications(): Promise<{ notifications: any[]; unreadCount: number }> {
-  return apiFetch('/user/notifications');
+export function getNotifications(token: string): Promise<{ notifications: any[]; unreadCount: number }> {
+  return apiFetch('/user/notifications', { token });
 }
-export function markNotificationsRead(ids?: string[]): Promise<void> {
-  return apiFetch('/user/notifications/read', { method: 'POST', body: { ids } });
-}
-
-export function getReferral(): Promise<{ code: string; link: string; totalRegistered: number; totalPaid: number; rewardStatus: 'none' | 'eligible' | 'granted'; qualifiedNeeded: number }> {
-  return apiFetch('/user/referral');
+export function markNotificationsRead(token: string, ids?: string[]): Promise<void> {
+  return apiFetch('/user/notifications/read', { method: 'POST', body: { ids }, token });
 }
 
-export function getBadges(): Promise<{ badges: any[] }> {
-  return apiFetch('/user/badges');
+export function getReferral(token: string): Promise<{ code: string; link: string; totalRegistered: number; totalPaid: number; rewardStatus: 'none' | 'eligible' | 'granted'; qualifiedNeeded: number }> {
+  return apiFetch('/user/referral', { token });
+}
+
+export function getBadges(token: string): Promise<{ badges: any[] }> {
+  return apiFetch('/user/badges', { token });
 }
 
 export function getLiveMatches(): Promise<{ matches: any[] }> {

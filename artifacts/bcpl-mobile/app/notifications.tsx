@@ -2,22 +2,32 @@ import React, { useCallback } from 'react';
 import { View, ScrollView, Text, Pressable, RefreshControl, StyleSheet, Platform, FlatList } from 'react-native';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getNotifications, markNotificationsRead } from '@/lib/api';
 import { ScreenBackground, GlassAppBar, useAppBarHeight, LoadingView, ErrorView, Card } from '@/components/ui';
 import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function NotificationsScreen() {
   const c = useColors();
   const { t } = useLang();
+  const { token, ready } = useAuth();
+  const router = useRouter();
   const appBarHeight = useAppBarHeight();
   const queryClient = useQueryClient();
 
-  const q = useQuery({ queryKey: ['notifications'], queryFn: getNotifications, staleTime: 60 * 1000 });
+  const q = useQuery({ 
+    queryKey: ['notifications', token], 
+    queryFn: () => getNotifications(token as string), 
+    staleTime: 60 * 1000,
+    enabled: !!token && ready
+  });
   const markRead = useMutation({
-    mutationFn: (ids?: string[]) => markNotificationsRead(ids),
+    mutationFn: (ids?: string[]) => markNotificationsRead(token as string, ids),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications', token] });
     }
   });
 
@@ -60,8 +70,21 @@ export default function NotificationsScreen() {
       <ScreenBackground />
       <GlassAppBar title={t('Notifications', 'नोटिफिकेशन')} />
       
-      {q.isLoading ? (
+      {!ready || q.isLoading ? (
         <LoadingView />
+      ) : !token ? (
+        <ScrollView contentContainerStyle={{ paddingTop: appBarHeight + 40, paddingHorizontal: 16 }}>
+          <Card style={{ alignItems: 'center', paddingVertical: 36 }}>
+            <Feather name="lock" size={28} color={c.magenta} />
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, marginTop: 16, textAlign: 'center' }}>
+              {t('Log in to see notifications', 'नोटिफिकेशन देखने के लिए लॉगिन करें')}
+            </Text>
+            <Pressable onPress={() => router.push('/login')} style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 48, borderRadius: 14, overflow: 'hidden', paddingHorizontal: 24, marginTop: 24, opacity: pressed ? 0.85 : 1 }]}>
+              <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
+              <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>{t('Login with OTP', 'OTP से लॉगिन')}</Text>
+            </Pressable>
+          </Card>
+        </ScrollView>
       ) : q.isError ? (
         <ErrorView onRetry={() => q.refetch()} />
       ) : (

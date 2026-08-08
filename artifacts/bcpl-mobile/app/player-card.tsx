@@ -9,11 +9,13 @@ import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
+import { useRouter } from 'expo-router';
 
 export default function PlayerCardScreen() {
   const c = useColors();
   const { t } = useLang();
-  const { user } = useAuth();
+  const { user, ready } = useAuth();
+  const router = useRouter();
   const appBarHeight = useAppBarHeight();
   const viewShotRef = useRef<any>(null);
 
@@ -29,8 +31,6 @@ export default function PlayerCardScreen() {
     }
   };
 
-  if (!user) return null;
-
   const w = Dimensions.get('window').width - 48;
   const h = w * 1.5;
 
@@ -39,9 +39,23 @@ export default function PlayerCardScreen() {
       <ScreenBackground />
       <GlassAppBar title={t('Player Card', 'प्लेयर कार्ड')} back />
       
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: appBarHeight, paddingBottom: 24 }}>
-        
-        <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }}>
+      {!ready ? null : !user ? (
+        <View style={{ flex: 1, paddingTop: appBarHeight + 40, paddingHorizontal: 16 }}>
+          <Card style={{ alignItems: 'center', paddingVertical: 36 }}>
+            <Feather name="lock" size={28} color={c.magenta} />
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, marginTop: 16, textAlign: 'center' }}>
+              {t('Log in to see your player card', 'अपना प्लेयर कार्ड देखने के लिए लॉगिन करें')}
+            </Text>
+            <Pressable onPress={() => router.push('/login')} style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 48, borderRadius: 14, overflow: 'hidden', paddingHorizontal: 24, marginTop: 24, opacity: pressed ? 0.85 : 1 }]}>
+              <LinearGradient colors={['#FF1A75', '#D10056']} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 14 }} />
+              <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>{t('Login with OTP', 'OTP से लॉगिन')}</Text>
+            </Pressable>
+          </Card>
+        </View>
+      ) : (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: appBarHeight, paddingBottom: 24 }}>
+          
+          <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }}>
           <View style={{ width: w, height: h, borderRadius: 24, overflow: 'hidden', backgroundColor: '#1A0B2E' }}>
             <LinearGradient colors={['#5B2BF0', '#1A0B2E', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.8 }} />
             
@@ -100,7 +114,8 @@ export default function PlayerCardScreen() {
           </Text>
         </Pressable>
 
-      </View>
+        </View>
+      )}
     </View>
   );
 }

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Text, Pressable, Share, Platform } from 'react-native';
+import { View, ScrollView, Text, Pressable, Share, Platform, StyleSheet } from 'react-native';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { getReferral } from '@/lib/api';
 import { ScreenBackground, GlassAppBar, useAppBarHeight, LoadingView, ErrorView, Card } from '@/components/ui';
@@ -11,9 +13,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function ReferScreen() {
   const c = useColors();
   const { t } = useLang();
+  const { token, ready } = useAuth();
+  const router = useRouter();
   const appBarHeight = useAppBarHeight();
 
-  const q = useQuery({ queryKey: ['referral'], queryFn: getReferral });
+  const q = useQuery({ 
+    queryKey: ['referral', token], 
+    queryFn: () => getReferral(token as string),
+    enabled: !!token && ready
+  });
 
   const handleShare = async () => {
     if (!q.data) return;
@@ -33,8 +41,21 @@ export default function ReferScreen() {
       <ScreenBackground />
       <GlassAppBar title={t('Refer & Earn', 'रेफर करें और कमाएं')} back />
       
-      {q.isLoading ? (
+      {!ready || q.isLoading ? (
         <LoadingView />
+      ) : !token ? (
+        <ScrollView contentContainerStyle={{ paddingTop: appBarHeight + 40, paddingHorizontal: 16 }}>
+          <Card style={{ alignItems: 'center', paddingVertical: 36 }}>
+            <Feather name="lock" size={28} color={c.magenta} />
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, marginTop: 16, textAlign: 'center' }}>
+              {t('Log in to view referrals', 'रेफरल देखने के लिए लॉगिन करें')}
+            </Text>
+            <Pressable onPress={() => router.push('/login')} style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 48, borderRadius: 14, overflow: 'hidden', paddingHorizontal: 24, marginTop: 24, opacity: pressed ? 0.85 : 1 }]}>
+              <LinearGradient colors={['#FF1A75', '#D10056']} style={[StyleSheet.absoluteFill, { borderRadius: 14 }]} />
+              <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>{t('Login with OTP', 'OTP से लॉगिन')}</Text>
+            </Pressable>
+          </Card>
+        </ScrollView>
       ) : q.isError ? (
         <ErrorView onRetry={() => q.refetch()} />
       ) : q.data ? (
