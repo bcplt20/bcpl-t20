@@ -57,6 +57,7 @@ import { OfficeCricketTeam }     from '@/pages/OfficeCricketTeam';
 import { Scorecard }             from '@/pages/Scorecard';
 import { Vote }                   from '@/pages/Vote';
 import { MVP }                    from '@/pages/MVP';
+import { Download }               from '@/pages/Download';
 import AdminPanel              from '@/admin/AdminPanel';
 
 // Staff trial-ops app — lazy: field staff only, keeps jsqr etc out of the main bundle
@@ -122,6 +123,7 @@ function Router() {
         <Route path="/points-table" component={PointsTable} />
         <Route path="/vote"        component={Vote} />
         <Route path="/mvp"         component={MVP} />
+        <Route path="/download"    component={Download} />
 
         {/* SEO keyword landing pages (non-brand search intent) */}
         <Route path="/corporate-cricket"                 component={CorporateCricket} />
@@ -168,6 +170,7 @@ function Router() {
         <Route path="/team-selected"    component={TeamSelected} />
         <Route path="/profile"          component={PlayerProfile} />
         <Route path="/player-card"      component={PlayerCard} />
+        <Route path="/my-card"          component={PlayerCard} />
         <Route path="/trial-pass"       component={TrialPass} />
 
         {/* Admin panel */}

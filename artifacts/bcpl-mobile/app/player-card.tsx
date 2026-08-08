@@ -59,7 +59,6 @@ export default function PlayerCardScreen() {
   };
 
   const w = Dimensions.get('window').width - 48;
-  const h = w * 1.5;
 
   return (
     <View style={{ flex: 1 }}>
@@ -86,8 +85,8 @@ export default function PlayerCardScreen() {
       ) : dashQ.data ? (
         <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingTop: appBarHeight + 20, paddingBottom: 40 }}>
           
-          <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }}>
-          <View style={{ width: w, height: h, borderRadius: 24, overflow: 'hidden', backgroundColor: '#1A0B2E', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}>
+          <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 1 }} style={{ backgroundColor: 'transparent' }}>
+          <View style={{ width: w, borderRadius: 24, overflow: 'hidden', backgroundColor: '#1A0B2E', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}>
             <LinearGradient colors={['#5B2BF0', '#1A0B2E', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFillObject} />
             
             <RNAnimated.View style={[StyleSheet.absoluteFill, { width: w * 2, opacity: 0.15, transform: [{ translateX: shimmerTranslate }] }]} pointerEvents="none">
@@ -95,83 +94,115 @@ export default function PlayerCardScreen() {
             </RNAnimated.View>
 
             {/* Watermark */}
-            <Text style={{ position: 'absolute', left: -20, bottom: 20, color: 'rgba(255,255,255,0.03)', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 80, transform: [{ rotate: '-10deg' }] }}>
-              SEASON 5
-            </Text>
+            <View style={{ position: 'absolute', top: '15%', left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+              <Text style={{ color: 'rgba(255,255,255,0.04)', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: w * 0.22, transform: [{ rotate: '-10deg' }], textAlign: 'center' }}>
+                SEASON 5
+              </Text>
+            </View>
 
             {/* Header */}
-            <View style={{ padding: 24, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <Image source={require('../assets/images/bcpl-ball-clean.png')} style={{ width: 36, height: 36 }} contentFit="contain" />
+            <View style={{ padding: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Image source={require('../assets/images/bcpl-ball-clean.png')} style={{ width: 32, height: 32 }} contentFit="contain" />
                 <View>
-                  <Text style={{ color: '#00DCF5', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase' }}>
+                  <Text style={{ color: '#00DCF5', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 9, letterSpacing: 2, textTransform: 'uppercase' }}>
                     Season 5
                   </Text>
-                  <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18 }}>
+                  <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16 }}>
                     BCPL T20
                   </Text>
                 </View>
               </View>
               <View style={{ backgroundColor: 'rgba(255,255,255,0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' }}>
-                <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12 }}>
+                <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11 }}>
                   {dashQ.data.registration?.regNumber || user?.regNumber || '—'}
                 </Text>
               </View>
             </View>
 
-            {/* Photo */}
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-              <View style={{ width: 140, height: 140, borderRadius: 70, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 3, borderColor: '#00DCF5', overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+            {/* Photo + Name */}
+            <View style={{ alignItems: 'center', marginTop: 4 }}>
+              <View style={{ width: 110, height: 110, borderRadius: 55, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 3, borderColor: '#00DCF5', overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
                 {dashQ.data.avatar?.viewUrl || user?.avatar ? (
                   <Image source={{ uri: dashQ.data.avatar?.viewUrl || user?.avatar! }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                 ) : (
-                  <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 56 }}>
+                  <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 44 }}>
                     {(dashQ.data.user.name || user?.name || '?').charAt(0).toUpperCase()}
                   </Text>
                 )}
               </View>
-            </View>
-
-            {/* Footer details */}
-            <View style={{ padding: 24, paddingBottom: 28, alignItems: 'center' }}>
-              <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 26, textAlign: 'center', marginBottom: 12 }} numberOfLines={1} adjustsFontSizeToFit>
+              <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, textAlign: 'center', marginTop: 12, paddingHorizontal: 20 }} numberOfLines={1} adjustsFontSizeToFit>
                 {dashQ.data.user.name || user?.name}
               </Text>
+            </View>
+
+            {/* Role chips */}
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, paddingHorizontal: 16, marginTop: 12 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12 }}>
+                <Feather name={(dashQ.data.registration?.role || user?.role) === 'bat' ? 'target' : (dashQ.data.registration?.role || user?.role) === 'bowl' ? 'crosshair' : (dashQ.data.registration?.role || user?.role) === 'ar' ? 'zap' : 'shield'} size={12} color="#FF3DA6" />
+                <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, textTransform: 'uppercase' }}>
+                  {(dashQ.data.registration?.role || user?.role) === 'bat' ? t('Batsman', 'बल्लेबाज़') : (dashQ.data.registration?.role || user?.role) === 'bowl' ? t('Bowler', 'गेंदबाज़') : (dashQ.data.registration?.role || user?.role) === 'ar' ? t('All-Rounder', 'ऑल-राउंडर') : t('Wicket Keeper', 'विकेट कीपर')}
+                </Text>
+              </View>
               
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 }}>
-                  <Feather name={(dashQ.data.registration?.role || user?.role) === 'bat' ? 'target' : (dashQ.data.registration?.role || user?.role) === 'bowl' ? 'crosshair' : (dashQ.data.registration?.role || user?.role) === 'ar' ? 'zap' : 'shield'} size={12} color="#FF3DA6" />
-                  <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, textTransform: 'uppercase' }}>
-                    {(dashQ.data.registration?.role || user?.role) === 'bat' ? t('Batsman', 'बल्लेबाज़') : (dashQ.data.registration?.role || user?.role) === 'bowl' ? t('Bowler', 'गेंदबाज़') : (dashQ.data.registration?.role || user?.role) === 'ar' ? t('All-Rounder', 'ऑल-राउंडर') : t('Wicket Keeper', 'विकेट कीपर')}
+              {dashQ.data.registration?.classification?.battingHand && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12 }}>
+                  <Text style={{ color: '#00DCF5', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, textTransform: 'uppercase' }}>
+                    {dashQ.data.registration.classification.battingHand === 'right' ? 'RH Bat' : 'LH Bat'}
                   </Text>
                 </View>
-                
-                {dashQ.data.registration?.classification?.battingHand && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 }}>
-                    <Text style={{ color: '#00DCF5', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, textTransform: 'uppercase' }}>
-                      {dashQ.data.registration.classification.battingHand === 'right' ? 'RH Bat' : 'LH Bat'}
-                    </Text>
-                  </View>
-                )}
+              )}
 
-                {dashQ.data.registration?.classification?.bowlingType && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 }}>
-                    <Text style={{ color: '#00DCF5', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, textTransform: 'uppercase' }}>
-                      {dashQ.data.registration.classification.bowlingType.replace('_', ' ')}
-                    </Text>
-                  </View>
-                )}
-                
-                {dashQ.data.registration?.trialCity && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 }}>
-                    <Feather name="map-pin" size={12} color="#00DCF5" />
-                    <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, textTransform: 'uppercase' }}>
-                      {dashQ.data.registration.trialCity}
-                    </Text>
-                  </View>
-                )}
+              {dashQ.data.registration?.classification?.bowlingType && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12 }}>
+                  <Text style={{ color: '#00DCF5', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, textTransform: 'uppercase' }}>
+                    {dashQ.data.registration.classification.bowlingType.replace('_', ' ')}
+                  </Text>
+                </View>
+              )}
+              
+              {dashQ.data.registration?.trialCity && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12 }}>
+                  <Feather name="map-pin" size={12} color="#00DCF5" />
+                  <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, textTransform: 'uppercase' }}>
+                    {dashQ.data.registration.trialCity}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* Highlights Block */}
+            <View style={{ marginHorizontal: 20, marginTop: 20, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: 'rgba(255,197,61,0.3)' }}>
+              <Text style={{ color: '#FFC53D', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12, textAlign: 'center' }}>
+                BCPL Highlights
+              </Text>
+              <View style={{ gap: 10 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <Feather name="award" size={14} color="#FFC53D" />
+                  <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12 }}>Total prize pool ₹15 Cr+</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <Feather name="star" size={14} color="#FFC53D" />
+                  <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12 }}>Winning amount ₹6 Cr this season</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <Feather name="gift" size={14} color="#FFC53D" />
+                  <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12 }}>Man of the Series — luxury car</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <Feather name="trending-up" size={14} color="#FFC53D" />
+                  <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 12 }}>Auction contracts ₹2–20 lakh</Text>
+                </View>
               </View>
             </View>
+
+            {/* Footer */}
+            <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', paddingVertical: 14, marginTop: 20, alignItems: 'center' }}>
+              <Text style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'PlusJakartaSans_600SemiBold', fontSize: 10, letterSpacing: 0.5 }}>
+                For more information: bcplt20.com · Download the BCPL app
+              </Text>
+            </View>
+
           </View>
         </ViewShot>
 

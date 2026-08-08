@@ -39,6 +39,13 @@ export default function CMSView() {
   const [uploading, setUploading] = useState<string | null>(null);
   const [msg, setMsg]           = useState("");
 
+  /* App-download links — stored under its own public setting key
+     (app_download_links). Kept separate from homepage_config so it has its own
+     load/save and cannot clobber unrelated homepage fields. */
+  const [appLinks, setAppLinks] = useState<{ playStore: string; appStore: string; apk: string }>({ playStore: "", appStore: "", apk: "" });
+  const [appSaving, setAppSaving] = useState(false);
+  const [appMsg, setAppMsg]     = useState("");
+
   const fileRef = useRef<HTMLInputElement>(null);
   const pendingField = useRef<HeroField | null>(null);
 
@@ -50,7 +57,30 @@ export default function CMSView() {
       } catch { /* start blank */ }
       finally { setLoading(false); }
     })();
+    (async () => {
+      try {
+        const r = await getSiteSetting<{ playStore?: string; appStore?: string; apk?: string }>("app_download_links");
+        if (r.value) setAppLinks({ playStore: r.value.playStore ?? "", appStore: r.value.appStore ?? "", apk: r.value.apk ?? "" });
+      } catch { /* start blank */ }
+    })();
   }, []);
+
+  const saveAppLinks = async () => {
+    setAppSaving(true);
+    setAppMsg("");
+    try {
+      await adminSetSiteSetting("app_download_links", {
+        playStore: appLinks.playStore.trim(),
+        appStore: appLinks.appStore.trim(),
+        apk: appLinks.apk.trim(),
+      });
+      setAppMsg("Saved — the /download page now uses these links (blank shows as “Coming soon”).");
+    } catch (e: any) {
+      setAppMsg("Error: " + e.message);
+    } finally {
+      setAppSaving(false);
+    }
+  };
 
   /* ── upload flow: presigned PUT to S3 (cms/ prefix) ── */
   const pickFile = (field: HeroField, accept: string) => {
@@ -356,6 +386,35 @@ export default function CMSView() {
             <input value={cfg.supportPhone ?? ""} placeholder="+91 …" style={inp}
               onChange={e => setCfg(c => ({ ...c, supportPhone: e.target.value }))} />
           </div>
+        </div>
+      </div>
+
+      <div style={card}>
+        <div style={sectionTitle}>App Download Links</div>
+        <div style={sectionSub}>Store &amp; APK links for the public <b>/download</b> page. Leave a field blank to show that button as a disabled “Coming soon”. Saved separately from the homepage fields above.</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 14 }}>
+          <div>
+            <label style={lbl}>Google Play URL</label>
+            <input value={appLinks.playStore} placeholder="https://play.google.com/…" style={inp}
+              onChange={e => setAppLinks(a => ({ ...a, playStore: e.target.value }))} />
+          </div>
+          <div>
+            <label style={lbl}>App Store URL</label>
+            <input value={appLinks.appStore} placeholder="https://apps.apple.com/…" style={inp}
+              onChange={e => setAppLinks(a => ({ ...a, appStore: e.target.value }))} />
+          </div>
+          <div>
+            <label style={lbl}>Direct APK URL</label>
+            <input value={appLinks.apk} placeholder="https://…/bcpl.apk" style={inp}
+              onChange={e => setAppLinks(a => ({ ...a, apk: e.target.value }))} />
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, justifyContent: "flex-end", marginTop: 14 }}>
+          {appMsg && <span style={{ fontSize: 11, color: appMsg.startsWith("Error") ? "#F87171" : "#34D399" }}>{appMsg}</span>}
+          <button onClick={saveAppLinks} disabled={appSaving}
+            style={{ padding: "9px 20px", borderRadius: 10, border: "none", background: "#FF6B00", color: "#fff", fontSize: 12, fontWeight: 800, cursor: "pointer", opacity: appSaving ? 0.6 : 1 }}>
+            {appSaving ? "Saving…" : "Save App Links"}
+          </button>
         </div>
       </div>
 

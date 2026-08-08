@@ -28,7 +28,7 @@ import { z } from "zod";
 const router = Router();
 
 /** Keys readable without auth (shown on public pages). */
-const PUBLIC_KEYS = new Set(["sample_videos", "homepage_config"]);
+const PUBLIC_KEYS = new Set(["sample_videos", "homepage_config", "app_download_links"]);
 /** Keys the admin may write. */
 const WRITABLE_KEYS = new Set([
   "sample_videos",
@@ -41,6 +41,7 @@ const WRITABLE_KEYS = new Set([
   "trial_rubrics_v1",
   "selection_config",
   "mvp_points_config",
+  "app_download_links",
 ]);
 /** Per-key role restriction (SUPER_ADMIN always allowed). */
 const KEY_ROLES: Record<string, string[]> = {
@@ -73,6 +74,10 @@ const KEY_ROLES: Record<string, string[]> = {
      (GET /api/mvp/leaderboard reads it). Match-operations owns scoring rules;
      SUPER_ADMIN always allowed by the gate below. Never public. */
   mvp_points_config: ["MATCH_OPERATIONS"],
+  /* Public "Download the app" store/APK links shown on the website /download
+     page. Content team owns them (same as sponsors/banners); read publicly via
+     GET /api/settings/app_download_links. Blank links render as "Coming soon". */
+  app_download_links: ["CONTENT_TEAM"],
 };
 
 /* ── ensure table exists (idempotent, runs at boot) ── */
@@ -186,6 +191,15 @@ const trialOpsDefaultsSchema = z.object({
   "provide staff and/or assessor",
 );
 
+/* Public app-download links shown on the website /download page. Each link is
+   an http(s) URL or empty; empty renders as a disabled "Coming soon" button so
+   nothing breaks before store listings / APK exist. */
+const appDownloadLinksSchema = z.object({
+  playStore: httpUrlOrEmpty.default(""),
+  appStore:  httpUrlOrEmpty.default(""),
+  apk:       httpUrlOrEmpty.default(""),
+}).strict();
+
 /* ── GET /api/settings/admin/:key (full value, role-gated — for non-public keys like sponsors) ── */
 router.get("/admin/:key", requireAdmin, async (req, res) => {
   const key = String(req.params.key);
@@ -286,6 +300,13 @@ router.put("/admin/:key", requireAdmin, async (req, res) => {
       return void res.status(400).json({ error: "Invalid mvp_points_config value — " + first });
     }
     value = parsed.data as unknown as Record<string, unknown>;
+  } else if (key === "app_download_links") {
+    const parsed = appDownloadLinksSchema.safeParse(req.body?.value);
+    if (!parsed.success) {
+      const first = parsed.error.issues.slice(0, 3).map(i => (i.path.join(".") || "value") + ": " + i.message).join("; ");
+      return void res.status(400).json({ error: "Invalid app_download_links value — " + first });
+    }
+    value = parsed.data as Record<string, unknown>;
   } else {
     return void res.status(400).json({ error: "Unknown setting key" });
   }

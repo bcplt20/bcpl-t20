@@ -33,6 +33,7 @@ const LINKS: NavItem[] = [
   { key: "Media",     en: "Media",     hi: "मीडिया",     href: "/photos" },
   { key: "Sponsor",   en: "Sponsor",   hi: "स्पॉन्सर",   href: "/become-a-sponsor" },
   { key: "About",     en: "About",     hi: "परिचय",      href: "/about" },
+  { key: "Download",  en: "Get the App", hi: "ऐप पाएँ",  href: "/download" },
 ];
 
 /* Mobile menu — clean single list (no section headings). Players and Auction
@@ -49,8 +50,9 @@ const MOB_LINKS: NavItem[] = [
   { key: "MVP",     en: "MVP Leaderboard",  hi: "MVP लीडरबोर्ड",  href: "/mvp" },
   { key: "Media",   en: "Media",            hi: "मीडिया",         href: "/news" },
   { key: "Sponsor", en: "Become a Sponsor", hi: "स्पॉन्सर बनें",  href: "/become-a-sponsor" },
-  { key: "About",   en: "About BCPL",       hi: "BCPL परिचय",     href: "/about" },
-  { key: "Contact", en: "Contact",          hi: "संपर्क",         href: "/contact" },
+  { key: "About",    en: "About BCPL",       hi: "BCPL परिचय",     href: "/about" },
+  { key: "Contact",  en: "Contact",          hi: "संपर्क",         href: "/contact" },
+  { key: "Download", en: "Download App",     hi: "ऐप डाउनलोड करें", href: "/download" },
 ];
 
 /* Pages pass legacy `active` names — map them onto V4 nav keys. */
@@ -61,6 +63,7 @@ const ACTIVE_MAP: Record<string, string> = {
   "Trust": "Trials", "Trials": "Trials",
   "About": "About", "Contact": "Contact", "Auction": "Auction",
   "Vote": "Vote", "MVP": "MVP", "Sponsor": "Sponsor",
+  "Download": "Download",
 };
 
 const WHATSAPP_URL = "https://wa.me/919151346555";
