@@ -241,8 +241,8 @@ export const BannerCarousel = React.memo(({ banners }: { banners: AppBanner[] })
                   </Text>
                 ) : null}
 
-                <View style={{ marginTop: 'auto', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                  {item.ctaHref === '/register' ? <RegCountdown /> : <View />}
+                <View style={{ marginTop: 'auto', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
+                  {item.ctaHref === '/register' ? <View style={{ flexShrink: 1, marginRight: 4 }}><RegCountdown /></View> : <View />}
                   {item.ctaLabel ? (
                     <View style={{ backgroundColor: '#FFFFFF', borderRadius: 999, paddingHorizontal: 16, paddingVertical: 9, shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 4 }}>
                       <Text style={{ color: bannerGradient(item.accent)[0], fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 13 }}>
@@ -867,49 +867,7 @@ export default function HomeScreen() {
           </View>
         ), [latestNews, c, t])}
 
-        {React.useMemo(() => (
-          sponsorGroups.length > 0 && (
-            <View style={{ paddingHorizontal: 16, marginTop: 40, marginBottom: 32, alignItems: 'center' }}>
-              <SectionHeader title={t('Our Sponsors', 'हमारे Sponsors')} />
-              {sponsorGroups.map((g, gi) => {
-                const isTop = gi === 0;
-                const logoH = isTop ? 64 : gi === 1 ? 44 : 32;
-                return (
-                  <View key={g.label} style={{ marginTop: isTop ? 8 : 24, alignItems: 'center' }}>
-                    <Text style={{ color: c.getAccentText(c.amber), fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: isTop ? 14 : 12, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 12 }}>
-                      {g.label}
-                    </Text>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: isTop ? 16 : 12 }}>
-                      {g.items.map((s, i) => {
-                        const inner = (
-                          <View style={{ backgroundColor: c.isDark ? c.card2 : '#1B2E52', borderRadius: 12, paddingHorizontal: logoH * 0.4, paddingVertical: logoH * 0.3, borderWidth: 1, borderColor: c.line, alignItems: 'center', justifyContent: 'center' }}>
-                            {s.logo ? (
-                              <Image source={{ uri: s.logo.startsWith('http') ? s.logo : `${SITE_ASSETS}/${s.logo.replace(/^\//, '')}` }} style={{ height: logoH, width: logoH * 3, maxWidth: 200 }} contentFit="contain" cachePolicy="memory-disk" />
-                            ) : (
-                              <Text style={{ fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: logoH * 0.4, color: '#FFFFFF', textAlign: 'center' }}>{s.name}</Text>
-                            )}
-                          </View>
-                        );
-                        if (s.url) {
-                          return (
-                            <Pressable key={i} onPress={() => WebBrowser.openBrowserAsync(s.url!)} style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}>
-                              {inner}
-                            </Pressable>
-                          );
-                        }
-                        return <View key={i}>{inner}</View>;
-                      })}
-                    </View>
-                  </View>
-                );
-              })}
-              <Pressable onPress={() => WebBrowser.openBrowserAsync('https://bcplt20.com/contact')} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, paddingHorizontal: 24, backgroundColor: c.card2, borderRadius: 100, borderWidth: 1, borderColor: c.line, marginTop: 32, opacity: pressed ? 0.8 : 1 })}>
-                <Feather name="star" size={16} color={c.amber} />
-                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>Become a Sponsor</Text>
-              </Pressable>
-            </View>
-          )
-        ), [sponsorGroups, c, t])}
+        {/* Sponsors section removed per owner request (Aug 2026) — restore from git history if needed */}
       </ScrollView>
     </View>
   );
@@ -920,7 +878,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginTop: 12,
+    flexShrink: 1,
     backgroundColor: 'rgba(11, 8, 19,0.6)',
     borderColor: 'rgba(0, 229, 255,0.4)',
     borderWidth: 1,
