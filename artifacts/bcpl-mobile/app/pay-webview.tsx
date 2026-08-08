@@ -232,7 +232,6 @@ export default function PayWebViewScreen() {
                the checkout just spins forever after picking card/netbanking. */
             javaScriptCanOpenWindowsAutomatically
             thirdPartyCookiesEnabled
-            mixedContentMode="compatibility"
             setSupportMultipleWindows={false}
             startInLoadingState={false}
             testID="pay-webview"
