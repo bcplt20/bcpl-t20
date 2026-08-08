@@ -13,6 +13,7 @@ import scoringRouter  from "./scoring";
 import pointsRouter   from "./points";
 import settingsRouter from "./settings";
 import sponsorsRouter from "./sponsors";
+import sponsorEnquiriesRouter, { adminSponsorEnquiriesRouter } from "./sponsorEnquiries";
 import galleryRouter  from "./gallery";
 import appBannersRouter from "./appBanners";
 import appMediaRouter  from "./appMedia";
@@ -61,7 +62,9 @@ router.use("/mvp",           mvpRouter);       // official-match MVP/fantasy lea
 router.use("/polls",         fanPollsRouter);  // fan voting (public + player-auth votes)
 router.use("/points-table",  pointsRouter);
 router.use("/teams",         teamsRouter);
+router.use("/sponsors/admin", adminSponsorEnquiriesRouter); // sponsorship enquiry CRM (admin)
 router.use("/sponsors",      sponsorsRouter); // public sanitized sponsor list
+router.use("/sponsors",      sponsorEnquiriesRouter); // public "become a sponsor" enquiry form
 router.use("/gallery",       galleryRouter);  // public match photos/videos (admin-opted folders)
 router.use("/app-banners",   appBannersRouter); // public mobile-app promo banners
 router.use("/app-media",     appMediaRouter); // public mobile-app curated photos & videos

@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /sponsor-deck
 
 Sitemap: https://bcplt20.com/sitemap.xml

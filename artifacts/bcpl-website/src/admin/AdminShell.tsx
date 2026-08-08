@@ -12,6 +12,7 @@ import TeamsView            from "./views/TeamsView";
 import SelectionView        from "./views/SelectionView";
 import MediaView            from "./views/MediaView";
 import SponsorsView         from "./views/SponsorsView";
+import SponsorEnquiriesView from "./views/SponsorEnquiriesView";
 import BannersView          from "./views/BannersView";
 import AppBannersView       from "./views/AppBannersView";
 import AppMediaView         from "./views/AppMediaView";
@@ -105,6 +106,7 @@ const NAV: NavGroup[] = [
     { id:"cms",          label:"CMS / Pages",       icon:"≡" },
     { id:"polls",        label:"Fan Voting",        icon:"☑" },
     { id:"sponsors",     label:"Sponsors",          icon:"⊟" },
+    { id:"sponsor_enquiries", label:"Sponsorship Enquiries", icon:"✉" },
   ]},
   { title: "SYSTEM", items: [
     { id:"data_export",     label:"Data Export",        icon:"⊕" },
@@ -165,6 +167,7 @@ function renderView(id: string, navigate: (viewId: string, payload?: AdminNavPay
     case "cms":            return <CMSView />;
     case "polls":          return <PollsView />;
     case "sponsors":       return <SponsorsView />;
+    case "sponsor_enquiries": return <SponsorEnquiriesView />;
     case "data_export":    return <DataExportView />;
     case "legacy_import":  return <LegacyImportView />;
     case "api_health":     return <ApiHealthView />;

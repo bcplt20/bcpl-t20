@@ -136,7 +136,7 @@ export default function AiHelper() {
   }, [open]);
 
   const path = typeof window !== "undefined" ? window.location.pathname : "";
-  if (gone || /\/(admin|staff)(\/|$)/.test(path)) return null;
+  if (gone || /\/(admin|staff|sponsor-deck)(\/|$)/.test(path)) return null;
 
   const send = async (override?: string) => {
     const text = (override ?? input).trim();

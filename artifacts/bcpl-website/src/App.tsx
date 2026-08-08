@@ -16,6 +16,7 @@ import News                    from '@/pages/News';
 import Careers                 from '@/pages/Careers';
 import Franchise               from '@/pages/Franchise';
 import BecomeASponsor          from '@/pages/BecomeASponsor';
+import SponsorDeck             from '@/pages/SponsorDeck';
 import { Videos }              from '@/pages/Videos';
 import { About }               from '@/pages/About';
 import { FAQ }                 from '@/pages/FAQ';
@@ -102,6 +103,8 @@ function Router() {
         <Route path="/careers"     component={Careers} />
         <Route path="/franchise"   component={Franchise} />
         <Route path="/become-a-sponsor" component={BecomeASponsor} />
+        {/* Print-only sponsorship deck (PDF generation) — kept out of nav & sitemap */}
+        <Route path="/sponsor-deck" component={SponsorDeck} />
         <Route path="/photos"      component={Photos} />
         <Route path="/videos"      component={Videos} />
         <Route path="/about"       component={About} />

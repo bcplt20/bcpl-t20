@@ -57,6 +57,7 @@ function renderAll(): Array<{ key: string; subject: string; html: string }> {
     { key: "phase2_payment_reminder", out: E.tplPhase2PaymentReminder("Saurabh Kumar") },
     { key: "referral_milestone", out: E.tplReferralMilestone("Saurabh Kumar", 3, "Official BCPL Jersey") },
     { key: "trial_pass", out: E.tplTrialPass("Saurabh Kumar", "Feroz Shah Kotla Ground", "Delhi", "12 Aug 2027", "8:30 AM", "Batch A") },
+    { key: "sponsor_enquiry", out: E.tplSponsorEnquiry({ name: "Anita Sharma", company: "Acme Retail Pvt Ltd", designation: "Marketing Head", phone: "9876543210", email: "anita@example.com", budgetRange: "5-15L", message: "Interested in a jersey partnership.", source: "website", receivedAt: new Date(0) }) },
   ];
   return t.map((x) => ({ key: x.key, subject: x.out.subject, html: x.out.htmlContent }));
 }
@@ -177,7 +178,7 @@ function visibleText(html: string): string {
 
 describe("player-facing compliance grep", () => {
   // Player-facing templates only (admin alerts are internal ops mail).
-  const adminOnly = new Set(["admin_login_lockdown", "kyc_manual_review"]);
+  const adminOnly = new Set(["admin_login_lockdown", "kyc_manual_review", "sponsor_enquiry"]);
   const banned = [/scout/i, /BCCI/i, /guarantee/i, /100\s*%/, /selected by/i, /Gemini/i];
   for (const r of rendered) {
     if (adminOnly.has(r.key)) continue;
@@ -189,6 +190,21 @@ describe("player-facing compliance grep", () => {
       }
     });
   }
+});
+
+describe("sponsor enquiry template — compliance grep (internal ops mail)", () => {
+  const tpl = E.tplSponsorEnquiry({ name: "Anita Sharma", company: "Acme Retail Pvt Ltd", designation: "Marketing Head", phone: "9876543210", email: "anita@example.com", budgetRange: "5-15L", message: "Interested in a jersey partnership.", source: "website", receivedAt: new Date(0) });
+  const banned = [/scout/i, /BCCI/i, /guarantee/i, /100\s*%/, /\bbest\b/i, /No\.?\s*1\b/i, /world-?class/i];
+  it("has no scout / BCCI / superlative / absolute-promise copy", () => {
+    const text = visibleText(tpl.htmlContent);
+    for (const re of banned) {
+      expect(re.test(text), `visible text matched ${re}`).toBe(false);
+      expect(re.test(tpl.subject), `subject matched ${re}`).toBe(false);
+    }
+  });
+  it("subject follows the required Hindi format", () => {
+    expect(tpl.subject).toBe("नई sponsorship enquiry — Acme Retail Pvt Ltd");
+  });
 });
 
 describe("shell structure integrity", () => {

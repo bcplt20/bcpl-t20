@@ -21,6 +21,7 @@ import { ensureTrialOpsTables } from "./routes/staffTrials";
 import { ensureSelectionTables } from "./lib/selectionMigrations";
 import { ensureAdminUsersTable } from "./routes/adminUsers";
 import { ensureRefundsTables } from "./routes/refunds";
+import { ensureSponsorEnquiriesTable } from "./routes/sponsorEnquiries";
 import { ensureUserAvatarColumn, ensureRegistrationClassificationColumn } from "./routes/user";
 import { ensureFraudTables } from "./routes/fraud";
 import { recordJobRun } from "./lib/heartbeat";
@@ -64,6 +65,7 @@ async function start() {
       await ensureAdminUsersTable(); // Stage 5 server-side RBAC
       await ensureFraudTables(); // Stage 6 fraud flag extensions
       await ensureRefundsTables(); // Stage 5 finance refunds
+      await ensureSponsorEnquiriesTable(); // sponsorship enquiry lead capture + CRM
       await ensureUserAvatarColumn(); // profile avatar (preset id or uploaded photo)
       await ensureRegistrationClassificationColumn(); // player playing-style classification
       await ensurePushTables(); // Growth — Expo push tokens + in-app notification inbox

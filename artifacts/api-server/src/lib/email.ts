@@ -493,6 +493,53 @@ export function tplKycManualReview(p: {
   };
 }
 
+// ── Admin alert: new sponsorship enquiry from the website/app ────────────────
+// Internal ops mail (goes to ADMIN_ALERT_EMAIL), not player-facing. Built from
+// the emailTheme design system; no emoji; no marketing/compliance-risk copy.
+export function tplSponsorEnquiry(p: {
+  name: string;
+  company: string;
+  designation?: string;
+  phone: string;
+  email?: string;
+  budgetRange: string;
+  message?: string;
+  source: string;
+  receivedAt: Date;
+}) {
+  const fmt = (d: Date) =>
+    d.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true }) + " IST";
+  const budgetLabel: Record<string, string> = {
+    "under-1L": "Under &#8377;1 Lakh",
+    "1-5L": "&#8377;1&ndash;5 Lakh",
+    "5-15L": "&#8377;5&ndash;15 Lakh",
+    "15L-plus": "&#8377;15 Lakh+",
+    "custom": "Custom / to discuss",
+  };
+  const rows: Array<[string, string]> = [
+    ["Company", `<strong style="color:${COLORS.ink};">${esc(p.company)}</strong>`],
+    ["Contact", esc(p.name) + (p.designation ? ` <span style="color:${COLORS.inkFaint};">(${esc(p.designation)})</span>` : "")],
+    ["Phone", `<span style="font-family:monospace;">${esc(p.phone)}</span>`],
+  ];
+  if (p.email) rows.push(["Email", esc(p.email)]);
+  rows.push(["Budget range", esc(budgetLabel[p.budgetRange] ?? p.budgetRange)]);
+  rows.push(["Received via", esc(p.source === "app" ? "Mobile app" : "Website")]);
+  rows.push(["Received at", esc(fmt(p.receivedAt))]);
+  return {
+    subject: `नई sponsorship enquiry — ${p.company}`,
+    htmlContent: EmailShell(`
+      ${HeroStatus({ iconUrl: ICONS.shield(COLORS.gold), ring: COLORS.gold, titleColor: COLORS.gold, title: "NEW SPONSORSHIP ENQUIRY", subtitle: "A brand has reached out to partner with BCPL." })}
+      ${InfoCard({
+        accent: COLORS.gold,
+        children: `<p style="font-size:14px;color:${COLORS.inkSoft};margin:0;line-height:1.6;">A new sponsorship enquiry has been received. The details are recorded in the admin panel &mdash; please follow up with the contact below.</p>`,
+      })}
+      ${KeyValueTable(rows)}
+      ${p.message ? NoteBox("Message: " + p.message) : ""}
+      ${PrimaryCTA("OPEN ADMIN PANEL", `${SITE_URL}/admin`, COLORS.gold)}
+    `),
+  };
+}
+
 // ── Template 11: GST Tax Invoice ──────────────────────────────────────────────
 // Statutory supplier identity lives in ONE shared place (lib/companyInfo) so
 // the HTML invoice below and the attached PDF (lib/invoicePdf) can never drift.

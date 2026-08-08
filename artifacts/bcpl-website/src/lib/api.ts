@@ -51,6 +51,25 @@ export type PublicSponsor = { name: string; category: string; logo: string; webs
 export const getPublicSponsors = () =>
   req<{ sponsors: PublicSponsor[] }>("GET", "/sponsors");
 
+/* ─── Sponsorship enquiry (public POST from the Sponsorship Hub) ───────
+   Endpoint POST /api/sponsors/enquiry is being built in parallel in the
+   api-server. Wired null-safely: callers must catch and show the contact
+   fallback. Honeypot field `website_url` must stay blank for real humans. */
+export type SponsorEnquiryInput = {
+  name: string;
+  company: string;
+  designation?: string;
+  phone: string;
+  email?: string;
+  budget: string;
+  message?: string;
+  website_url?: string; // honeypot — leave empty
+};
+export const submitSponsorEnquiry = ({ budget, ...rest }: SponsorEnquiryInput) =>
+  req<{ ok?: boolean; success?: boolean; id?: string }>(
+    "POST", "/sponsors/enquiry", { ...rest, budgetRange: budget, source: "website" }
+  );
+
 /* ─── Public fee config (single source of truth for displayed prices) ─── */
 export type FeeConfig = { phase1: Record<string, number>; phase2: Record<string, number>; gstRate: number };
 export const getFees = () => req<FeeConfig>("GET", "/fees");
