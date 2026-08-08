@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { View, Text, Pressable, Platform, Dimensions, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Pressable, Platform, Dimensions, StyleSheet, ScrollView, Animated as RNAnimated, Easing } from 'react-native';
 import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
@@ -12,7 +12,6 @@ import * as Sharing from 'expo-sharing';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { getDashboard } from '@/lib/api';
-import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing } from 'react-native-reanimated';
 
 export default function PlayerCardScreen() {
   const c = useColors();
@@ -28,18 +27,24 @@ export default function PlayerCardScreen() {
     enabled: !!token && ready
   });
 
-  const shimmer = useSharedValue(-1);
+  const shimmerAnim = useRef(new RNAnimated.Value(0)).current;
   useEffect(() => {
-    shimmer.value = withRepeat(
-      withTiming(2, { duration: 2500, easing: Easing.linear }),
-      -1,
-      false
+    const loop = RNAnimated.loop(
+      RNAnimated.timing(shimmerAnim, {
+        toValue: 1,
+        duration: 3000,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      })
     );
-  }, []);
+    loop.start();
+    return () => loop.stop();
+  }, [shimmerAnim]);
 
-  const shimmerStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shimmer.value * Dimensions.get('window').width }]
-  }));
+  const shimmerTranslate = shimmerAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-Dimensions.get('window').width, Dimensions.get('window').width * 1.5]
+  });
 
   const handleShare = async () => {
     if (!viewShotRef.current?.capture) return;
@@ -85,9 +90,9 @@ export default function PlayerCardScreen() {
           <View style={{ width: w, height: h, borderRadius: 24, overflow: 'hidden', backgroundColor: '#1A0B2E', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}>
             <LinearGradient colors={['#5B2BF0', '#1A0B2E', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFillObject} />
             
-            <Animated.View style={[StyleSheet.absoluteFill, shimmerStyle, { width: w * 2, opacity: 0.15 }]} pointerEvents="none">
+            <RNAnimated.View style={[StyleSheet.absoluteFill, { width: w * 2, opacity: 0.15, transform: [{ translateX: shimmerTranslate }] }]} pointerEvents="none">
               <LinearGradient colors={['transparent', '#fff', 'transparent']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ flex: 1, transform: [{ skewX: '-20deg' }] }} />
-            </Animated.View>
+            </RNAnimated.View>
 
             {/* Watermark */}
             <Text style={{ position: 'absolute', left: -20, bottom: 20, color: 'rgba(255,255,255,0.03)', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 80, transform: [{ rotate: '-10deg' }] }}>

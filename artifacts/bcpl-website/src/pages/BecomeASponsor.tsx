@@ -3,6 +3,7 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { SponsorWall } from '../components/SponsorWall';
 import { useLang } from '../lib/i18n';
+import { GROUP_A_TEAMS, GROUP_B_TEAMS, useTeamMeta } from '../lib/teamMeta';
 import { SEASON } from '../lib/season';
 import { submitSponsorEnquiry } from '../lib/api';
 
@@ -28,6 +29,25 @@ const PAST_SEASON_IMAGES: Array<[string, string]> = [
   ['ganguly_shoot.jpg', 'Brand shoot'],
   ['ambassador-a.webp', 'On-ground moments'],
   ['ambassador-b.webp', 'On-ground moments'],
+];
+
+/* Ten franchises — logos come from the shared server-backed team meta cache. */
+const TEAM_NAMES = [...GROUP_A_TEAMS, ...GROUP_B_TEAMS].slice().sort();
+
+/* Season journey — real photos already on the site. */
+const JOURNEY: Array<[string, string, string, string, string]> = [
+  ['auction-hero.webp', 'Trials', 'Trials', `Open trials across ${SEASON.trialCities} cities`, `${SEASON.trialCities} शहरों में open trials`],
+  ['event-panel.webp', 'Auction', 'Auction', 'Franchises build their squads at the player auction', 'Franchises player auction में अपनी squads बनाते हैं'],
+  ['event-teams-a.webp', 'League', 'League', 'A full season of fixtures across the franchises', 'Franchises के बीच पूरे season के fixtures'],
+  ['event-stage-trophy.webp', 'The Final', 'The Final', 'A season-ending final and trophy presentation', 'Season के अंत में final और trophy presentation'],
+];
+
+/* Branding placement cards over real photos. */
+const PLACEMENTS: Array<[string, string, string, string, string]> = [
+  ['jerseys.webp', 'Jersey branding', 'Jersey branding', 'Your logo on team jerseys, worn across every fixture.', 'हर fixture में पहनी जाने वाली team jerseys पर आपका logo।'],
+  ['event-stage-trophy.webp', 'Ground & LED', 'Ground & LED', 'Boundary boards, LED and ground branding at venues.', 'Venues पर boundary boards, LED और ground branding।'],
+  ['event-panel.webp', 'Digital presence', 'Digital presence', 'Website logo strip, social features and match-day content.', 'Website logo strip, social features और match-day content।'],
+  ['auction-hero.webp', 'In-app placement', 'In-app placement', 'Sponsor logo placement inside the BCPL app.', 'BCPL app के अंदर sponsor logo placement।'],
 ];
 
 const BUDGETS: Array<[string, string, string]> = [
@@ -81,6 +101,28 @@ body { background:#1B2E52; }
 .sp-strip figure { flex:0 0 auto; width:min(280px,72vw); margin:0; scroll-snap-align:start; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,0.14); background:#16233F; box-shadow:0 10px 28px rgba(0,0,0,0.3); }
 .sp-strip img { width:100%; height:180px; object-fit:cover; display:block; }
 .sp-strip figcaption { font-family:Inter,sans-serif; font-size:11.5px; color:rgba(255,255,255,0.7); padding:8px 12px; }
+.sp-logos { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+@media(min-width:560px){ .sp-logos{grid-template-columns:repeat(5,1fr);} }
+.sp-logo { display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:14px; aspect-ratio:1/1; }
+.sp-logo img { max-width:100%; max-height:100%; object-fit:contain; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.3)); }
+.sp-journey { display:grid; grid-template-columns:1fr; gap:16px; }
+@media(min-width:760px){ .sp-journey{grid-template-columns:repeat(4,1fr);} }
+.sp-step { position:relative; border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,0.16); background:#16233F; box-shadow:0 12px 34px rgba(0,0,0,0.3); }
+.sp-step .ph { position:relative; height:150px; }
+.sp-step .ph img { width:100%; height:100%; object-fit:cover; display:block; }
+.sp-step .ph::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(11,20,40,0.15),rgba(11,20,40,0.72)); }
+.sp-step .num { position:absolute; top:10px; left:10px; z-index:2; width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed','Montserrat',sans-serif; font-weight:800; font-size:16px; color:#0C1D33; background:linear-gradient(135deg,#E8B23D,#FFD873); box-shadow:0 6px 16px rgba(232,178,61,0.4); }
+.sp-step .body { padding:14px 16px 18px; }
+.sp-step h4 { font-family:'Barlow Condensed','Montserrat',sans-serif; font-weight:800; font-size:20px; color:#fff; text-transform:uppercase; letter-spacing:.02em; margin:0 0 5px; }
+.sp-step p { font-size:13px; line-height:1.55; color:rgba(255,255,255,0.8); font-family:Inter,sans-serif; margin:0; }
+.sp-place { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media(min-width:760px){ .sp-place{grid-template-columns:repeat(4,1fr);} }
+.sp-pcard { position:relative; border-radius:16px; overflow:hidden; min-height:190px; display:flex; align-items:flex-end; border:1px solid rgba(255,255,255,0.16); box-shadow:0 12px 34px rgba(0,0,0,0.3); }
+.sp-pcard img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+.sp-pcard::after { content:''; position:absolute; inset:0; z-index:1; background:linear-gradient(180deg,rgba(11,20,40,0.15) 30%,rgba(11,20,40,0.86)); }
+.sp-pcard .cap { position:relative; z-index:2; padding:16px; }
+.sp-pcard .cap h4 { font-family:'Montserrat',Inter,sans-serif; font-weight:800; font-size:15px; color:#fff; margin:0 0 4px; }
+.sp-pcard .cap p { font-size:12px; line-height:1.5; color:rgba(255,255,255,0.85); font-family:Inter,sans-serif; margin:0; }
 .sp-field { display:flex; flex-direction:column; gap:6px; }
 .sp-field label { font-family:Inter,sans-serif; font-size:12px; font-weight:700; letter-spacing:.04em; color:rgba(255,255,255,0.82); }
 .sp-field label .opt { color:rgba(255,255,255,0.5); font-weight:500; }
@@ -237,6 +279,7 @@ function SponsorEnquiryForm() {
 
 export default function BecomeASponsor() {
   const { t } = useLang();
+  const teamMeta = useTeamMeta();
 
   return (
     <div style={{ minHeight: '100vh', background: '#1B2E52', color: '#fff' }}>
@@ -291,6 +334,21 @@ export default function BecomeASponsor() {
                 <div key={String(s)} className="sp-stat"><b>{b}</b><span>{s}</span></div>
               ))}
             </div>
+            <p className="sp-sec-sub" style={{ margin: '24px 0 12px', fontWeight: 700, color: 'rgba(255,255,255,0.9)' }}>
+              {t('The ten franchises', 'दस franchises')}
+            </p>
+            <div className="sp-logos">
+              {TEAM_NAMES.map(name => {
+                const src = teamMeta.logoOf(name);
+                return (
+                  <div key={name} className="sp-logo" title={name}>
+                    {src
+                      ? <img src={src} alt={name} loading="lazy" />
+                      : <span className="sp-logo-name">{name}</span>}
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Why sponsor */}
@@ -308,6 +366,30 @@ export default function BecomeASponsor() {
                   <div className="cic">{ic}</div>
                   <h4>{t(en, hi)}</h4>
                   <p>{t(pEn, pHi)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Season journey timeline */}
+          <div>
+            <div className="sp-sec-kick">{t('How a season runs', 'Season कैसे चलता है')}</div>
+            <h2 className="sp-sec-h">{t('THE SEASON JOURNEY', 'Season की यात्रा')}</h2>
+            <p className="sp-sec-sub" style={{ marginBottom: 20 }}>
+              {t('From open trials to the final — your brand can travel with the league at every stage.',
+                 'Open trials से final तक — आपका brand हर चरण में league के साथ चल सकता है।')}
+            </p>
+            <div className="sp-journey">
+              {JOURNEY.map(([img, en, hi, pEn, pHi], i) => (
+                <div key={en} className="sp-step">
+                  <div className="ph">
+                    <span className="num">{i + 1}</span>
+                    <img src={BASE + 'bcpl-assets/' + img} alt={en} loading="lazy" />
+                  </div>
+                  <div className="body">
+                    <h4>{t(en, hi)}</h4>
+                    <p>{t(pEn, pHi)}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -352,6 +434,27 @@ export default function BecomeASponsor() {
               {t('Indicative deliverables — final scope, placements and pricing are confirmed per agreement.',
                  'Indicative deliverables — final scope, placements और pricing agreement के अनुसार तय होते हैं।')}
             </p>
+          </div>
+
+          {/* Branding placements — visual cards over real photos */}
+          <div>
+            <div className="sp-sec-kick">{t('Where your brand shows up', 'आपका brand कहाँ दिखेगा')}</div>
+            <h2 className="sp-sec-h">{t('BRANDING PLACEMENTS', 'Branding placements')}</h2>
+            <p className="sp-sec-sub" style={{ marginBottom: 20 }}>
+              {t('On the jersey, around the ground, across digital and inside the app — visibility built into every part of the league.',
+                 'Jersey पर, मैदान के चारों ओर, digital पर और app के अंदर — league के हर हिस्से में visibility।')}
+            </p>
+            <div className="sp-place">
+              {PLACEMENTS.map(([img, en, hi, pEn, pHi]) => (
+                <div key={en} className="sp-pcard">
+                  <img src={BASE + 'bcpl-assets/' + img} alt={en} loading="lazy" />
+                  <div className="cap">
+                    <h4>{t(en, hi)}</h4>
+                    <p>{t(pEn, pHi)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Past seasons photo strip */}
