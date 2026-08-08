@@ -132,12 +132,12 @@ export function Download() {
           <div>
             <div className="dl-kicker">{t("BCPL · SEASON " + SEASON.number, "BCPL · सीज़न " + SEASON.number)}</div>
             <h1 className="dl-h1">
-              {t("EVERYTHING BCPL,", "पूरा BCPL,")}<br />
-              <span style={{ color: ORANGE }}>{t("IN YOUR POCKET.", "आपकी जेब में।")}</span>
+              {t("THE OFFICIAL", "BCPL T20 का")}<br />
+              <span style={{ color: ORANGE }}>{t("BCPL T20 APP", "OFFICIAL APP")}</span>
             </h1>
             <p className="dl-lead">
-              {t("Download the BCPL app to register, follow live scores, carry your digital trial pass and get updates — all in one place.",
-                 "BCPL app डाउनलोड करें — register करें, live scores follow करें, अपना digital trial pass रखें और updates पाएँ — सब एक जगह।")}
+              {t("Register for Season " + SEASON.number + ", follow live scores ball by ball, keep your digital trial pass handy and stay updated on every match — all in one app.",
+                 "Season " + SEASON.number + " के लिए register करें, ball-by-ball live scores देखें, digital trial pass साथ रखें और हर match की update पाएँ — सब कुछ एक ही app में।")}
             </p>
             <div className="dl-btns">
               {btn(playStore, <GooglePlayIcon />, "Get it on", "इस पर पाएँ", "Google Play", "Google Play")}
