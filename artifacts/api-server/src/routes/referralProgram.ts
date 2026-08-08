@@ -171,28 +171,16 @@ router.get("/me", requireAuth, async (req: AuthRequest, res) => {
     const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId)).limit(1);
     if (!user) return void res.status(404).json({ error: "User not found" });
 
-    // Eligible = has a successful Phase-1 payment (works for old players too —
-    // the code is created right here on first dashboard load, not at pay time).
+    // Eligible = any registered player (growth round Aug'26: every player gets
+    // a referral link — payment is NOT required to share; only the *referred*
+    // friend's paid registration counts toward rewards. This also covers
+    // legacy carryover players who have no payment rows).
     const [reg] = await db
       .select({ id: registrationsTable.id })
       .from(registrationsTable)
       .where(eq(registrationsTable.userId, userId))
       .limit(1);
-    let eligible = false;
-    if (reg) {
-      const [p] = await db
-        .select({ id: phase1PaymentsTable.id })
-        .from(phase1PaymentsTable)
-        .where(
-          and(
-            eq(phase1PaymentsTable.registrationId, reg.id),
-            inArray(phase1PaymentsTable.status, PAID_STATUSES),
-          ),
-        )
-        .limit(1);
-      eligible = Boolean(p);
-    }
-    if (!eligible) return void res.json({ eligible: false });
+    if (!reg) return void res.json({ eligible: false });
 
     const myCode = await ensurePlayerCode(userId, user.name);
     if (!myCode) {
