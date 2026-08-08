@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   BackHandler,
+  Linking,
   Platform,
   Pressable,
   StyleSheet,
@@ -92,10 +93,28 @@ export default function PayWebViewScreen() {
   }, [token, orderId, phase, router, t]);
 
   // Primary interception: catch the return URL before the WebView renders it.
+  // Also hand off non-http(s) links (upi://, gpay://, phonepe://, paytm://,
+  // intent://…) to the OS — the WebView cannot open UPI/wallet apps itself,
+  // which is exactly why tapping UPI on the checkout page otherwise does nothing.
   const onShouldStart = useCallback((req: { url: string }): boolean => {
-    if (req.url.includes(RETURN_MARKER)) {
+    const url = req.url || '';
+    if (url.includes(RETURN_MARKER)) {
       runVerify();
       return false; // never load the return/website page
+    }
+    if (!/^https?:\/\//i.test(url)) {
+      let target = url;
+      // Android Chrome-style intent:// links → rebuild as <scheme>://<rest>
+      const m = url.match(/^intent:\/\/(.*?)#Intent;(.*?)(;end)?$/i);
+      if (m) {
+        const schemeMatch = m[2].match(/scheme=([^;]+)/i);
+        if (schemeMatch) target = `${schemeMatch[1]}://${m[1]}`;
+      }
+      Linking.openURL(target).catch(() => {
+        // UPI app not installed / cannot open — stay on the checkout page so
+        // the player can pick another payment method.
+      });
+      return false; // never let the WebView try (it would error out)
     }
     return true;
   }, [runVerify]);
