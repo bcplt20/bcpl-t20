@@ -87,6 +87,39 @@ const FAB_CSS = `
   html.bcpl-mobnav.bcpl-ai-open .bcplai-fab{bottom:calc(18px + env(safe-area-inset-bottom,0px));}
   html.bcpl-mobnav.bcpl-ai-open .bcplai-panel{bottom:calc(88px + env(safe-area-inset-bottom,0px));height:min(576px,calc(100vh - 130px - env(safe-area-inset-bottom,0px)));}
 }
+
+/* ── PHONE (<=480px): open as a TRUE full-screen sheet ───────────────────────
+   Root cause of the owner's "cut" panel: the floating panel used 100vh + a
+   fixed bottom offset, so the mobile URL bar ate the bottom (input/disclaimer
+   clipped off-screen). Fix: pin the panel to all four edges with 100dvw/100dvh
+   (dvh tracks the *visible* viewport, immune to URL-bar resize), zero radius,
+   safe-area padding, and let the internal flex column pin the composer above
+   the keyboard. Geometry uses !important to defeat the broader <=1023.98 /
+   <=767.98 rules above which also match at phone widths. Desktop is untouched. */
+@media(max-width:480px){
+  .bcplai-panel{
+    inset:0 !important; top:0 !important; right:0 !important; bottom:0 !important; left:0 !important;
+    width:100vw !important; height:100vh !important;            /* fallback */
+    width:100dvw !important; height:100dvh !important;          /* visible viewport — no URL-bar clip */
+    max-width:none !important; max-height:none !important;
+    border-radius:0 !important; border:none !important;
+    box-shadow:none !important; animation:none !important;
+  }
+  /* Header clears the notch/status bar. */
+  .bcplai-header{padding-top:calc(14px + env(safe-area-inset-top,0px)) !important;}
+  /* Disclaimer is the last element — pad it down past the home-bar safe area
+     so nothing sits under the gesture bar. */
+  .bcplai-disclaimer{padding-bottom:calc(10px + env(safe-area-inset-bottom,0px)) !important;}
+  /* Full-screen sheet is self-closing via its ✕ — the floating bubble/badge
+     would only overlap the sheet, so hide them while open. */
+  html.bcpl-ai-open .bcplai-fab,
+  html.bcpl-ai-open .bcplai-badge{display:none !important;}
+  /* >=16px input prevents iOS Safari's auto-zoom (a common "the panel jumped /
+     got cut" trigger when the field focuses). */
+  .bcplai-composer input{font-size:16px !important;}
+  /* Lock horizontal overflow inside the sheet. */
+  .bcplai-panel{overflow-x:hidden;}
+}
 `;
 
 export default function AiHelper() {
@@ -298,7 +331,7 @@ export default function AiHelper() {
       {open && (
         <div className="bcplai-panel">
           {/* Header */}
-          <div style={{ position: "relative", padding: "14px 16px", background: "linear-gradient(120deg,#12305F 0%,#1B4A8C 55%,#2E6FD6 100%)", borderBottom: "1px solid rgba(126,196,255,0.16)" }}>
+          <div className="bcplai-header" style={{ position: "relative", padding: "14px 16px", background: "linear-gradient(120deg,#12305F 0%,#1B4A8C 55%,#2E6FD6 100%)", borderBottom: "1px solid rgba(126,196,255,0.16)", flexShrink: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#2E6FD6,#7FC4FF)", border: "1px solid rgba(255,255,255,0.24)", boxShadow: "0 4px 14px rgba(46,111,214,0.45)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                 <SparkleIcon size={22} />
@@ -344,7 +377,7 @@ export default function AiHelper() {
           </div>
 
           {/* Composer */}
-          <div style={{ display: "flex", gap: 8, padding: 12, borderTop: "1px solid rgba(255,255,255,0.10)", background: "rgba(0,0,0,0.18)", alignItems: "stretch" }}>
+          <div className="bcplai-composer" style={{ display: "flex", gap: 8, padding: 12, borderTop: "1px solid rgba(255,255,255,0.10)", background: "rgba(0,0,0,0.18)", alignItems: "stretch", flexShrink: 0 }}>
             {/* Mic — Web Speech API primary, MediaRecorder→/ai/transcribe fallback */}
             <button
               type="button"
@@ -383,7 +416,7 @@ export default function AiHelper() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
             </button>
           </div>
-          <div style={{ padding: "6px 12px 10px", fontSize: 10.5, color: "rgba(255,255,255,0.45)", textAlign: "center", background: "rgba(0,0,0,0.15)" }}>
+          <div className="bcplai-disclaimer" style={{ padding: "6px 12px 10px", fontSize: 10.5, color: "rgba(255,255,255,0.45)", textAlign: "center", background: "rgba(0,0,0,0.15)", flexShrink: 0 }}>
             {t("BCPL AI can make mistakes — check important details on bcplt20.com", "BCPL AI से गलती हो सकती है — ज़रूरी जानकारी bcplt20.com पर जाँचें")}
           </div>
         </div>
