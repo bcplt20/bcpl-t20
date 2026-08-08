@@ -34,11 +34,11 @@ export default function LoginScreen() {
   const [busy, setBusy] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  // Resend cooldown (mirrors the website login modal's 30s resend timer).
+  // Resend cooldown — must be >= server's 45s per-phone cooldown or resend hits "please wait".
   const [resendTimer, setResendTimer] = useState<number>(0);
 
   const startResendTimer = () => {
-    setResendTimer(30);
+    setResendTimer(46);
     const iv = setInterval(() => {
       setResendTimer((n) => {
         if (n <= 1) { clearInterval(iv); return 0; }
