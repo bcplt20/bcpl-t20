@@ -1033,8 +1033,8 @@ export function markNotificationsRead(token: string, ids?: string[]): Promise<vo
   return apiFetch('/user/notifications/read', { method: 'POST', body: { ids }, token });
 }
 
-export function getReferral(token: string): Promise<{ code: string; link: string; totalRegistered: number; totalPaid: number; rewardStatus: 'none' | 'eligible' | 'granted'; qualifiedNeeded: number }> {
-  return apiFetch('/user/referral', { token });
+export function getReferral(token: string): Promise<any> {
+  return apiFetch('/referral/me', { token });
 }
 
 export function getBadges(token: string): Promise<{ badges: any[] }> {

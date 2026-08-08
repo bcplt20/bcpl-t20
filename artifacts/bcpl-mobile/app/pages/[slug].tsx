@@ -33,8 +33,8 @@ function HeroMesh({ title }: { title: string }) {
   React.useEffect(() => {
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(anim, { toValue: 1, duration: 4000, useNativeDriver: false }),
-        Animated.timing(anim, { toValue: 0, duration: 4000, useNativeDriver: false })
+        Animated.timing(anim, { toValue: 1, duration: 4000, useNativeDriver: true }),
+        Animated.timing(anim, { toValue: 0, duration: 4000, useNativeDriver: true })
       ])
     );
     loop.start();
@@ -172,7 +172,7 @@ export default function NativePageScreen() {
   const sharedShimmer = React.useRef(new Animated.Value(0)).current;
   React.useEffect(() => {
     const loop = Animated.loop(
-      Animated.timing(sharedShimmer, { toValue: 1, duration: 4000, useNativeDriver: false })
+      Animated.timing(sharedShimmer, { toValue: 1, duration: 4000, useNativeDriver: true })
     );
     loop.start();
     return () => loop.stop();

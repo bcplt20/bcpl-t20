@@ -12,7 +12,6 @@ const WHATSAPP_URL = 'https://wa.me/919151346555?text=' +
   encodeURIComponent('Hi BCPL team, I would like to know about sponsorship options.');
 const BASE = import.meta.env.BASE_URL;
 const HERO_IMG = BASE + 'bcpl-assets/stadium-hero.jpg';
-const DECK_URL = BASE + 'bcpl-assets/BCPL-Sponsorship-Deck.pdf';
 
 /* Real photos already shipped in public/bcpl-assets and used elsewhere on the
    site — reused here as the past-seasons strip (no new/invented assets). */
@@ -238,16 +237,6 @@ function SponsorEnquiryForm() {
 
 export default function BecomeASponsor() {
   const { t } = useLang();
-  const [deckOk, setDeckOk] = React.useState(false);
-
-  // Show the deck button only if the PDF actually exists (graceful 404 hide).
-  React.useEffect(() => {
-    let alive = true;
-    fetch(DECK_URL, { method: 'HEAD' })
-      .then(r => { if (alive) setDeckOk(r.ok); })
-      .catch(() => { if (alive) setDeckOk(false); });
-    return () => { alive = false; };
-  }, []);
 
   return (
     <div style={{ minHeight: '100vh', background: '#1B2E52', color: '#fff' }}>
@@ -277,11 +266,6 @@ export default function BecomeASponsor() {
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginTop: 26 }}>
             <a className="sp-cta" href="#enquiry">{t('ENQUIRE NOW', 'अभी पूछें')}</a>
             <a className="sp-cta ghost" href="#tiers">{t('VIEW OPTIONS', 'विकल्प देखें')}</a>
-            {deckOk && (
-              <a className="sp-cta gold" href={DECK_URL} target="_blank" rel="noopener noreferrer" download>
-                {t('DOWNLOAD DECK (PDF)', 'DECK डाउनलोड करें (PDF)')}
-              </a>
-            )}
           </div>
         </div>
       </section>
@@ -403,27 +387,6 @@ export default function BecomeASponsor() {
               </p>
               <a className="sp-cta gold" href="#enquiry">{t('CLAIM YOUR SPOT', 'अपनी जगह लें')}</a>
             </div>
-          </div>
-
-          {/* Deck download */}
-          <div className="sp-card" style={{ textAlign: 'center' }}>
-            <div className="cic" style={{ margin: '0 auto 12px', fontSize: 24 }}>{'\uD83D\uDCC4'}</div>
-            <h3 style={{ fontFamily: "'Montserrat',Inter,sans-serif", fontWeight: 800, fontSize: 'clamp(18px,3vw,24px)', color: '#fff', margin: '0 0 8px' }}>
-              {t('Sponsorship deck', 'Sponsorship deck')}
-            </h3>
-            <p className="sp-sec-sub" style={{ margin: '0 auto 18px', maxWidth: 480 }}>
-              {t('Get the full overview — reach, tiers, placements and past seasons — in one PDF.',
-                 'पूरा overview एक PDF में लीजिए — reach, tiers, placements और पिछले seasons।')}
-            </p>
-            {deckOk ? (
-              <a className="sp-cta gold" href={DECK_URL} target="_blank" rel="noopener noreferrer" download>
-                {t('DOWNLOAD SPONSORSHIP DECK (PDF)', 'SPONSORSHIP DECK डाउनलोड करें (PDF)')}
-              </a>
-            ) : (
-              <p className="sp-note" style={{ margin: 0 }}>
-                {t('Email us and we\u2019ll send the deck over.', 'हमें email करें, हम deck भेज देंगे।')}
-              </p>
-            )}
           </div>
 
           {/* Enquiry form */}

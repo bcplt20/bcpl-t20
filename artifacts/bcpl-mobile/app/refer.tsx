@@ -69,7 +69,7 @@ export default function ReferScreen() {
               {t('Refer Friends, Win Gear', 'दोस्तों को रेफर करें, किट जीतें')}
             </Text>
             <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 24 }}>
-              {t(`Get ${q.data.qualifiedNeeded} friends to register and pay Phase 1 fee to earn BCPL training gear.`, `${q.data.qualifiedNeeded} दोस्तों को फेज 1 पेमेंट के साथ रजिस्टर करवाएं और BCPL ट्रेनिंग किट पाएं।`)}
+              {t(`Get ${q.data.tiers?.[0]?.threshold || 3} friends to register and pay Phase 1 fee to earn BCPL training gear.`, `${q.data.tiers?.[0]?.threshold || 3} दोस्तों को फेज 1 पेमेंट के साथ रजिस्टर करवाएं और BCPL ट्रेनिंग किट पाएं।`)}
             </Text>
 
             <View style={{ backgroundColor: c.card2, borderWidth: 1, borderColor: c.line, borderRadius: 16, width: '100%', padding: 16, alignItems: 'center', marginBottom: 24 }}>
@@ -99,21 +99,21 @@ export default function ReferScreen() {
                 {t('Qualified Referrals', 'क्वालिफाइड रेफरल')}
               </Text>
               <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 20 }}>
-                {q.data.totalPaid} / {q.data.qualifiedNeeded}
+                {q.data.paid} / {q.data.tiers?.[0]?.threshold || 3}
               </Text>
             </View>
             
             <View style={{ height: 8, borderRadius: 4, backgroundColor: c.card2, overflow: 'hidden', marginBottom: 16 }}>
-              <View style={{ width: `${Math.min(100, (q.data.totalPaid / q.data.qualifiedNeeded) * 100)}%`, height: '100%', backgroundColor: c.cyan, borderRadius: 4 }} />
+              <View style={{ width: `${Math.min(100, (q.data.paid / (q.data.tiers?.[0]?.threshold || 3)) * 100)}%`, height: '100%', backgroundColor: c.cyan, borderRadius: 4 }} />
             </View>
             
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13 }}>
-                {q.data.totalRegistered} {t('registered total', 'ने कुल रजिस्टर किया')}
+                {q.data.joined} {t('registered total', 'ने कुल रजिस्टर किया')}
               </Text>
-              {q.data.rewardStatus === 'granted' ? (
+              {q.data.tiers?.[0]?.rewardGiven ? (
                 <Text style={{ color: c.lime, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13 }}>{t('Reward Granted!', 'इनाम मिल गया!')}</Text>
-              ) : q.data.rewardStatus === 'eligible' ? (
+              ) : q.data.tiers?.[0]?.reached ? (
                 <Text style={{ color: c.cyan, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13 }}>{t('Reward Unlocked!', 'इनाम खुल गया!')}</Text>
               ) : null}
             </View>

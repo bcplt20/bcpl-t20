@@ -76,6 +76,22 @@ const FAB_CSS = `
 .bcplai-mic.rec{background:linear-gradient(135deg,#E23B4E,#FF6A78);border-color:rgba(255,120,132,0.8);color:#fff;animation:bcplaiRec 1.15s ease-in-out infinite;}
 @keyframes bcplaiRec{0%,100%{box-shadow:0 0 0 0 rgba(226,59,78,0.55);}50%{box-shadow:0 0 0 8px rgba(226,59,78,0);}}
 @media(prefers-reduced-motion:reduce){.bcplai-panel,.bcplai-msg,.bcplai-fab{animation:none;}.bcplai-typing i{animation:none;}.bcplai-mic.rec{animation:none;}}
+/* ── GLOBAL FLOATING-BUTTON OVERLAP FIX ──────────────────────────────────────
+   The AI FAB sits bottom-right (right:18px; bottom:18px, 58px wide). ~19 pages
+   also render a desktop-only floating register button (.float-reg-btn) pinned
+   at bottom:28px; right:28px — which lands ON TOP of the AI bubble. Instead of
+   editing every page, we reposition .float-reg-btn ONCE here (this stylesheet
+   is injected by AiHelper, which mounts on every public page) so the register
+   button always stacks ABOVE the AI bubble in the same right-hand column.
+   The html prefix raises specificity so this wins over the per-page single-
+   class rules regardless of stylesheet order. Desktop only — button is hidden
+   below 1024px, where the phone StickyRegisterCTA bar takes over instead. */
+@media(min-width:1024px){
+  html .float-reg-btn{
+    right:18px !important;
+    bottom:calc(18px + 58px + 16px) !important; /* AI FAB base + FAB height + gap = 92px */
+  }
+}
 /* Logged-out: clear the mobile sticky register bar. */
 @media(max-width:1023.98px){
   html:not(.bcpl-authed) .bcplai-fab{bottom:calc(92px + env(safe-area-inset-bottom,0px));}
@@ -174,7 +190,7 @@ export default function AiHelper() {
   }, [open]);
 
   const path = typeof window !== "undefined" ? window.location.pathname : "";
-  if (gone || /\/(admin|staff|sponsor-deck)(\/|$)/.test(path)) return null;
+  if (gone || /\/(admin|staff)(\/|$)/.test(path)) return null;
 
   const send = async (override?: string) => {
     const text = (override ?? input).trim();

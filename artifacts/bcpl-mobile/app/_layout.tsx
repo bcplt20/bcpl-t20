@@ -152,6 +152,7 @@ function RootLayoutNav() {
       <StatusBar style={theme === 'stadium' ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
+          headerShown: false,
           headerBackTitle: 'Back',
           headerStyle: { backgroundColor: c.bg },
           headerTintColor: c.ink,
@@ -159,33 +160,30 @@ function RootLayoutNav() {
           contentStyle: { backgroundColor: c.bg },
         }}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="login"
-          options={{ presentation: 'modal', title: 'Login', headerShown: false }}
-        />
-        <Stack.Screen name="register" options={{ title: 'Register', headerShown: false }} />
-        <Stack.Screen name="pages/[slug]" options={{ headerShown: false }} />
-        <Stack.Screen name="match/[id]" options={{ title: 'Match Center', headerShown: false }} />
-        <Stack.Screen name="news/[slug]" options={{ title: 'News', headerShown: false }} />
-        <Stack.Screen name="teams" options={{ title: 'Teams', headerShown: false }} />
-        <Stack.Screen name="team/[id]" options={{ title: 'Team', headerShown: false }} />
-        <Stack.Screen name="journey" options={{ title: 'My Journey', headerShown: false }} />
-        <Stack.Screen name="upload-video" options={{ title: 'Upload Video', headerShown: false }} />
-        <Stack.Screen name="phase2-pay" options={{ title: 'Phase 2', headerShown: false }} />
-        <Stack.Screen name="result" options={{ title: 'Phase 1 Result', headerShown: false }} />
-        <Stack.Screen name="trial-pass" options={{ title: 'Trial Pass', headerShown: false }} />
-        <Stack.Screen name="vote" options={{ title: 'Fan Voting', headerShown: false }} />
-        <Stack.Screen name="mvp" options={{ title: 'MVP Race', headerShown: false }} />
-        <Stack.Screen name="pay-webview" options={{ title: 'Payment', headerShown: false, gestureEnabled: false }} />
-        <Stack.Screen name="pay-receipt" options={{ title: 'Receipt', headerShown: false, gestureEnabled: false }} />
-        <Stack.Screen name="kyc" options={{ title: 'KYC', headerShown: false }} />
-        <Stack.Screen name="about" options={{ title: 'About', headerShown: false }} />
-        <Stack.Screen name="jersey-backfill" options={{ title: 'Jersey Backfill', headerShown: false }} />
-        <Stack.Screen name="profile" options={{ title: 'Profile', headerShown: false }} />
-        <Stack.Screen name="classification" options={{ title: 'Playing Style', headerShown: false }} />
-        <Stack.Screen name="scorer/new" options={{ title: 'New Match', headerShown: false }} />
-        <Stack.Screen name="scorer/[id]" options={{ title: 'Scoring', headerShown: false }} />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="login" options={{ presentation: 'modal', title: 'Login' }} />
+        <Stack.Screen name="register" options={{ title: 'Register' }} />
+        <Stack.Screen name="pages/[slug]" />
+        <Stack.Screen name="match/[id]" options={{ title: 'Match Center' }} />
+        <Stack.Screen name="news/[slug]" options={{ title: 'News' }} />
+        <Stack.Screen name="teams" options={{ title: 'Teams' }} />
+        <Stack.Screen name="team/[id]" options={{ title: 'Team' }} />
+        <Stack.Screen name="journey" options={{ title: 'My Journey' }} />
+        <Stack.Screen name="upload-video" options={{ title: 'Upload Video' }} />
+        <Stack.Screen name="phase2-pay" options={{ title: 'Phase 2' }} />
+        <Stack.Screen name="result" options={{ title: 'Phase 1 Result' }} />
+        <Stack.Screen name="trial-pass" options={{ title: 'Trial Pass' }} />
+        <Stack.Screen name="vote" options={{ title: 'Fan Voting' }} />
+        <Stack.Screen name="mvp" options={{ title: 'MVP Race' }} />
+        <Stack.Screen name="pay-webview" options={{ title: 'Payment', gestureEnabled: false }} />
+        <Stack.Screen name="pay-receipt" options={{ title: 'Receipt', gestureEnabled: false }} />
+        <Stack.Screen name="kyc" options={{ title: 'KYC' }} />
+        <Stack.Screen name="about" options={{ title: 'About' }} />
+        <Stack.Screen name="jersey-backfill" options={{ title: 'Jersey Backfill' }} />
+        <Stack.Screen name="profile" options={{ title: 'Profile' }} />
+        <Stack.Screen name="classification" options={{ title: 'Playing Style' }} />
+        <Stack.Screen name="scorer/new" options={{ title: 'New Match' }} />
+        <Stack.Screen name="scorer/[id]" options={{ title: 'Scoring' }} />
       </Stack>
       <FloatingAiButton />
       <AssistantOverlay />

@@ -1,23 +1,45 @@
-import React, { useRef } from 'react';
-import { View, Text, Pressable, Platform, Dimensions } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, Pressable, Platform, Dimensions, StyleSheet, ScrollView } from 'react-native';
 import { Image } from 'expo-image';
 import { useColors } from '@/hooks/useColors';
 import { useLang } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
-import { ScreenBackground, GlassAppBar, useAppBarHeight, Card } from '@/components/ui';
+import { ScreenBackground, GlassAppBar, useAppBarHeight, Card, LoadingView, ErrorView } from '@/components/ui';
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { useRouter } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
+import { getDashboard } from '@/lib/api';
+import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing } from 'react-native-reanimated';
 
 export default function PlayerCardScreen() {
   const c = useColors();
   const { t } = useLang();
-  const { user, ready } = useAuth();
+  const { user, token, ready } = useAuth();
   const router = useRouter();
   const appBarHeight = useAppBarHeight();
   const viewShotRef = useRef<any>(null);
+
+  const dashQ = useQuery({
+    queryKey: ['dashboard', token],
+    queryFn: () => getDashboard(token as string),
+    enabled: !!token && ready
+  });
+
+  const shimmer = useSharedValue(-1);
+  useEffect(() => {
+    shimmer.value = withRepeat(
+      withTiming(2, { duration: 2500, easing: Easing.linear }),
+      -1,
+      false
+    );
+  }, []);
+
+  const shimmerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shimmer.value * Dimensions.get('window').width }]
+  }));
 
   const handleShare = async () => {
     if (!viewShotRef.current?.capture) return;
@@ -39,7 +61,7 @@ export default function PlayerCardScreen() {
       <ScreenBackground />
       <GlassAppBar title={t('Player Card', 'प्लेयर कार्ड')} back />
       
-      {!ready ? null : !user ? (
+      {!ready ? null : !token ? (
         <View style={{ flex: 1, paddingTop: appBarHeight + 40, paddingHorizontal: 16 }}>
           <Card style={{ alignItems: 'center', paddingVertical: 36 }}>
             <Feather name="lock" size={28} color={c.magenta} />
@@ -52,56 +74,97 @@ export default function PlayerCardScreen() {
             </Pressable>
           </Card>
         </View>
-      ) : (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: appBarHeight, paddingBottom: 24 }}>
+      ) : dashQ.isLoading ? (
+        <LoadingView />
+      ) : dashQ.isError ? (
+        <ErrorView onRetry={() => dashQ.refetch()} />
+      ) : dashQ.data ? (
+        <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingTop: appBarHeight + 20, paddingBottom: 40 }}>
           
           <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }}>
-          <View style={{ width: w, height: h, borderRadius: 24, overflow: 'hidden', backgroundColor: '#1A0B2E' }}>
-            <LinearGradient colors={['#5B2BF0', '#1A0B2E', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.8 }} />
+          <View style={{ width: w, height: h, borderRadius: 24, overflow: 'hidden', backgroundColor: '#1A0B2E', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}>
+            <LinearGradient colors={['#5B2BF0', '#1A0B2E', '#FF3DA6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFillObject} />
             
+            <Animated.View style={[StyleSheet.absoluteFill, shimmerStyle, { width: w * 2, opacity: 0.15 }]} pointerEvents="none">
+              <LinearGradient colors={['transparent', '#fff', 'transparent']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ flex: 1, transform: [{ skewX: '-20deg' }] }} />
+            </Animated.View>
+
             {/* Watermark */}
-            <Image source={require('../assets/images/bcpl-ball-clean.png')} style={{ position: 'absolute', right: -40, bottom: -40, width: 200, height: 200, opacity: 0.15 }} contentFit="contain" />
+            <Text style={{ position: 'absolute', left: -20, bottom: 20, color: 'rgba(255,255,255,0.03)', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 80, transform: [{ rotate: '-10deg' }] }}>
+              SEASON 5
+            </Text>
 
             {/* Header */}
             <View style={{ padding: 24, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <View>
-                <Text style={{ color: '#00DCF5', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase' }}>
-                  Season 5
-                </Text>
-                <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18, marginTop: 4 }}>
-                  BCPL
-                </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Image source={require('../assets/images/bcpl-ball-clean.png')} style={{ width: 36, height: 36 }} contentFit="contain" />
+                <View>
+                  <Text style={{ color: '#00DCF5', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase' }}>
+                    Season 5
+                  </Text>
+                  <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 18 }}>
+                    BCPL T20
+                  </Text>
+                </View>
               </View>
-              <View style={{ backgroundColor: 'rgba(255,255,255,0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}>
+              <View style={{ backgroundColor: 'rgba(255,255,255,0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' }}>
                 <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12 }}>
-                  {user.regNumber || '—'}
+                  {dashQ.data.registration?.regNumber || user?.regNumber || '—'}
                 </Text>
               </View>
             </View>
 
             {/* Photo */}
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-              <View style={{ width: 160, height: 160, borderRadius: 80, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 4, borderColor: '#FF3DA6', overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-                {user.avatar ? (
-                  <Image source={{ uri: user.avatar }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+              <View style={{ width: 140, height: 140, borderRadius: 70, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 3, borderColor: '#00DCF5', overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+                {dashQ.data.avatar?.viewUrl || user?.avatar ? (
+                  <Image source={{ uri: dashQ.data.avatar?.viewUrl || user?.avatar! }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                 ) : (
-                  <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 64 }}>
-                    {user.name?.charAt(0).toUpperCase()}
+                  <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 56 }}>
+                    {(dashQ.data.user.name || user?.name || '?').charAt(0).toUpperCase()}
                   </Text>
                 )}
               </View>
             </View>
 
             {/* Footer details */}
-            <View style={{ padding: 24, paddingBottom: 32, alignItems: 'center' }}>
-              <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 28, textAlign: 'center', marginBottom: 8 }}>
-                {user.name}
+            <View style={{ padding: 24, paddingBottom: 28, alignItems: 'center' }}>
+              <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 26, textAlign: 'center', marginBottom: 12 }} numberOfLines={1} adjustsFontSizeToFit>
+                {dashQ.data.user.name || user?.name}
               </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'rgba(0,0,0,0.3)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 }}>
-                <Feather name={user.role === 'bat' ? 'target' : user.role === 'bowl' ? 'crosshair' : user.role === 'ar' ? 'zap' : 'shield'} size={14} color="#00DCF5" />
-                <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14, textTransform: 'uppercase' }}>
-                  {user.role === 'bat' ? t('Batsman', 'बल्लेबाज़') : user.role === 'bowl' ? t('Bowler', 'गेंदबाज़') : user.role === 'ar' ? t('All-Rounder', 'ऑल-राउंडर') : t('Wicket Keeper', 'विकेट कीपर')}
-                </Text>
+              
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 }}>
+                  <Feather name={(dashQ.data.registration?.role || user?.role) === 'bat' ? 'target' : (dashQ.data.registration?.role || user?.role) === 'bowl' ? 'crosshair' : (dashQ.data.registration?.role || user?.role) === 'ar' ? 'zap' : 'shield'} size={12} color="#FF3DA6" />
+                  <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, textTransform: 'uppercase' }}>
+                    {(dashQ.data.registration?.role || user?.role) === 'bat' ? t('Batsman', 'बल्लेबाज़') : (dashQ.data.registration?.role || user?.role) === 'bowl' ? t('Bowler', 'गेंदबाज़') : (dashQ.data.registration?.role || user?.role) === 'ar' ? t('All-Rounder', 'ऑल-राउंडर') : t('Wicket Keeper', 'विकेट कीपर')}
+                  </Text>
+                </View>
+                
+                {dashQ.data.registration?.classification?.battingHand && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 }}>
+                    <Text style={{ color: '#00DCF5', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, textTransform: 'uppercase' }}>
+                      {dashQ.data.registration.classification.battingHand === 'right' ? 'RH Bat' : 'LH Bat'}
+                    </Text>
+                  </View>
+                )}
+
+                {dashQ.data.registration?.classification?.bowlingType && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 }}>
+                    <Text style={{ color: '#00DCF5', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, textTransform: 'uppercase' }}>
+                      {dashQ.data.registration.classification.bowlingType.replace('_', ' ')}
+                    </Text>
+                  </View>
+                )}
+                
+                {dashQ.data.registration?.trialCity && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16 }}>
+                    <Feather name="map-pin" size={12} color="#00DCF5" />
+                    <Text style={{ color: '#fff', fontFamily: 'PlusJakartaSans_700Bold', fontSize: 11, textTransform: 'uppercase' }}>
+                      {dashQ.data.registration.trialCity}
+                    </Text>
+                  </View>
+                )}
               </View>
             </View>
           </View>
@@ -114,8 +177,8 @@ export default function PlayerCardScreen() {
           </Text>
         </Pressable>
 
-        </View>
-      )}
+        </ScrollView>
+      ) : null}
     </View>
   );
 }
