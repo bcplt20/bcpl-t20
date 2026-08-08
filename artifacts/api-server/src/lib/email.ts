@@ -363,7 +363,7 @@ export function tplTrialVenueAnnounced(name: string, city: string, venue: string
         accent: COLORS.gold,
         children: `
           <div style="font-size:10px;color:${COLORS.inkFaint};letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">What to Bring</div>
-          <div style="font-size:13px;color:${COLORS.inkSoft};line-height:1.9;">Aadhaar Card (original)<br/>PAN Card (original)<br/>Your cricket kit (optional — kit available on site)<br/>Water bottle and light refreshments<br/>Bhartiya Corporate Premier League jersey (if received)</div>`,
+          <div style="font-size:13px;color:${COLORS.inkSoft};line-height:1.9;">Aadhaar Card (original)<br/>PAN Card (original)<br/>Your cricket kit (optional — kit available on venue)<br/>Water bottle and light refreshments</div>`,
       })}
       ${NoteBox("Late arrivals may not be accommodated. Please reach 30 minutes before the trial time.", COLORS.red)}
       ${PrimaryCTA("VIEW VENUE DETAILS", `${SITE_URL}/register/result`, COLORS.gold)}

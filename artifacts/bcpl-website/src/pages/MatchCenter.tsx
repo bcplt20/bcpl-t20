@@ -447,6 +447,33 @@ export function MatchCenter() {
           <p style={{ fontFamily: "Inter, sans-serif", fontSize: "clamp(16px, 1.8vw, 18px)", color: TXT2, lineHeight: 1.7, maxWidth: 640, margin: "0 auto" }}>
             {t("Live scores, full match scorecards and the Season 4 points table.", "Live scores, पूरे match scorecards और Season 4 points table।")}
           </p>
+
+          {/* Quick links — reach the standings, squads and auction directly. */}
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 28 }}>
+            {([
+              { href: "/points-table", en: "Points Table", hi: "अंक तालिका" },
+              { href: "/players",      en: "Players",      hi: "खिलाड़ी" },
+              { href: "/auction/live", en: "Auction",      hi: "ऑक्शन" },
+            ] as const).map(q => (
+              <Link
+                key={q.href}
+                href={q.href}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  background: PANEL, border: `1px solid ${LINE}`, borderRadius: 12,
+                  padding: "13px 22px", color: "#fff", textDecoration: "none",
+                  fontFamily: "var(--font-head)", fontWeight: 800, fontSize: 14,
+                  letterSpacing: ".06em", textTransform: "uppercase",
+                  boxShadow: "0 6px 20px rgba(0,0,0,.22)", transition: "border-color .18s, transform .15s, background .18s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = ORANGE; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = LINE; e.currentTarget.style.transform = "translateY(0)"; }}
+              >
+                {t(q.en, q.hi)}
+                <span style={{ color: GOLD, fontWeight: 900 }}>→</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
