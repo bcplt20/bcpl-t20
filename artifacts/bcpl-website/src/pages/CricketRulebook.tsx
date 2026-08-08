@@ -4,9 +4,16 @@ import { BCPLFooter } from '../components/BCPLFooter';
 import { SiteHeader } from '../components/SiteHeader';
 import { StickyRegisterCTA } from '../components/StickyRegisterCTA';
 import { LegalDocHeader } from '../lib/legalMeta';
-import { IcoCalendar, IcoUsers, IcoBat, IcoZap, IcoBall, IcoShield, IcoScale, IcoList, IcoStadium, IcoPages, IcoBan } from '../lib/icons';
+import { IcoCalendar, IcoUsers, IcoBat, IcoZap, IcoBall, IcoShield, IcoScale, IcoList, IcoStadium, IcoPages, IcoBan, IcoGauge } from '../lib/icons';
 
 type IcoComp = (p: { size?: number; style?: React.CSSProperties }) => React.ReactElement;
+
+/* Local rain-drop icon (no weather glyph in the shared set). */
+const IcoDrop: IcoComp = ({ size = 18, style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, ...style }} aria-hidden="true">
+    <path d="M12 3s6 6.5 6 10.5A6 6 0 0 1 6 13.5C6 9.5 12 3 12 3Z" />
+  </svg>
+);
 
 const OrangeDot = () => (
   <span style={{display:'inline-block',width:6,height:6,borderRadius:'50%',background:'#FF7A29',marginRight:10,flexShrink:0,marginTop:7}}/>
@@ -259,6 +266,15 @@ export function CricketRulebook() {
                   <span style={{display:'inline-flex',alignItems:'center',gap:8}}><span style={{color:'#FF7A29',display:'inline-flex'}}><item.icon size={16}/></span>{item.label}</span>
                 </button>
               ))}
+              {[
+                {id:'nrr-graphic',icon:IcoGauge,label:'How Net Run Rate is Calculated'},
+                {id:'dls-graphic',icon:IcoDrop,label:'Rain Rule (Duckworth–Lewis / DLS)'},
+              ].map(x=>(
+                <button key={x.id} className="toc-link" onClick={()=>document.getElementById(x.id)?.scrollIntoView({behavior:'smooth',block:'start'})}>
+                  <span style={{width:22,height:22,borderRadius:'50%',background:'rgba(232,178,61,0.2)',border:'1px solid rgba(232,178,61,0.4)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#E8B23D',flexShrink:0,fontFamily:'Montserrat,sans-serif'}}>★</span>
+                  <span style={{display:'inline-flex',alignItems:'center',gap:8}}><span style={{color:'#E8B23D',display:'inline-flex'}}><x.icon size={16}/></span>{x.label}</span>
+                </button>
+              ))}
             </div>
           </div>
 
@@ -279,6 +295,12 @@ export function CricketRulebook() {
               </ul>
             </div>
           ))}
+
+          {/* ═══ NET RUN RATE — infographic ═══ */}
+          <NetRunRateGraphic />
+
+          {/* ═══ DUCKWORTH–LEWIS (DLS) — infographic ═══ */}
+          <DlsGraphic />
 
           {/* Callout — foundation & hierarchy */}
           <div style={{background:'rgba(255,122,41,0.08)',border:'1px solid rgba(255,122,41,0.4)',borderLeft:'3px solid #FF7A29',borderRadius:16,padding:'20px clamp(16px,4vw,24px)',marginBottom:20,animation:'borderGlow 3s ease-in-out infinite'}}>
@@ -319,6 +341,176 @@ export function CricketRulebook() {
       </div>
       <StickyRegisterCTA />
       <Link className='float-reg-btn float-reg-pulse' href='/register' style={{textDecoration:'none'}}>REGISTER NOW →</Link>
+    </div>
+  );
+}
+
+/* ─── Shared infographic atoms ─────────────────────────────────────────── */
+const GOLD_ = '#E8B23D';
+const ORANGE_ = '#FF7A29';
+const GREEN_ = '#31C56B';
+const RED_ = '#F26158';
+
+function Chip({ children, color = ORANGE_ }: { children: React.ReactNode; color?: string }) {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: `${color}22`, border: `1px solid ${color}66`, color, borderRadius: 100, padding: '6px 13px', fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 12, letterSpacing: '.02em' }}>{children}</span>
+  );
+}
+
+function Op({ children }: { children: React.ReactNode }) {
+  return <span style={{ color: GOLD_, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 24, padding: '0 4px' }}>{children}</span>;
+}
+
+function FormulaBlock({ top, bottom, tint = '#273E6E' }: { top: string; bottom: string; tint?: string }) {
+  return (
+    <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', background: tint, border: '1px solid rgba(255,255,255,0.18)', borderRadius: 12, padding: '10px 16px', minWidth: 148 }}>
+      <span style={{ color: '#fff', fontFamily: 'Inter,sans-serif', fontWeight: 700, fontSize: 13, textAlign: 'center' }}>{top}</span>
+      <span style={{ width: '100%', height: 2, background: 'rgba(255,255,255,0.4)', margin: '7px 0' }} />
+      <span style={{ color: GOLD_, fontFamily: 'Inter,sans-serif', fontWeight: 700, fontSize: 13, textAlign: 'center' }}>{bottom}</span>
+    </div>
+  );
+}
+
+/* ─── NET RUN RATE infographic ─────────────────────────────────────────── */
+function NetRunRateGraphic() {
+  const td: React.CSSProperties = { padding: '12px 10px', fontSize: 13.5, color: 'rgba(255,255,255,0.9)', borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'center', fontFamily: 'Inter,sans-serif' };
+  const th: React.CSSProperties = { padding: '11px 10px', fontSize: 11, color: GOLD_, textTransform: 'uppercase', letterSpacing: '.08em', fontFamily: 'Montserrat,sans-serif', fontWeight: 700, borderBottom: '2px solid rgba(255,255,255,0.2)', textAlign: 'center', whiteSpace: 'nowrap' };
+  return (
+    <div id="nrr-graphic" className="glass-card" style={{ padding: 'clamp(20px,4vw,32px) clamp(16px,4vw,36px)', marginBottom: 20, scrollMarginTop: 90 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
+        <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,rgba(255,122,41,0.3),rgba(232,178,61,0.2))', border: '1px solid rgba(255,122,41,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: ORANGE_, flexShrink: 0 }}><IcoGauge size={20} /></div>
+        <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 'clamp(16px,3vw,20px)', color: '#fff' }}>Net Run Rate (ICC Standard)</h2>
+        <Chip color={GOLD_}>Standings Separator</Chip>
+      </div>
+      <p style={{ color: 'rgba(255,255,255,0.82)', fontSize: 'clamp(13px,2vw,14px)', lineHeight: 1.7, marginBottom: 20 }}>
+        Net Run Rate (NRR) separates teams level on points. It rewards scoring faster and conceding slower across the whole tournament.
+      </p>
+
+      {/* Formula */}
+      <div style={{ background: 'rgba(0,0,0,0.18)', borderRadius: 16, padding: 'clamp(16px,3vw,22px)', marginBottom: 22 }}>
+        <div style={{ color: GOLD_, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 12, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 16 }}>The Formula</div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <FormulaBlock top="Total Runs Scored" bottom="Total Overs Faced" />
+          <Op>&minus;</Op>
+          <FormulaBlock top="Total Runs Conceded" bottom="Total Overs Bowled" tint="#3A2A1E" />
+          <Op>=</Op>
+          <span style={{ color: GREEN_, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 22 }}>NRR</span>
+        </div>
+      </div>
+
+      {/* Key rules as step chips */}
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 22 }}>
+        <Chip>Decimal overs: 17.3 overs = 17.5 (3 balls = 3&frasl;6)</Chip>
+        <Chip color={RED_}>All-out counts as the FULL quota (e.g. 20 overs)</Chip>
+        <Chip color={GREEN_}>Tournament-wide totals, not per-match average</Chip>
+      </div>
+
+      {/* Worked example */}
+      <div style={{ color: GOLD_, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 12, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 12 }}>Worked Example — Two Teams</div>
+      <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', marginBottom: 14 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
+          <thead>
+            <tr>
+              <th style={{ ...th, textAlign: 'left' }}>Team</th>
+              <th style={th}>Runs Scored / Overs</th>
+              <th style={th}>Runs Conceded / Overs</th>
+              <th style={th}>Run Rate For</th>
+              <th style={th}>Run Rate Against</th>
+              <th style={th}>NRR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{ ...td, textAlign: 'left', fontWeight: 700, color: '#fff' }}>Kolkata Tigers</td>
+              <td style={td}>180 / 20.0</td>
+              <td style={td}>165 / 20.0</td>
+              <td style={td}>9.000</td>
+              <td style={td}>8.250</td>
+              <td style={{ ...td, color: GREEN_, fontWeight: 800 }}>+0.750</td>
+            </tr>
+            <tr>
+              <td style={{ ...td, textAlign: 'left', fontWeight: 700, color: '#fff' }}>Mumbai Mavericks</td>
+              <td style={td}>150 / 20.0</td>
+              <td style={td}>168 / 20.0</td>
+              <td style={td}>7.500</td>
+              <td style={td}>8.400</td>
+              <td style={{ ...td, color: RED_, fontWeight: 800 }}>&minus;0.900</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style={{ background: 'rgba(232,178,61,0.07)', border: '1px solid rgba(232,178,61,0.3)', borderRadius: 12, padding: '12px 16px' }}>
+        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13, lineHeight: 1.65 }}>
+          <strong style={{ color: GOLD_ }}>Kolkata:</strong> (180 &divide; 20) &minus; (165 &divide; 20) = 9.000 &minus; 8.250 = <strong style={{ color: GREEN_ }}>+0.750</strong>. A higher NRR ranks above a lower one when points are level.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ─── DUCKWORTH–LEWIS (DLS) infographic ────────────────────────────────── */
+function DlsGraphic() {
+  const step: React.CSSProperties = { flex: '1 1 180px', background: 'rgba(0,0,0,0.18)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 14, padding: '16px 16px' };
+  return (
+    <div id="dls-graphic" className="glass-card" style={{ padding: 'clamp(20px,4vw,32px) clamp(16px,4vw,36px)', marginBottom: 20, scrollMarginTop: 90 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
+        <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,rgba(90,160,255,0.3),rgba(232,178,61,0.2))', border: '1px solid rgba(90,160,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7FB0FF', flexShrink: 0 }}><IcoDrop size={20} /></div>
+        <h2 style={{ fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 'clamp(16px,3vw,20px)', color: '#fff' }}>Duckworth–Lewis–Stern (DLS Standard Edition)</h2>
+        <Chip color="#7FB0FF">Rain Rule</Chip>
+      </div>
+      <p style={{ color: 'rgba(255,255,255,0.82)', fontSize: 'clamp(13px,2vw,14px)', lineHeight: 1.7, marginBottom: 20 }}>
+        When rain shortens a match, DLS sets a fair revised target. It works on <strong style={{ color: GOLD_ }}>resources</strong> — the combination of <strong style={{ color: '#fff' }}>overs remaining</strong> and <strong style={{ color: '#fff' }}>wickets in hand</strong> a team still has to score with.
+      </p>
+
+      {/* Resources concept */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap', background: 'rgba(0,0,0,0.18)', borderRadius: 16, padding: 'clamp(16px,3vw,22px)', marginBottom: 22 }}>
+        <FormulaBlock top="Overs Left" bottom="Wickets in Hand" tint="#1E3A5F" />
+        <Op>=</Op>
+        <span style={{ color: '#7FB0FF', fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 20 }}>Resources %</span>
+        <Op>→</Op>
+        <span style={{ color: GREEN_, fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 18 }}>Revised Target</span>
+      </div>
+
+      {/* 3-step flow */}
+      <div style={{ color: GOLD_, fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 12, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 12 }}>How a Revised Target is Set</div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'stretch', marginBottom: 22 }}>
+        {[
+          { n: 1, t: 'Measure resources lost', d: 'Work out the resource % each side had available (overs remaining × wickets in hand).' },
+          { n: 2, t: 'Compare both innings', d: 'If Team 2 has fewer resources than Team 1, the target is scaled down in proportion.' },
+          { n: 3, t: 'Set revised target', d: 'The par score plus one run becomes the new target to win over the reduced overs.' },
+        ].map((s, i) => (
+          <div key={s.n} style={step}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <span style={{ width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(135deg,#7FB0FF,#3A6FD8)', color: '#0C1D33', fontFamily: 'Montserrat,sans-serif', fontWeight: 900, fontSize: 14, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{s.n}</span>
+              <span style={{ color: '#fff', fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 14 }}>{s.t}</span>
+              {i < 2 && <Op>→</Op>}
+            </div>
+            <p style={{ color: 'rgba(255,255,255,0.82)', fontSize: 12.5, lineHeight: 1.6 }}>{s.d}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Worked example */}
+      <div style={{ background: 'rgba(127,176,255,0.08)', border: '1px solid rgba(127,176,255,0.35)', borderRadius: 14, padding: '16px 18px', marginBottom: 14 }}>
+        <div style={{ color: '#7FB0FF', fontFamily: 'Montserrat,sans-serif', fontWeight: 800, fontSize: 13, marginBottom: 10 }}>Worked Example — 2nd innings cut short</div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+          <Chip color="#7FB0FF">Team 1: 160/6 in 20 overs</Chip>
+          <Chip color={RED_}>Rain: 2nd innings reduced 20 → 15 overs</Chip>
+        </div>
+        <p style={{ color: 'rgba(255,255,255,0.88)', fontSize: 13.5, lineHeight: 1.7 }}>
+          With fewer overs but all 10 wickets in hand, Team 2 keeps most of its resources. DLS scales Team 1&rsquo;s 160 to the reduced quota — a <strong style={{ color: GREEN_ }}>revised target of about 132 from 15 overs</strong> (illustrative). Team 2 must reach that revised target to win.
+        </p>
+      </div>
+
+      <div style={{ background: 'rgba(49,197,107,0.08)', border: '1px solid rgba(49,197,107,0.35)', borderRadius: 12, padding: '12px 16px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+        <span style={{ color: GREEN_, display: 'inline-flex', flexShrink: 0, marginTop: 1 }}><IcoGauge size={18} /></span>
+        <p style={{ color: 'rgba(255,255,255,0.88)', fontSize: 13, lineHeight: 1.65 }}>
+          BCPL scoreboards show the live <strong style={{ color: GREEN_ }}>DLS par score</strong> automatically during rain-affected chases, so you always know if the batting side is ahead or behind. The result line shows <strong style={{ color: GOLD_ }}>&ldquo;(DLS method)&rdquo;</strong> when a target was revised.
+        </p>
+      </div>
+      <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11.5, lineHeight: 1.6, marginTop: 12, fontStyle: 'italic' }}>
+        Figures above are illustrative. BCPL uses the recognised DLS Standard Edition method adopted in the published Playing Conditions; official targets are computed at the ground.
+      </p>
     </div>
   );
 }

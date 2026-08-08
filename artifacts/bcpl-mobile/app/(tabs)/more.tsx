@@ -345,21 +345,27 @@ function SponsorStrip() {
   const c = useColors();
   const q = useQuery({ queryKey: ['sponsors'], queryFn: getSponsors });
 
-  if (q.isLoading || !q.data || q.data.sponsors.length === 0) return null;
-
   return (
     <Card padding={0} border={true}>
       <View style={{ padding: 20, paddingBottom: 12 }}>
         <Text style={[styles.cardTitle, { color: c.ink, marginBottom: 12 }]}>Our Sponsors</Text>
       </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16, paddingHorizontal: 20, paddingBottom: 20 }}>
-        {q.data.sponsors.map((s) => (
-          <Pressable key={s.id} onPress={() => s.url && Linking.openURL(s.url)}>
-            <View style={{ backgroundColor: c.card2, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: c.line }}>
-              <Image source={{ uri: `https://bcplt20.com${s.logo}` }} style={{ width: 80, height: 40 }} contentFit="contain" />
-            </View>
-          </Pressable>
-        ))}
+      {q.data?.sponsors && q.data.sponsors.length > 0 && (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16, paddingHorizontal: 20, paddingBottom: 20 }}>
+          {q.data.sponsors.map((s) => (
+            <Pressable key={s.id} onPress={() => s.url && Linking.openURL(s.url)}>
+              <View style={{ backgroundColor: c.card2, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: c.line }}>
+                <Image source={{ uri: `https://bcplt20.com${s.logo}` }} style={{ width: 80, height: 40 }} contentFit="contain" />
+              </View>
+            </Pressable>
+          ))}
+        </View>
+      )}
+      <View style={{ borderTopWidth: 1, borderTopColor: c.line, padding: 16 }}>
+        <Pressable onPress={() => WebBrowser.openBrowserAsync('https://bcplt20.com/contact')} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 12, backgroundColor: c.card2, borderRadius: 12, opacity: pressed ? 0.8 : 1 })}>
+          <Feather name="star" size={16} color={c.amber} />
+          <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>Become a Sponsor</Text>
+        </Pressable>
       </View>
     </Card>
   );
@@ -627,7 +633,6 @@ export default function ProfileScreen() {
           <LangSwitch />
           <MoreMenu />
           <ContactSupport />
-          <SponsorStrip />
 
           <Pressable
             onPress={() => logout()}
@@ -640,6 +645,8 @@ export default function ProfileScreen() {
             <Feather name="log-out" size={18} color={c.coral} />
             <Text style={{ color: c.coral, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 15 }}>Logout</Text>
           </Pressable>
+
+          <SponsorStrip />
         </View>
       </ScrollView>
     </View>

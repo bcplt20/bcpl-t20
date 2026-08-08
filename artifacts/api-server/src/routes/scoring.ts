@@ -1,10 +1,10 @@
 /**
- * Live scoring routes (admin only)
+ * Live scoring routes (admin only). Mounted at /api/scoring.
  *
- * POST /api/admin/scoring/:matchId/ball   – record a delivery
- * POST /api/admin/scoring/:matchId/innings-end  – end current innings, start 2nd
- * PUT  /api/admin/scoring/:matchId/players – update striker / non-striker / bowler
- * DELETE /api/admin/scoring/:matchId/ball  – undo last delivery
+ * POST   /api/scoring/:matchId/ball          – record a delivery
+ * POST   /api/scoring/:matchId/innings-end   – end current innings, start 2nd
+ * DELETE /api/scoring/:matchId/ball          – undo last delivery
+ * POST   /api/scoring/:matchId/dls           – rain interruption / reduce overs (DLS)
  */
 
 import { Router }   from "express";
@@ -12,9 +12,19 @@ import { db }       from "@workspace/db";
 import {
   matchesTable, inningsTable, deliveriesTable,
 } from "@workspace/db/schema";
-import { eq, and, desc, asc } from "drizzle-orm";
+import { eq, and, desc, asc, sql } from "drizzle-orm";
 import { requireAdmin }  from "../middlewares/adminAuth";
 import { z }             from "zod";
+import { recomputePointsTable } from "../lib/pointsEngine";
+import { decideResultForMatch } from "../lib/matchResult";
+import { availableResource, dlsTarget, resourcePct } from "../lib/dls";
+import { logger }        from "../lib/logger";
+
+/** Best-effort points-table recompute — never fails the scoring request. */
+async function safeRecompute(season: number): Promise<void> {
+  try { await recomputePointsTable(season); }
+  catch (e) { logger.error({ err: e, season }, "points-table auto-recompute failed"); }
+}
 
 const router = Router();
 
@@ -137,8 +147,10 @@ router.post("/:matchId/ball", requireAdmin, async (req, res) => {
   const newWickets  = inn.totalWickets + (isWicket ? 1 : 0);
   const newExtras   = inn.extras + extrasRuns;
 
-  // Check innings complete: 10 wickets or 20 overs
-  const innsComplete = newWickets >= 10 || newOvers >= 20 ||
+  // Check innings complete: 10 wickets, allotted overs reached (revised if a
+  // DLS reduction is in force), or the (revised) target chased down.
+  const allottedOvers = inn.revisedOvers ?? inn.originalOvers ?? 20;
+  const innsComplete = newWickets >= 10 || newOvers >= allottedOvers ||
     (inn.target !== null && inn.target !== undefined && newTotal >= inn.target);
 
   const innsStatus = innsComplete ? "completed" : "live";
@@ -158,10 +170,12 @@ router.post("/:matchId/ball", requireAdmin, async (req, res) => {
     await db.update(matchesTable).set({ status: "innings2", updatedAt: new Date() })
       .where(eq(matchesTable.id, match.id));
   }
-  // If innings 2 just ended → match completed
+  // If innings 2 just ended → decide result (handles DLS) + auto-recompute table
   if (innsComplete && inn.inningsNumber === 2) {
     await db.update(matchesTable).set({ status: "completed", updatedAt: new Date() })
       .where(eq(matchesTable.id, match.id));
+    await decideResultForMatch(match.id);
+    await safeRecompute(match.season);
   }
 
   res.json({
@@ -269,5 +283,109 @@ router.delete("/:matchId/ball", requireAdmin, async (req, res) => {
 
   res.json({ success: true, undone: last });
 });
+
+/* ─── POST /api/admin/scoring/:matchId/dls ─────────────────────────────────
+ * Record a rain interruption / reduce the overs available for an innings.
+ * Recomputes the DLS target for the chasing side when the reduction is applied
+ * to (or after) innings 1. Scorer/admin authorized; the match row is locked
+ * FOR UPDATE inside a transaction, matching every scoring mutation, so two
+ * scorers can't apply conflicting reductions concurrently.
+ *
+ * Validations (ICC): cannot INCREASE overs beyond original; minimum 5 overs
+ * for a valid T20 result. */
+const dlsBody = z.object({
+  inningsNumber: z.number().int().min(1).max(2),
+  oversAvailable: z.number().int().min(1).max(20),
+  // wickets lost at the moment of the stoppage (for the resource loss calc);
+  // defaults to the innings' current wickets when omitted.
+  wicketsLostAtStop: z.number().int().min(0).max(10).optional(),
+});
+router.post("/:matchId/dls", requireAdmin, async (req, res) => {
+  const parsed = dlsBody.safeParse(req.body);
+  if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
+  const { inningsNumber, oversAvailable, wicketsLostAtStop } = parsed.data;
+  const matchId = String(req.params.matchId);
+
+  try {
+    const result = await db.transaction(async (tx) => {
+      // Lock the match row (all scorer writes serialize on it).
+      const locked = await tx.execute(sql`SELECT id, season, status FROM matches WHERE id = ${matchId} FOR UPDATE`);
+      const mrow = (locked.rows as Array<{ id: string; season: number; status: string }>)[0];
+      if (!mrow) return { error: "Match not found", code: 404 as const };
+
+      const [inn] = await tx.select().from(inningsTable)
+        .where(and(eq(inningsTable.matchId, matchId), eq(inningsTable.inningsNumber, inningsNumber))).limit(1);
+      if (!inn) return { error: `Innings ${inningsNumber} not found`, code: 400 as const };
+
+      const original = inn.originalOvers ?? 20;
+      if (oversAvailable > original) {
+        return { error: `Cannot increase overs beyond the original ${original}`, code: 400 as const };
+      }
+      if (oversAvailable < 5) {
+        return { error: "Minimum 5 overs required for a valid T20 result under DLS", code: 400 as const };
+      }
+      const oversBowled = inn.overs + inn.balls / 6;
+      if (oversAvailable < oversBowled) {
+        return { error: `Innings has already bowled ${inn.overs}.${inn.balls} overs — revised overs cannot be below overs already bowled`, code: 400 as const };
+      }
+
+      // Log the interruption: resource lost between "stop" and "resume".
+      const wktsAtStop = wicketsLostAtStop ?? inn.totalWickets;
+      const oversLeftAtStop = (inn.revisedOvers ?? original) - oversBowled;
+      const oversLeftAtResume = oversAvailable - oversBowled;
+      const interruptions = [
+        ...((inn.dlsInterruptions ?? []) as Array<{ oversLeftAtStop: number; wicketsLostAtStop: number; oversLeftAtResume: number }>),
+        { oversLeftAtStop, wicketsLostAtStop: wktsAtStop, oversLeftAtResume },
+      ];
+
+      await tx.update(inningsTable).set({
+        revisedOvers: oversAvailable,
+        dlsInterruptions: interruptions,
+        updatedAt: new Date(),
+      }).where(eq(inningsTable.id, inn.id));
+
+      // Mark the match as DLS-affected.
+      await tx.update(matchesTable).set({ dlsApplied: true, updatedAt: new Date() })
+        .where(eq(matchesTable.id, matchId));
+
+      // If innings 2 exists, recompute its revised target from resources.
+      let revisedTarget: number | null = null;
+      const [inn1] = await tx.select().from(inningsTable)
+        .where(and(eq(inningsTable.matchId, matchId), eq(inningsTable.inningsNumber, 1))).limit(1);
+      const [inn2] = await tx.select().from(inningsTable)
+        .where(and(eq(inningsTable.matchId, matchId), eq(inningsTable.inningsNumber, 2))).limit(1);
+      if (inn1 && inn2) {
+        const r1 = inningsResourceUsedTx(inn1);
+        const r2 = availableResource(inn2.revisedOvers ?? inn2.originalOvers ?? 20,
+          (inn2.dlsInterruptions ?? []) as Array<{ oversLeftAtStop: number; wicketsLostAtStop: number; oversLeftAtResume: number }>);
+        revisedTarget = dlsTarget({ team1Score: inn1.totalRuns, team1Resource: r1, team2Resource: r2 });
+        await tx.update(inningsTable).set({ target: revisedTarget, updatedAt: new Date() })
+          .where(eq(inningsTable.id, inn2.id));
+      }
+
+      return { ok: true as const, season: mrow.season, revisedOvers: oversAvailable, revisedTarget, inningsNumber };
+    });
+
+    if ("error" in result) return void res.status(result.code ?? 400).json({ error: result.error });
+    res.json({ success: true, ...result });
+  } catch (e) {
+    logger.error({ err: e, matchId }, "DLS reduce-overs failed");
+    res.status(500).json({ error: "Could not apply DLS reduction" });
+  }
+});
+
+/** Local copy of resource-used calc using a tx-selected innings row. */
+function inningsResourceUsedTx(inn: typeof inningsTable.$inferSelect): number {
+  const original = inn.originalOvers ?? 20;
+  const interruptions = (inn.dlsInterruptions ?? []) as Array<{ oversLeftAtStop: number; wicketsLostAtStop: number; oversLeftAtResume: number }>;
+  const available = availableResource(original, interruptions);
+  if (inn.status === "completed") {
+    const allocation = inn.revisedOvers ?? original;
+    const oversLeftAtEnd = Math.max(0, allocation - (inn.overs + inn.balls / 6));
+    const remaining = inn.totalWickets >= 10 ? 0 : resourcePct(oversLeftAtEnd, inn.totalWickets);
+    return Math.max(0, available - remaining);
+  }
+  return available;
+}
 
 export default router;

@@ -29,6 +29,7 @@ import { sendPaymentReminders, remindersEnabled } from "./lib/reminders";
 import { sendKycManualReviewReminders } from "./lib/kycReminders";
 import { ensurePushTables } from "./lib/push";
 import { ensureMatchMomentsTable } from "./lib/matchMoments";
+import { ensureDlsColumns } from "./lib/dls";
 import { sendIncompleteRegistrationReminders } from "./lib/incompleteReminders";
 import { sendTrialDayReminders } from "./lib/trialReminders";
 
@@ -67,6 +68,7 @@ async function start() {
       await ensureRegistrationClassificationColumn(); // player playing-style classification
       await ensurePushTables(); // Growth — Expo push tokens + in-app notification inbox
       await ensureMatchMomentsTable(); // Growth — admin-attached match highlight clips
+      await ensureDlsColumns(); // Cricket rules — DLS overs/interruption columns on innings + matches
       logger.info("startup migrations ensured");
       break;
     } catch (e) {

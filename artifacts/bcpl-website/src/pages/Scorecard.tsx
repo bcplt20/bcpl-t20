@@ -186,6 +186,41 @@ export function Scorecard() {
                   </div>
                 )}
 
+                {/* DLS strip — rain-rule revised target + live par (server truth) */}
+                {m.dls && m.dls.active && (() => {
+                  const d = m.dls!;
+                  const ab = typeof d.aheadBehind === "number" ? d.aheadBehind : null;
+                  const abColor = ab == null ? TXT2 : ab >= 0 ? GREEN : RED;
+                  return (
+                    <div style={{ background: "rgba(127,176,255,0.10)", border: "1px solid rgba(127,176,255,0.45)", borderRadius: 14, padding: "14px 16px", marginBottom: 20, display: "flex", flexWrap: "wrap", gap: 14, alignItems: "center" }}>
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#7FB0FF", display: "inline-block", animation: "liveBlip 1.2s infinite" }} />
+                        <span style={{ fontFamily: "'Montserrat',sans-serif", fontWeight: 900, fontSize: 12, letterSpacing: ".1em", color: "#7FB0FF" }}>DLS</span>
+                      </div>
+                      {d.revisedOvers != null && (
+                        <div style={{ fontSize: 13.5, color: TXT2 }}>
+                          {t("Revised", "संशोधित")}: <strong style={{ color: "#fff" }}>{d.revisedOvers} {t("ov", "ओवर")}</strong>
+                        </div>
+                      )}
+                      {d.target != null && (
+                        <div style={{ fontSize: 13.5, color: TXT2 }}>
+                          {t("Target", "लक्ष्य")}: <strong style={{ color: GOLD }}>{d.target}</strong>
+                        </div>
+                      )}
+                      {d.parScore != null && (
+                        <div style={{ fontSize: 13.5, color: TXT2 }}>
+                          {t("Par", "पार")}: <strong style={{ color: "#fff" }}>{d.parScore}</strong>
+                        </div>
+                      )}
+                      {ab != null && (
+                        <div style={{ fontSize: 13.5, fontFamily: "'Montserrat',sans-serif", fontWeight: 800, color: abColor }}>
+                          {ab >= 0 ? t(`+${ab} ahead`, `+${ab} आगे`) : t(`${ab} behind`, `${ab} पीछे`)}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
                 {/* Result banner */}
                 {isCompleted && m.resultDesc && (
                   <div style={{ background: "rgba(49,197,107,0.12)", border: `1px solid rgba(49,197,107,0.45)`, borderRadius: 14, padding: "14px 18px", marginBottom: 24, color: GREEN, fontFamily: "'Montserrat',sans-serif", fontWeight: 800, fontSize: 16, textAlign: "center" }}>

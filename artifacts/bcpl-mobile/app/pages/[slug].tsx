@@ -57,6 +57,110 @@ function HeroMesh({ title }: { title: string }) {
   );
 }
 
+function CricketRulebookExtras({ c, t }: { c: any; t: any }) {
+  return (
+    <View style={{ gap: 24, marginTop: 8 }}>
+      {/* NRR SECTION */}
+      <View>
+        <SectionHeader title={t('Net Run Rate (NRR)', 'नेट रन रेट (NRR)')} />
+        <Card padding={20} border={true} style={{ overflow: 'hidden' }}>
+          <View style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 4, backgroundColor: c.cyan }} />
+          <View style={{ position: 'absolute', right: -40, top: -40, opacity: 0.05, transform: [{ rotate: '15deg' }] }}>
+            <Feather name="bar-chart-2" size={140} color={c.cyan} />
+          </View>
+          
+          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, lineHeight: 22, marginBottom: 16 }}>
+            {t('The ICC standard NRR formula measures a team\'s overall performance rate across the tournament.', 'ICC स्टैंडर्ड NRR फ़ॉर्मूला पूरे टूर्नामेंट में टीम के प्रदर्शन रेट को मापता है।')}
+          </Text>
+
+          <View style={{ backgroundColor: c.card2, borderRadius: 12, borderWidth: 1, borderColor: c.line, overflow: 'hidden', marginBottom: 16 }}>
+            <View style={{ padding: 12, borderBottomWidth: 1, borderBottomColor: c.line, backgroundColor: 'rgba(0,220,245,0.05)' }}>
+              <Text style={{ color: c.cyan, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1, textAlign: 'center' }}>{t('NRR Formula', 'NRR फ़ॉर्मूला')}</Text>
+            </View>
+            <View style={{ padding: 16, alignItems: 'center' }}>
+              <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, textAlign: 'center' }}>
+                (Total Runs Scored ÷ Total Overs Faced)
+              </Text>
+              <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16, marginVertical: 8 }}>−</Text>
+              <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, textAlign: 'center' }}>
+                (Total Runs Conceded ÷ Total Overs Bowled)
+              </Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: 'row', gap: 12, marginBottom: 16 }}>
+            <View style={{ width: 4, borderRadius: 2, backgroundColor: c.amber }} />
+            <Text style={{ flex: 1, color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20 }}>
+              <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Important Rule:', 'महत्वपूर्ण नियम:')}</Text> If a team is bowled out, their full quota of overs (e.g. 20) is counted, not the actual overs faced.
+            </Text>
+          </View>
+
+          <View style={{ backgroundColor: 'rgba(255,61,166,0.05)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,61,166,0.2)', padding: 16 }}>
+            <Text style={{ color: c.magenta, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{t('Example', 'उदाहरण')}</Text>
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20 }}>
+              • {t('Team scores 180 runs in 20 overs', 'टीम 20 ओवर में 180 रन बनाती है')} (180 ÷ 20 = 9.00){'\n'}
+              • {t('Team concedes 150 runs in 20 overs', 'टीम 20 ओवर में 150 रन देती है')} (150 ÷ 20 = 7.50){'\n'}
+              • <Text style={{ fontFamily: 'PlusJakartaSans_700Bold' }}>NRR = 9.00 − 7.50 = +1.50</Text>
+            </Text>
+          </View>
+        </Card>
+      </View>
+
+      {/* DLS SECTION */}
+      <View>
+        <SectionHeader title={t('Duckworth-Lewis (DLS)', 'डकवर्थ-लुईस (DLS)')} />
+        <Card padding={20} border={true} style={{ overflow: 'hidden' }}>
+          <View style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 4, backgroundColor: c.magenta }} />
+          <View style={{ position: 'absolute', right: -40, top: -40, opacity: 0.05, transform: [{ rotate: '-15deg' }] }}>
+            <Feather name="cloud-rain" size={140} color={c.magenta} />
+          </View>
+          
+          <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, lineHeight: 22, marginBottom: 16 }}>
+            {t('BCPL uses the official DLS Standard Edition method to calculate revised targets when rain cuts a match short.', 'बारिश से मैच रुकने पर BCPL आधिकारिक DLS Standard Edition तरीके से नया लक्ष्य निकालता है।')}
+          </Text>
+
+          <View style={{ backgroundColor: c.card2, borderRadius: 12, borderWidth: 1, borderColor: c.line, padding: 16, marginBottom: 16 }}>
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14, marginBottom: 8 }}>{t('How it works (Resources Concept)', 'यह कैसे काम करता है (रिसोर्स सिद्धांत)')}</Text>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20 }}>
+              {t('A team\'s scoring ability depends on two resources: overs left and wickets left. If rain reduces these resources, the target is adjusted proportionally.', 'टीम के रन बनाने की क्षमता 2 चीज़ों पर निर्भर है: बचे हुए ओवर और बचे हुए विकेट। अगर बारिश से ये कम होते हैं, तो लक्ष्य भी उसी अनुपात में बदल जाता है।')}
+            </Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, marginVertical: 8 }}>
+            <View style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: 'rgba(0,220,245,0.1)', borderRadius: 8, borderWidth: 1, borderColor: 'rgba(0,220,245,0.3)' }}>
+              <Text style={{ color: c.cyan, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12 }}>{t('Overs Left', 'बचे ओवर')}</Text>
+            </View>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>+</Text>
+            <View style={{ paddingHorizontal: 12, paddingVertical: 6, backgroundColor: 'rgba(255,61,166,0.1)', borderRadius: 8, borderWidth: 1, borderColor: 'rgba(255,61,166,0.3)' }}>
+              <Text style={{ color: c.magenta, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12 }}>{t('Wickets Left', 'बचे विकेट')}</Text>
+            </View>
+            <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 16 }}>=</Text>
+            <Text style={{ color: c.ink, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14, textTransform: 'uppercase' }}>{t('Resources', 'रिसोर्स')}</Text>
+          </View>
+
+          <View style={{ backgroundColor: 'rgba(0,220,245,0.05)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(0,220,245,0.2)', padding: 16, marginTop: 16 }}>
+            <Text style={{ color: c.cyan, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{t('Example (Revised Target)', 'उदाहरण (नया लक्ष्य)')}</Text>
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20 }}>
+              • {t('Team 1 scores 160 in 20 overs.', 'टीम 1 ने 20 ओवर में 160 रन बनाए।')}{'\n'}
+              • {t('Rain cuts Team 2\'s innings to 15 overs.', 'बारिश के कारण टीम 2 की पारी 15 ओवर की कर दी जाती है।')}{'\n'}
+              • {t('Team 2 loses 20% of their resources due to lost overs.', 'टीम 2 के 20% रिसोर्स खो गए हैं।')}{'\n'}
+              • <Text style={{ fontFamily: 'PlusJakartaSans_700Bold' }}>{t('Revised Target:', 'नया लक्ष्य:')}</Text> 160 × 80% = 129 {t('runs', 'रन')}
+            </Text>
+          </View>
+
+          <View style={{ backgroundColor: 'rgba(255,197,61,0.05)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,197,61,0.2)', padding: 16, marginTop: 16 }}>
+            <Text style={{ color: c.amber, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{t('Live Par Score', 'लाइव पार स्कोर')}</Text>
+            <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 20 }}>
+              {t('During the 2nd innings, the scoreboard displays a "Par Score". If the match is abandoned, the chasing team must be at least 1 run ahead of the Par Score to win.', 'दूसरी पारी के दौरान, स्कोरबोर्ड पर "Par Score" दिखता है। अगर मैच रद्द होता है, तो जीतने के लिए चेज़ करने वाली टीम को पार स्कोर से कम से कम 1 रन आगे होना चाहिए।')}
+            </Text>
+          </View>
+
+        </Card>
+      </View>
+    </View>
+  );
+}
+
 export default function NativePageScreen() {
   const c = useColors();
   const { t } = useLang();
@@ -299,6 +403,10 @@ export default function NativePageScreen() {
             </View>
           );
         })}
+
+        {slug === 'cricket-rulebook' && (
+          <CricketRulebookExtras c={c} t={t} />
+        )}
         
         {/* WEBSITE CTA FOOTER */}
         <Pressable 

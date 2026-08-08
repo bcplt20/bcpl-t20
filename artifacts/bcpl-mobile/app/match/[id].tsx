@@ -113,9 +113,13 @@ function UpcomingPanel({ live }: { live: LiveMatch }) {
             <LinearGradient colors={['transparent', c.line, 'transparent']} style={styles.vsLineVert} />
           </View>
           {parts ? (
-            <View style={{ backgroundColor: `${c.cyan}15`, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, borderWidth: 1, borderColor: `${c.cyan}40` }}>
-              <Text style={{ color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 14, letterSpacing: 0.5, fontVariant: ['tabular-nums'] }}>
-                {parts.d > 0 ? `${parts.d}D ${pad2(parts.h)}H` : `${pad2(parts.h)}:${pad2(parts.m)}:${pad2(parts.s)}`}
+            <View style={{ backgroundColor: `${c.cyan}15`, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 12, borderWidth: 1, borderColor: `${c.cyan}40`, width: '100%', alignItems: 'center' }}>
+              <Text 
+                numberOfLines={1} 
+                adjustsFontSizeToFit 
+                style={{ color: c.cyan, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 13, letterSpacing: 0, fontVariant: ['tabular-nums'] }}
+              >
+                {parts.d > 0 ? `${parts.d}d ${pad2(parts.h)}h ${pad2(parts.m)}m ${pad2(parts.s)}s` : `${pad2(parts.h)}:${pad2(parts.m)}:${pad2(parts.s)}`}
               </Text>
             </View>
           ) : null}
@@ -169,6 +173,18 @@ function LiveTab({ live }: { live: LiveMatch }) {
           <View style={{ gap: 16 }}>
             {innings.map((inn) => <InningsScore key={inn.number} inn={inn} />)}
           </View>
+
+          {live.dls?.active && (
+            <View style={{ marginTop: 20, paddingTop: 16, borderTopWidth: 1, borderTopColor: c.line, alignItems: 'center' }}>
+              <View style={{ backgroundColor: 'rgba(255,61,166,0.1)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,61,166,0.3)', flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Feather name="cloud-rain" size={16} color={c.magenta} />
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 13 }}>
+                  DLS: Par {live.dls.parScore ?? '--'} {live.dls.aheadBehind !== undefined ? `(${live.dls.aheadBehind > 0 ? '+' : ''}${live.dls.aheadBehind} ${live.dls.aheadBehind >= 0 ? 'ahead' : 'behind'})` : ''} · Target {live.dls.target ?? '--'} in {live.dls.revisedOvers ?? '--'} ov
+                </Text>
+              </View>
+            </View>
+          )}
+
           {live.status === 'completed' && live.resultDesc ? (
             <View style={{ marginTop: 20, paddingTop: 20, borderTopWidth: 1, borderTopColor: c.line }}>
               <Text style={{ color: c.magenta, fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 16, textAlign: 'center' }}>

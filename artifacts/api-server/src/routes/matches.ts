@@ -27,6 +27,14 @@ import { z }            from "zod";
 import { buildMatchMoments } from "../lib/matchMoments";
 import { matchMomentsTable } from "@workspace/db/schema";
 import { logger }       from "../lib/logger";
+import { recomputePointsTable } from "../lib/pointsEngine";
+import { buildDlsBlock } from "../lib/matchResult";
+
+/** Best-effort points-table recompute — never fails the admin request. */
+async function safeRecompute(season: number): Promise<void> {
+  try { await recomputePointsTable(season); }
+  catch (e) { logger.error({ err: e, season }, "points-table auto-recompute failed"); }
+}
 
 const router = Router();
 
@@ -200,7 +208,7 @@ router.get("/:id", async (req, res) => {
     .where(eq(inningsTable.matchId, match.id))
     .orderBy(asc(inningsTable.inningsNumber));
 
-  res.json({ match, innings });
+  res.json({ match, innings, dls: buildDlsBlock(match, innings) });
 });
 
 // GET /api/matches/:id/live  (compact — polled every 5s by public website)
@@ -249,6 +257,7 @@ router.get("/:id/live", async (req, res) => {
       isWicket:   d.isWicket,
       commentary: d.commentary,
     })),
+    dls: buildDlsBlock(match, innings),
   });
 });
 
@@ -266,7 +275,7 @@ router.get("/:id/scorecard", async (req, res) => {
     scorecard:   await buildScorecard(i.id),
   })));
 
-  res.json({ match, scorecards });
+  res.json({ match, scorecards, dls: buildDlsBlock(match, innings) });
 });
 
 // GET /api/matches/:id/moments — key highlights DERIVED from deliveries
@@ -486,6 +495,8 @@ router.put("/admin/matches/:id/status", requireAdmin, async (req, res) => {
     .returning();
 
   if (!match) return void res.status(404).json({ error: "Match not found" });
+  // Any status/winner/result edit recomputes the season's table (idempotent).
+  await safeRecompute(match.season);
   res.json({ success: true, match });
 });
 
@@ -720,6 +731,8 @@ router.delete("/admin/matches/:id", requireAdmin, async (req, res) => {
       await sweepFkDelete(tx, "public", "matches", "id", [matchId], [],
         (obj, msg) => req.log.warn(obj, msg));
     });
+    // Deleting a match can change the standings → recompute its season.
+    await safeRecompute(match.season);
   } catch (err) {
     if ((err as { scoringDataAppeared?: boolean } | null)?.scoringDataAppeared) {
       return void res.status(409).json({

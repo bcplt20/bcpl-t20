@@ -225,6 +225,15 @@ export type CommunityScorecard = {
     id: string; team1: string; team2: string; venue: string;
     oversLimit: number; playersPerSide?: number;
     status: "live" | "innings2" | "completed"; resultDesc: string; createdAt: string;
+    /* Optional rain-rule block — present only when the server has an active or
+       applied DLS revision. Absent on older servers / non-affected matches. */
+    dls?: {
+      active: boolean;
+      revisedOvers?: number | null;
+      target?: number | null;
+      parScore?: number | null;
+      aheadBehind?: number | null; // + = batting side ahead of par, − = behind
+    } | null;
   };
   innings: Array<{
     inningsNumber: number; battingTeam: string; bowlingTeam: string;

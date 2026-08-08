@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, integer, timestamp, text } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, integer, timestamp, text, boolean } from "drizzle-orm/pg-core";
 
 /** One match in the league schedule */
 export const matchesTable = pgTable("matches", {
@@ -21,6 +21,9 @@ export const matchesTable = pgTable("matches", {
   // result
   winner:       varchar("winner",  { length: 80 }),
   resultDesc:   text("result_desc"),           // e.g. "Mumbai won by 14 runs"
+  // DLS: true when the result was decided by the Duckworth–Lewis–Stern method
+  // (rain-shortened). Used for the "(DLS method)" tag + NRR revised-overs rule.
+  dlsApplied:   boolean("dls_applied").default(false).notNull(),
   playerOfMatch: varchar("player_of_match", { length: 100 }),
   createdAt:    timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt:    timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),

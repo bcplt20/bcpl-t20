@@ -905,6 +905,10 @@ export default function HomeScreen() {
                   </View>
                 );
               })}
+              <Pressable onPress={() => WebBrowser.openBrowserAsync('https://bcplt20.com/contact')} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, paddingHorizontal: 24, backgroundColor: c.card2, borderRadius: 100, borderWidth: 1, borderColor: c.line, marginTop: 32, opacity: pressed ? 0.8 : 1 })}>
+                <Feather name="star" size={16} color={c.amber} />
+                <Text style={{ color: c.ink, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>Become a Sponsor</Text>
+              </Pressable>
             </View>
           )
         ), [sponsorGroups, c, t])}

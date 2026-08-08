@@ -863,6 +863,13 @@ export interface LiveMatch {
   resultDesc?: string | null;
   innings: LiveInnings[];
   recentDeliveries: { over: string | number; runs: number; isWicket: boolean; commentary?: string | null }[];
+  dls?: {
+    active: boolean;
+    revisedOvers?: number;
+    target?: number;
+    parScore?: number;
+    aheadBehind?: number;
+  };
 }
 
 export function getLiveMatch(id: string): Promise<LiveMatch> {

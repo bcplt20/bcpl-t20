@@ -360,6 +360,18 @@ export function PointsTable() {
               <span className="qz-swatch" />
               {t("Top 2 from each group qualify for the semi finals", "प्रत्येक ग्रुप से टॉप 2 सेमी फाइनल के लिए क्वालिफाई करेंगे")}
             </div>
+
+            {/* NRR / tie-break note — teams level on points are separated by NRR */}
+            <div className="qz-note" style={{ marginBottom: 8 }}>
+              <span style={{ fontFamily: "var(--font-head)", fontWeight: 800, color: GOLD }}>NRR</span>
+              {t(
+                "= Net Run Rate. Teams level on points are ranked by higher NRR (green = positive, red = negative).",
+                "= नेट रन रेट। समान अंक वाली टीमों को ज़्यादा NRR से रैंक किया जाता है (हरा = धनात्मक, लाल = ऋणात्मक)।",
+              )}
+              <Link href="/cricket-rulebook" style={{ color: ORANGE, fontWeight: 700, textDecoration: "none" }}>
+                {t("How NRR works →", "NRR कैसे काम करता है →")}
+              </Link>
+            </div>
           </>
         )}
 

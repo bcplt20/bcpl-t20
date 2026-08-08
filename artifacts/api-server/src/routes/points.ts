@@ -15,6 +15,7 @@ import { db }      from "@workspace/db";
 import { pointsTableEntries } from "@workspace/db/schema";
 import { eq, and }            from "drizzle-orm";
 import { requireAdmin }       from "../middlewares/adminAuth";
+import { recomputePointsTable } from "../lib/pointsEngine";
 import { z }                  from "zod";
 
 const router = Router();
@@ -40,10 +41,24 @@ router.get("/", async (req, res) => {
     .where(eq(pointsTableEntries.season, season));
   // Sort by points desc, then nrr desc
   rows.sort((a, b) => b.points - a.points || b.nrr - a.nrr);
-  res.json({ season, table: rows });
+  // Expose nrr as a signed, 3-decimal number for the frontend.
+  const table = rows.map((r) => ({
+    ...r,
+    nrr: Math.round(r.nrr * 1000) / 1000,
+    nrrDisplay: (r.nrr >= 0 ? "+" : "") + (Math.round(r.nrr * 1000) / 1000).toFixed(3),
+  }));
+  res.json({ season, table });
 });
 
 /* ─── Admin ────────────────────────────────────────── */
+
+// POST /api/admin/points-table/recompute — force a full idempotent recompute
+// from completed matches (also runs automatically on every finalize/edit).
+router.post("/admin/points-table/recompute", requireAdmin, async (req, res) => {
+  const season = Number(req.body?.season) || Number(req.query.season) || 5;
+  const standings = await recomputePointsTable(season);
+  res.json({ success: true, season, standings });
+});
 
 // POST /api/admin/points-table/seed
 router.post("/admin/points-table/seed", requireAdmin, async (req, res) => {
