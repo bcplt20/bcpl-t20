@@ -248,7 +248,7 @@ export function PlayerCard() {
         const regNo = reg.regNumber || (reg.id ? 'BCPL-' + reg.id.slice(0, 6).toUpperCase() : '\u2014');
         const cls: ClassificationValue | null = reg.classification ?? null;
         setData({
-          name: d.user.name || 'Player',
+          name: d.user?.name || 'Player',
           role: reg.role,
           regNo,
           city: reg.trialCity || null,

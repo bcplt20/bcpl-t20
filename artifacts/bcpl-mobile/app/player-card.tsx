@@ -127,12 +127,12 @@ export default function PlayerCardScreen() {
                   <Image source={{ uri: dashQ.data.avatar?.viewUrl || user?.avatar! }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                 ) : (
                   <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 44 }}>
-                    {(dashQ.data.user.name || user?.name || '?').charAt(0).toUpperCase()}
+                    {(dashQ.data.user?.name || user?.name || '?').charAt(0).toUpperCase()}
                   </Text>
                 )}
               </View>
               <Text style={{ color: '#fff', fontFamily: 'BricolageGrotesque_800ExtraBold', fontSize: 24, textAlign: 'center', marginTop: 12, paddingHorizontal: 20 }} numberOfLines={1} adjustsFontSizeToFit>
-                {dashQ.data.user.name || user?.name}
+                {dashQ.data.user?.name || user?.name || 'Player'}
               </Text>
             </View>
 
