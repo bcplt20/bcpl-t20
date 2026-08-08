@@ -31,6 +31,18 @@ body { background:#1C2B47; }
 .tp-status.done  { background:rgba(34,197,94,0.18);  color:#5EE38B; border-bottom:1px solid rgba(34,197,94,0.38); }
 .tp-qrbox { background:#fff; border-radius:16px; padding:16px; display:inline-block; max-width:100%; box-shadow:0 8px 26px rgba(0,0,0,0.35); }
 .tp-qrbox img { width:clamp(150px,44vw,184px); height:clamp(150px,44vw,184px); max-width:100%; display:block; }
+/* QR + details layout. Desktop: two columns (QR left, details right).
+   Mobile: stack in a single CENTERED column — QR block auto-centered, note
+   text centered, details full-width. Robust for any 320–480px width (no
+   fixed px widths that overflow, no horizontal scroll). */
+.tp-body { display:flex; gap:22px; align-items:flex-start; }
+.tp-qrcol { flex-shrink:0; }
+.tp-qrcol .tp-note { margin-left:auto; margin-right:auto; }
+@media(max-width:559.98px){
+  .tp-body { flex-direction:column; align-items:center; gap:20px; }
+  .tp-qrcol { width:100%; display:flex; flex-direction:column; align-items:center; }
+  .tp-details { width:100%; min-width:0 !important; flex:1 1 auto; }
+}
 .tp-row { display:flex; justify-content:space-between; gap:14px; padding:12px 0; border-bottom:1px dashed rgba(255,255,255,0.2); }
 .tp-lbl { font-family:var(--font-body); font-weight:700; font-size:13px; color:rgba(255,255,255,0.72); letter-spacing:0.06em; text-transform:uppercase; }
 .tp-val { font-family:var(--font-body); font-weight:700; font-size:15px; color:#fff; text-align:right; }
@@ -64,6 +76,10 @@ body { background:#1C2B47; }
   .tp-perf::before, .tp-perf::after { background:#fff !important; }
   .tp-jdot.done { background:#22C55E !important; border-color:#22C55E !important; color:#fff !important; }
   .tp-jdot.active { border-color:#E8B23D !important; color:#E8B23D !important; }
+  /* Keep the printed pass as the two-column desktop layout even when printed
+     from a phone (avoids an awkward stacked print). */
+  .tp-body { flex-direction:row !important; align-items:flex-start !important; }
+  .tp-details { width:auto !important; }
 }
 `;
 
@@ -187,9 +203,9 @@ export function TrialPass() {
                 )}
 
                 <div style={{ padding: '26px 24px 26px' }}>
-                  <div style={{ display: 'flex', gap: 22, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                  <div className="tp-body">
                     {/* QR */}
-                    <div style={{ textAlign: 'center' }}>
+                    <div className="tp-qrcol" style={{ textAlign: 'center' }}>
                       <div className="tp-qrbox" style={data.assessmentSubmitted ? { opacity: 0.55 } : undefined}>
                         <img src={data.qrDataUrl} alt="Trial pass QR" />
                       </div>
@@ -206,7 +222,7 @@ export function TrialPass() {
                     </div>
 
                     {/* details */}
-                    <div style={{ flex: 1, minWidth: 240 }}>
+                    <div className="tp-details" style={{ flex: 1, minWidth: 240 }}>
                       <div className="tp-name" style={{ font: '900 26px var(--font-head)', color: '#fff', marginBottom: 4, lineHeight: 1.05 }}>{data.player.name}</div>
                       <div style={{ font: '700 14px var(--font-body)', color: '#F1C765', marginBottom: 14, letterSpacing: '0.02em' }}>
                         {formatRoleCity(data.player.role, data.player.city)}
