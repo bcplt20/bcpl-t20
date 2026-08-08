@@ -152,7 +152,7 @@ export function AssistantOverlay() {
       setBusy(true);
       setErr('');
       
-      const b64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+      const b64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
       await FileSystem.deleteAsync(uri, { idempotent: true });
       const mimeType = Platform.OS === 'ios' ? 'audio/m4a' : 'audio/mp4';
       
