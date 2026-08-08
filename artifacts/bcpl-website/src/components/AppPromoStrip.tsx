@@ -45,13 +45,15 @@ export function AppPromoStrip() {
         cursor: "pointer",
       }}
     >
-      <span aria-hidden="true" style={{ fontSize: 20, lineHeight: 1 }}>{"\uD83D\uDCF1"}</span>
+      <span aria-hidden="true" style={{ display: "inline-flex", flex: "0 0 auto" }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8B23D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5" /><path d="M11 18h2" /></svg>
+      </span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: "Montserrat,Inter,sans-serif", fontWeight: 800, fontSize: 13.5, color: "#fff", lineHeight: 1.25 }}>
-          {t("Everything BCPL on the app", "BCPL app \u092A\u0930 \u0938\u092C \u0915\u0941\u091B")}
+          {t("The BCPL app is here", "BCPL app \u0906 \u0917\u092F\u093E \u0939\u0948")}
         </div>
         <div style={{ fontFamily: "Inter,sans-serif", fontSize: 11.5, color: "rgba(255,255,255,0.72)" }}>
-          {t("Live scores, trial pass & more \u2014 download now", "Live scores, trial pass \u0914\u0930 \u092C\u0939\u0941\u0924 \u0915\u0941\u091B \u2014 \u0905\u092D\u0940 download \u0915\u0930\u0947\u0902")}
+          {t("Live scores, your trial pass and every update \u2014 download it now", "Live scores, trial pass \u0914\u0930 \u0939\u0930 update \u2014 \u0905\u092D\u0940 download \u0915\u0930\u0947\u0902")}
         </div>
       </div>
       <span

@@ -5,8 +5,9 @@ const BASE = import.meta.env.BASE_URL;
 
 /* ------------------------------------------------------------------ *
  * App-screen slider for the /download hero.
- * 10 REAL screenshots captured from the actual BCPL app —
- * 5 in light (daylight) theme, 5 in dark (stadium) theme.
+ * Shows the 10 official store-listing panels (the same premium artwork
+ * prepared for the App Store / Play Store listing) at their full
+ * 1290x2796 aspect ratio — nothing cropped.
  * - Desktop: arrows + dots + auto-advance (~4s, pause on hover).
  * - Mobile: horizontal scroll-snap swipe with a peek of the next slide.
  * - Fully keyboard accessible; NO scroll-reveal/fade-in animations.
@@ -23,10 +24,8 @@ const CSS = `
 .aps-slide { flex:0 0 100%; scroll-snap-align:center; display:flex; justify-content:center; }
 @media (max-width:899px){ .aps-slide{ flex:0 0 82%; } }
 
-/* ---- phone frame ---- */
-.aps-phone { position:relative; width:min(288px,72vw); border-radius:42px; padding:10px; background:linear-gradient(160deg,#05070f,#191d3a); border:2px solid rgba(255,255,255,.14); box-shadow:0 34px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.14); }
-.aps-phone::before{ content:''; position:absolute; top:11px; left:50%; transform:translateX(-50%); width:104px; height:20px; border-radius:0 0 14px 14px; background:#04060d; z-index:6; }
-.aps-shot { display:block; width:100%; aspect-ratio:402/874; object-fit:cover; border-radius:32px; background:#101433; }
+/* ---- store panel ---- */
+.aps-shot { display:block; width:min(320px,78vw); aspect-ratio:1290/2796; height:auto; object-fit:contain; border-radius:26px; background:#101433; border:1px solid rgba(255,255,255,.14); box-shadow:0 34px 80px rgba(0,0,0,.55); }
 
 /* ---- controls ---- */
 .aps-ctrls { display:flex; align-items:center; justify-content:center; gap:14px; margin-top:14px; }
@@ -43,24 +42,21 @@ const CSS = `
 .aps-cap { text-align:center; margin-top:10px; min-height:44px; }
 .aps-cap .k { font-family:'Barlow Condensed','Montserrat',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:.04em; font-size:17px; color:#fff; }
 .aps-cap .d { font-size:12.5px; color:rgba(255,255,255,.72); margin-top:2px; }
-.aps-cap .th { display:inline-block; margin-left:8px; vertical-align:2px; font-size:8.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; border-radius:100px; padding:2px 8px; }
-.aps-cap .th.light { background:rgba(255,255,255,.9); color:#3a2b73; }
-.aps-cap .th.dark { background:rgba(124,92,255,.35); border:1px solid rgba(124,92,255,.6); color:#fff; }
 `;
 
-type Shot = { img: string; theme: "light" | "dark"; kEn: string; kHi: string; dEn: string; dHi: string };
+type Shot = { img: string; kEn: string; kHi: string; dEn: string; dHi: string };
 
 const SHOTS: Shot[] = [
-  { img: "home-light.jpg", theme: "light", kEn: "Home", kHi: "होम", dEn: "Everything BCPL on one home screen", dHi: "पूरा BCPL एक होम स्क्रीन पर" },
-  { img: "match-dark.jpg", theme: "dark", kEn: "Match Center", kHi: "मैच सेंटर", dEn: "Live score, scorecard and moments", dHi: "लाइव स्कोर, स्कोरकार्ड और मोमेंट्स" },
-  { img: "playercard-light.jpg", theme: "light", kEn: "Player Card", kHi: "प्लेयर कार्ड", dEn: "Your shareable BCPL player card", dHi: "आपका शेयर-योग्य BCPL प्लेयर कार्ड" },
-  { img: "points-dark.jpg", theme: "dark", kEn: "Points Table", kHi: "पॉइंट्स टेबल", dEn: "Group-wise standings and NRR", dHi: "ग्रुप-वार स्टैंडिंग और NRR" },
-  { img: "journey-light.jpg", theme: "light", kEn: "My Journey", kHi: "मेरी यात्रा", dEn: "Track your journey step by step", dHi: "अपनी यात्रा कदम-दर-कदम देखें" },
-  { img: "mvp-dark.jpg", theme: "dark", kEn: "MVP Race", kHi: "MVP रेस", dEn: "Leaderboard and points system", dHi: "लीडरबोर्ड और पॉइंट्स सिस्टम" },
-  { img: "trialpass-light.jpg", theme: "light", kEn: "Trial Pass", kHi: "ट्रायल पास", dEn: "Your digital trial pass with QR", dHi: "QR वाला आपका डिजिटल ट्रायल पास" },
-  { img: "vote-dark.jpg", theme: "dark", kEn: "Fan Voting", kHi: "फैन वोटिंग", dEn: "Vote in live fan polls", dHi: "लाइव फैन पोल में वोट करें" },
-  { img: "matches-light.jpg", theme: "light", kEn: "Matches", kHi: "मैच", dEn: "Fixtures and countdowns", dHi: "फिक्स्चर और काउंटडाउन" },
-  { img: "notifications-dark.jpg", theme: "dark", kEn: "Updates", kHi: "अपडेट", dEn: "Trial, result and match alerts", dHi: "ट्रायल, रिज़ल्ट और मैच अलर्ट" },
+  { img: "store-1.webp", kEn: "From Office to Stadium", kHi: "Office से Stadium तक", dEn: "Start your cricket dream with BCPL", dHi: "अपने cricket सपने की शुरुआत करें" },
+  { img: "store-2.webp", kEn: "Register in Minutes", kHi: "मिनटों में Register", dEn: "Complete your registration in about 2 minutes", dHi: "करीब 2 मिनट में registration पूरा" },
+  { img: "store-3.webp", kEn: "Show Your Skills", kHi: "अपना हुनर दिखाएँ", dEn: "Upload a 30–90 second video — trial from home", dHi: "30–90 second का video upload करें — घर बैठे trial" },
+  { img: "store-4.webp", kEn: "Your Official Scorecard", kHi: "आपका official scorecard", dEn: "See your score and rank in every category", dHi: "हर category का score और अपनी rank देखें" },
+  { img: "store-5.webp", kEn: "On to Phase 2", kHi: "अब Phase 2 की ओर", dEn: "Clear Phase 1 and move ahead", dHi: "Phase 1 पास — अब Phase 2 का रास्ता" },
+  { img: "store-6.webp", kEn: "Your Trial Pass", kHi: "आपका Trial Pass", dEn: "Show the QR at the gate — venue, batch and time included", dHi: "QR गेट पर दिखाएँ — venue, batch और reporting time साथ" },
+  { img: "store-7.webp", kEn: "The Road to Auction", kHi: "Auction तक का सफर", dEn: "From physical trials to the auction table", dHi: "Physical trial के बाद auction तक का सफर" },
+  { img: "store-8.webp", kEn: "Live Matches & Scores", kHi: "Live matches और scores", dEn: "Every match, every score — in one place", dHi: "हर match, हर score — एक जगह" },
+  { img: "store-9.webp", kEn: "10 Franchises. One Dream.", kHi: "10 franchises, एक सपना", dEn: "Pick your team and follow it all season", dHi: "अपनी team चुनिए" },
+  { img: "store-10.webp", kEn: "Real Stakes. Real Rewards.", kHi: "असली मुकाबला, असली इनाम", dEn: "Winning team prize ₹6 crore · Auction ₹2–20 lakh", dHi: "Winning prize ₹6 करोड़ · Auction में ₹2–20 लाख" },
 ];
 
 export function AppScreensSlider() {
@@ -148,18 +144,16 @@ export function AppScreensSlider() {
               aria-label={`${i + 1} / ${N} — ${t(s.kEn, s.kHi)}`}
               aria-hidden={i !== idx}
             >
-              <div className="aps-phone">
-                <img
-                  className="aps-shot"
-                  src={`${BASE}app-screens/${s.img}`}
-                  alt={t(s.kEn, s.kHi)}
-                  loading={i === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                  width={402}
-                  height={874}
-                  draggable={false}
-                />
-              </div>
+              <img
+                className="aps-shot"
+                src={`${BASE}store-shots/${s.img}`}
+                alt={t(s.kEn, s.kHi)}
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
+                width={645}
+                height={1398}
+                draggable={false}
+              />
             </div>
           ))}
         </div>
@@ -188,10 +182,7 @@ export function AppScreensSlider() {
       </div>
 
       <div className="aps-cap" aria-live="polite">
-        <div className="k">
-          {t(cur.kEn, cur.kHi)}
-          <span className={"th " + cur.theme}>{cur.theme === "light" ? t("Light", "लाइट") : t("Dark", "डार्क")}</span>
-        </div>
+        <div className="k">{t(cur.kEn, cur.kHi)}</div>
         <div className="d">{t(cur.dEn, cur.dHi)}</div>
       </div>
     </div>
