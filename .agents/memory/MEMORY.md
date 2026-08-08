@@ -57,3 +57,4 @@
 - [Community scorer](community-scorer.md) — any-user scorer: match-row FOR UPDATE tx on every mutation; retired_hurt ≠ wicket; byes not on bowler; active innings = last array element
 - [Fan voting & MVP engine](voting-mvp.md) — polls + auto fantasy points from official scorecards; car prize only for finalist-team players (stage='final'); vote response has no poll object
 - [Mobile app design system](mobile-app-design.md) — owner-supplied v4 HTML mockup is the design source of truth (violet/magenta/cyan, stadium+daylight themes); links open in-app; never invent palettes for this app
+- [Growth features](growth-features.md) — push gated PUSH_ENABLED (inbox always written; Expo Go = no remote push); referral open to ALL registered players, same-phone cross-account block; badge icons must be Feather-valid; conditional useMemo crashes screens
