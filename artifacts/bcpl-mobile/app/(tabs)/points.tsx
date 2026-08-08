@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useColors } from '@/hooks/useColors';
-import { getMatches, getPointsTable, getTeamGroup, type PointsRow } from '@/lib/api';
-import { Card, EmptyView, ErrorView, LoadingView, TeamLogo, GlassAppBar, ScreenBackground, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
+import { getMatches, getPointsTable, getTeamGroup, GROUP_A_TEAMS, GROUP_B_TEAMS, type PointsRow } from '@/lib/api';
+import { Card, ErrorView, LoadingView, TeamLogo, GlassAppBar, ScreenBackground, useAppBarHeight, useBottomNavHeight } from '@/components/ui';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useLang } from '@/context/LanguageContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -88,8 +88,19 @@ export default function PointsScreen() {
   const matchesQ = useQuery({ queryKey: ['matches'], queryFn: getMatches });
   const table = q.data?.table ?? [];
 
-  const groupA = table.filter((t) => getTeamGroup(t.team) === 'A');
-  const groupB = table.filter((t) => getTeamGroup(t.team) === 'B');
+  // Before any match is played the API returns an empty table — mirror the
+  // website: show both groups pre-seeded with all-zero rows instead of an
+  // empty state, so players can see the Group A/B line-up from day one.
+  const zeroRow = (team: string): PointsRow => ({
+    team, played: 0, won: 0, lost: 0, noResult: 0, points: 0, nrr: 0, form: null,
+  });
+  const preSeason = !q.isLoading && !q.isError && table.length === 0;
+  const groupA = preSeason
+    ? GROUP_A_TEAMS.map(zeroRow)
+    : table.filter((t) => getTeamGroup(t.team) === 'A');
+  const groupB = preSeason
+    ? GROUP_B_TEAMS.map(zeroRow)
+    : table.filter((t) => getTeamGroup(t.team) === 'B');
   const grouped = groupA.length > 0 || groupB.length > 0;
 
   return (
@@ -108,8 +119,6 @@ export default function PointsScreen() {
             <LoadingView />
           ) : q.isError ? (
             <ErrorView onRetry={() => q.refetch()} />
-          ) : table.length === 0 ? (
-            <EmptyView icon="bar-chart-2" text={t('Points table will appear once Season 5 begins', 'पॉइंट्स टेबल सीज़न 5 शुरू होते ही यहाँ दिखेगी')} />
           ) : grouped ? (
             <>
               <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
@@ -142,6 +151,12 @@ export default function PointsScreen() {
               ) : (
                 <GroupTable title="GROUP B" rows={groupB} qualify={2} hideTitle />
               )}
+
+              {preSeason ? (
+                <Text style={{ color: c.sub, fontSize: 12, paddingHorizontal: 4, paddingBottom: 10, textAlign: 'center' }}>
+                  {t('Season 5 has not started yet — the table will update live after every match', 'सीज़न 5 अभी शुरू नहीं हुआ है — हर match के बाद टेबल यहाँ live update होगी')}
+                </Text>
+              ) : null}
               
               <Text style={{ color: c.sub, fontSize: 12, paddingHorizontal: 4, paddingBottom: 6, textAlign: 'center' }}>
                 {t('Top 2 teams from this group qualify for the playoffs', 'इस ग्रुप की टॉप 2 टीमें प्लेऑफ़ में जाती हैं')}

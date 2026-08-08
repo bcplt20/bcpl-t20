@@ -225,6 +225,14 @@ export default function PayWebViewScreen() {
             javaScriptEnabled
             domStorageEnabled
             sharedCookiesEnabled={Platform.OS === 'ios'}
+            /* Card/netbanking (3-D Secure / bank pages) fixes: banks open their
+               OTP/ACS step via window.open + rely on third-party cookies. With
+               multiple windows off, window.open must load in THIS WebView —
+               that needs javaScriptCanOpenWindowsAutomatically. Without these
+               the checkout just spins forever after picking card/netbanking. */
+            javaScriptCanOpenWindowsAutomatically
+            thirdPartyCookiesEnabled
+            mixedContentMode="compatibility"
             setSupportMultipleWindows={false}
             startInLoadingState={false}
             testID="pay-webview"

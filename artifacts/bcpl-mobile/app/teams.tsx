@@ -112,6 +112,7 @@ export default function TeamsScreen() {
   const bottomNavHeight = useBottomNavHeight();
 
   const q = useQuery({ queryKey: ['teams'], queryFn: getTeams });
+  const [activeGroup, setActiveGroup] = React.useState<'A' | 'B'>('A');
 
   const ordered = React.useMemo(() => {
     const list = [...(q.data?.teams ?? [])];
@@ -152,11 +153,39 @@ export default function TeamsScreen() {
         ) : q.isError ? (
           <ErrorView onRetry={() => q.refetch()} />
         ) : (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 16, paddingTop: 20 }}>
-            {ordered.map((team) => (
-              <TeamCard key={team.id} team={team} group={groupOf(team)} />
-            ))}
-          </View>
+          <>
+            {/* Group A / Group B switch — mirrors the Points Table tabs */}
+            <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 16, paddingTop: 20 }}>
+              {(['A', 'B'] as const).map((g) => (
+                <Pressable
+                  key={g}
+                  onPress={() => setActiveGroup(g)}
+                  testID={`teams-group-${g}`}
+                  style={({ pressed }) => ({
+                    flex: 1, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center',
+                    backgroundColor: activeGroup === g ? c.cyan : c.card2,
+                    borderWidth: 1, borderColor: activeGroup === g ? c.cyan : c.line,
+                    opacity: pressed ? 0.8 : 1,
+                  })}
+                >
+                  <Text style={{ color: activeGroup === g ? '#000' : c.sub, fontFamily: 'PlusJakartaSans_700Bold', fontSize: 14 }}>
+                    {g === 'A' ? t('Group A', 'ग्रुप A') : t('Group B', 'ग्रुप B')}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 16, paddingTop: 16 }}>
+              {ordered
+                .filter((team) => {
+                  const idx = CANON_ORDER.indexOf(team.name);
+                  if (idx === -1) return true; // unknown/extra teams: show in both, never hide
+                  return activeGroup === 'A' ? idx < 5 : idx >= 5;
+                })
+                .map((team) => (
+                  <TeamCard key={team.id} team={team} group={groupOf(team)} />
+                ))}
+            </View>
+          </>
         )}
       </ScrollView>
     </View>
