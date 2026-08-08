@@ -23,14 +23,13 @@ import { useLang } from "../lib/i18n";
 
 type NavItem = { key: string; en: string; hi: string; href: string };
 
+/* Desktop nav — Teams, Players and Auction live inside Match Centre now
+   (quick-links on that page), per owner's request. */
 const LINKS: NavItem[] = [
-  { key: "Teams",     en: "Teams",     hi: "टीमें",      href: "/teams" },
-  { key: "Players",   en: "Players",   hi: "खिलाड़ी",    href: "/players" },
   { key: "Trials",    en: "Trials",    hi: "ट्रायल्स",   href: "/trust" },
   { key: "Matches",   en: "Matches",   hi: "मैच",        href: "/match-center" },
   { key: "Vote",      en: "Vote",      hi: "वोट",        href: "/vote" },
   { key: "MVP",       en: "MVP",       hi: "MVP",        href: "/mvp" },
-  { key: "Auction",   en: "Auction",   hi: "ऑक्शन",      href: "/auction/live" },
   { key: "Media",     en: "Media",     hi: "मीडिया",     href: "/photos" },
   { key: "Sponsor",   en: "Sponsor",   hi: "स्पॉन्सर",   href: "/become-a-sponsor" },
   { key: "About",     en: "About",     hi: "परिचय",      href: "/about" },
@@ -44,7 +43,6 @@ const LINKS: NavItem[] = [
    - Standings is not its own entry: it lives inside Match Centre. */
 const MOB_LINKS: NavItem[] = [
   { key: "Home",    en: "Home",             hi: "होम",           href: "/" },
-  { key: "Teams",   en: "Teams",            hi: "टीमें",          href: "/teams" },
   { key: "Trials",  en: "Trials",           hi: "ट्रायल्स",       href: "/trust" },
   { key: "Matches", en: "Match Centre",     hi: "मैच सेंटर",      href: "/match-center" },
   { key: "Vote",    en: "Fan Vote",         hi: "फैन वोट",        href: "/vote" },

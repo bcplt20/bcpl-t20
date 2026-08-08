@@ -452,6 +452,7 @@ export function MatchCenter() {
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 28 }}>
             {([
               { href: "/points-table", en: "Points Table", hi: "अंक तालिका" },
+              { href: "/teams",        en: "Teams",        hi: "टीमें" },
               { href: "/players",      en: "Players",      hi: "खिलाड़ी" },
               { href: "/auction/live", en: "Auction",      hi: "ऑक्शन" },
             ] as const).map(q => (
