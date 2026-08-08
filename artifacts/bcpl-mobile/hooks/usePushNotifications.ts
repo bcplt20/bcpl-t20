@@ -59,6 +59,9 @@ export function usePushNotifications() {
 
         if (pushToken && pushToken.data) {
           setExpoPushToken(pushToken.data);
+          import('@react-native-async-storage/async-storage').then(module => {
+            module.default.setItem('bcpl-push-token', pushToken.data);
+          });
           await registerPushToken(pushToken.data, Platform.OS).catch(e => console.log('Failed to register push token API', e));
         }
       } catch (e) {

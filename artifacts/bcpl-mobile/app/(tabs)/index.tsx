@@ -711,7 +711,7 @@ export default function HomeScreen() {
                       {t('Refer & Earn', 'रेफर करें और कमाएं')}
                     </Text>
                     <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 13, lineHeight: 18 }}>
-                      {t('Invite 3 friends to win exclusive BCPL training gear.', '3 दोस्तों को आमंत्रित करें और खास BCPL किट जीतें।')}
+                      {t('Invite 3 friends to win BCPL training gear.', '3 दोस्तों को आमंत्रित करें और BCPL किट जीतें।')}
                     </Text>
                   </View>
                   <Feather name="chevron-right" size={20} color={c.sub} />

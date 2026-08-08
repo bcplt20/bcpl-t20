@@ -48,7 +48,7 @@ export default function ReferScreen() {
               {t('Refer Friends, Win Gear', 'दोस्तों को रेफर करें, किट जीतें')}
             </Text>
             <Text style={{ color: c.sub, fontFamily: 'PlusJakartaSans_500Medium', fontSize: 15, textAlign: 'center', lineHeight: 22, marginBottom: 24 }}>
-              {t(`Get ${q.data.qualifiedNeeded} friends to register and pay Phase 1 fee to earn exclusive BCPL training gear.`, `${q.data.qualifiedNeeded} दोस्तों को फेज 1 पेमेंट के साथ रजिस्टर करवाएं और BCPL ट्रेनिंग किट पाएं।`)}
+              {t(`Get ${q.data.qualifiedNeeded} friends to register and pay Phase 1 fee to earn BCPL training gear.`, `${q.data.qualifiedNeeded} दोस्तों को फेज 1 पेमेंट के साथ रजिस्टर करवाएं और BCPL ट्रेनिंग किट पाएं।`)}
             </Text>
 
             <View style={{ backgroundColor: c.card2, borderWidth: 1, borderColor: c.line, borderRadius: 16, width: '100%', padding: 16, alignItems: 'center', marginBottom: 24 }}>

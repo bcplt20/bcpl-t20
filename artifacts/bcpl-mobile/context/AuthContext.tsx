@@ -61,6 +61,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     // Drop every cached, user-scoped query so the next login never shows the
     // previous player's (or a stale copy of this player's) data.
+    import('@/lib/api').then(async (api) => {
+      const pushToken = await AsyncStorage.getItem('bcpl-push-token');
+      if (pushToken) {
+        await api.unregisterPushToken(pushToken).catch(() => {});
+        await AsyncStorage.removeItem('bcpl-push-token');
+      }
+    });
     queryClient.clear();
     setToken(null);
     setUser(null);
