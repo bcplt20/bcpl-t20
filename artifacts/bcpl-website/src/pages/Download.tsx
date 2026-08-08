@@ -4,8 +4,8 @@ import { BCPLFooter } from "../components/BCPLFooter";
 import { getSiteSetting } from "../lib/api";
 import { useLang } from "../lib/i18n";
 import { SEASON } from "../lib/season";
+import { AppScreensSlider } from "../components/AppScreensSlider";
 
-const BASE = import.meta.env.BASE_URL;
 const GOLD = "#E8B23D";
 const ORANGE = "#FF7A29";
 const PAGE = "#1B2E52";
@@ -20,6 +20,7 @@ const CSS = `
 @media(min-width:768px){ .dl-wrap{padding:0 32px} }
 .dl-hero { display:grid; grid-template-columns:1fr; gap:36px; align-items:center; }
 @media(min-width:900px){ .dl-hero{grid-template-columns:1.1fr 0.9fr;} }
+.dl-hero > * { min-width:0; }
 .dl-h1 { font-family:'Barlow Condensed','Montserrat',sans-serif; font-weight:800; text-transform:uppercase; line-height:.98; letter-spacing:.015em; color:#fff; font-size:clamp(38px,6.6vw,72px); margin:12px 0 0; }
 .dl-lead { max-width:520px; margin:18px 0 0; font-size:15.5px; line-height:1.75; color:rgba(255,255,255,0.82); font-family:Inter,sans-serif; }
 .dl-kicker { font-family:Inter,sans-serif; font-weight:700; font-size:12px; letter-spacing:.22em; color:${GOLD}; text-transform:uppercase; }
@@ -32,16 +33,9 @@ const CSS = `
 .dl-btn .tx small { font-family:Inter,sans-serif; font-size:10.5px; letter-spacing:.06em; color:rgba(255,255,255,0.7); text-transform:uppercase; }
 .dl-btn .tx b { font-family:'Montserrat',Inter,sans-serif; font-weight:800; font-size:16px; }
 .dl-btn .soon { margin-left:auto; font-family:Inter,sans-serif; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:${GOLD}; border:1px solid rgba(232,178,61,0.45); border-radius:100px; padding:3px 9px; }
-/* phone mockup */
+/* app-screen slider wrapper */
 .dl-phone-wrap { display:flex; justify-content:center; }
-.dl-phone { position:relative; width:min(280px,74vw); aspect-ratio:9/19; border-radius:38px; background:linear-gradient(160deg,#0A1327,#182a4d); border:2px solid rgba(255,255,255,0.14); box-shadow:0 30px 70px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12); padding:12px; }
-.dl-phone::before { content:''; position:absolute; top:14px; left:50%; transform:translateX(-50%); width:120px; height:20px; border-radius:0 0 14px 14px; background:#060B18; z-index:3; }
-.dl-screen { width:100%; height:100%; border-radius:28px; overflow:hidden; position:relative; background:radial-gradient(120% 80% at 50% 0%,rgba(255,122,41,0.28),transparent 60%),linear-gradient(180deg,#12233F,#1B2E52 55%,#24396B); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:24px 18px; }
-.dl-screen img { width:82px; height:82px; object-fit:contain; filter:drop-shadow(0 8px 18px rgba(0,0,0,0.4)); }
-.dl-screen .stitle { font-family:'Barlow Condensed','Montserrat',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:.03em; text-transform:uppercase; }
-.dl-screen .ssub { font-family:Inter,sans-serif; font-size:11px; letter-spacing:.18em; color:${GOLD}; text-transform:uppercase; }
-.dl-screen .schips { display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin-top:6px; }
-.dl-screen .schip { font-family:Inter,sans-serif; font-size:10px; font-weight:700; color:#fff; background:rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.16); border-radius:100px; padding:5px 10px; }
+@media(max-width:899px){ .dl-phone-wrap{ margin:0 -20px; } }
 /* features */
 .dl-feat { display:grid; grid-template-columns:1fr; gap:16px; }
 @media(min-width:620px){ .dl-feat{grid-template-columns:1fr 1fr;} }
@@ -151,21 +145,9 @@ export function Download() {
             </div>
           </div>
 
-          {/* CSS phone mockup */}
+          {/* App-screen mockup slider */}
           <div className="dl-phone-wrap">
-            <div className="dl-phone">
-              <div className="dl-screen">
-                <img src={BASE + "bcpl-assets/bcpl-logo-white.png"} alt="BCPL" loading="lazy" />
-                <div className="ssub">{t("SEASON " + SEASON.number, "सीज़न " + SEASON.number)}</div>
-                <div className="stitle">BCPL T20</div>
-                <div className="schips">
-                  <span className="schip">{t("Live Scores", "Live Scores")}</span>
-                  <span className="schip">{t("Trial Pass", "Trial Pass")}</span>
-                  <span className="schip">{t("MVP", "MVP")}</span>
-                  <span className="schip">{t("My Card", "My Card")}</span>
-                </div>
-              </div>
-            </div>
+            <AppScreensSlider />
           </div>
         </div>
       </section>

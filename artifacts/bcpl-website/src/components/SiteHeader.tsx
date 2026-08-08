@@ -91,7 +91,7 @@ const CSS = `
   @media(min-width:768px){.sh-W{padding:0 32px;}}
   @media(min-width:1280px){.sh-W{padding:0 48px;}}
 
-  .sh-link{font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:700;font-size:15.5px;letter-spacing:.09em;color:rgba(255,255,255,0.88);text-decoration:none;text-transform:uppercase;transition:color .2s;white-space:nowrap;padding:6px 2px;}
+  .sh-link{font-family:'Barlow Condensed','Mukta',sans-serif;font-weight:700;font-size:17px;letter-spacing:.09em;color:rgba(255,255,255,0.88);text-decoration:none;text-transform:uppercase;transition:color .2s;white-space:nowrap;padding:6px 2px;}
   .sh-link:hover{color:#fff;}
   .sh-link-active{color:#FF7A29;}
   .sh-link-active:hover{color:#FF7A29;}
@@ -116,11 +116,11 @@ const CSS = `
   @media(min-width:1180px){
     .sh-deskbar{display:flex;align-items:center;height:var(--sh-h);gap:12px;}
     .sh-desk{display:flex;flex-wrap:nowrap;gap:clamp(8px,1.1vw,20px);align-items:center;justify-content:center;flex:1 1 0;min-width:0;overflow:hidden;}
-    .sh-link{font-size:clamp(12.5px,1.02vw,15.5px);letter-spacing:.06em;}
+    .sh-link{font-size:clamp(14.5px,1.2vw,17px);letter-spacing:.06em;}
     .sh-mobbar{display:none;}
   }
   @media(min-width:1280px){.sh-deskbar{gap:16px;}.sh-desk{gap:clamp(14px,1.3vw,22px);}.sh-link{letter-spacing:.08em;}}
-  @media(min-width:1440px){.sh-desk{gap:26px;}.sh-link{font-size:15.5px;letter-spacing:.09em;}}
+  @media(min-width:1440px){.sh-desk{gap:26px;}.sh-link{font-size:17px;letter-spacing:.09em;}}
 
   /* SEASON 5 sits centered UNDER the logo (stacked lockup — fits every phone).
      padding-left mirrors the letter-spacing so the text is optically centered
