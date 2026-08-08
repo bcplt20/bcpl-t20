@@ -19,6 +19,8 @@
       "buildNumber": "1"
     },
     "android": {
+      "package": "com.bcplt20.app",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -40,6 +42,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "42972cb1-1aba-4f28-aa84-4e83199a75dc"
+      }
+    },
+    "owner": "bcplt20"
   }
 }
