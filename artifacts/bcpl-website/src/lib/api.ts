@@ -287,17 +287,33 @@ export const recordBall = (matchId: string, data: {
   fielderName?: string;
   nonStrikerOut?: boolean;
   customCommentary?: string;
-}) => adminReq<{ success: boolean; inningsComplete: boolean }>(
-  "POST", `/scoring/admin/scoring/${matchId}/ball`, data
+}) => adminReq<{
+  success: boolean;
+  delivery: { over: string; runs: number; isWicket: boolean; commentary: string };
+  inningsTotal: { runs: number; wickets: number; overs: number; balls: number };
+  inningsComplete: boolean;
+}>(
+  "POST", `/scoring/${matchId}/ball`, data
 );
 
 export const endInnings = (matchId: string) =>
-  adminReq<{ innings2: any; target: number }>(
-    "POST", `/scoring/admin/scoring/${matchId}/innings-end`, {}
+  adminReq<{ success: boolean; innings2: any; target: number }>(
+    "POST", `/scoring/${matchId}/innings-end`, {}
   );
 
 export const undoBall = (matchId: string) =>
-  adminReq<{ success: boolean }>("DELETE", `/scoring/admin/scoring/${matchId}/ball`);
+  adminReq<{ success: boolean }>("DELETE", `/scoring/${matchId}/ball`);
+
+/* Rain interruption / DLS overs reduction (admin, live match).
+   Server: POST /api/scoring/:matchId/dls  → { success, revisedOvers, revisedTarget, inningsNumber }.
+   Server validates: max = original overs, min 5, and cannot go below overs already bowled. */
+export const applyDlsReduction = (matchId: string, data: {
+  inningsNumber: 1 | 2;
+  oversAvailable: number;
+  wicketsLostAtStop?: number;
+}) => adminReq<{ success: boolean; season: number; revisedOvers: number; revisedTarget: number | null; inningsNumber: number }>(
+  "POST", `/scoring/${matchId}/dls`, data
+);
 
 /* ─── Points Table ─────────────────────────────────── */
 

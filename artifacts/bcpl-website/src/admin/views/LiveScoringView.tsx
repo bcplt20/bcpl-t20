@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   getMatches, createMatch, recordToss, setPlayingXI, recordBall,
-  endInnings, updateMatchStatus, recordMatchResult,
-  getTeams, getTeamDetail,
+  endInnings, getTeams, getTeamDetail, applyDlsReduction, getLiveScore,
 } from "../../lib/api";
 import type { ApiTeam } from "../../lib/api";
 
@@ -23,6 +22,9 @@ interface InningsState {
   partnerships:Partnership[]; fowList:Fow[];
   strikerIdx:number; nonStrikerIdx:number; bowlerIdx:number;
   target?:number;
+  /* Authoritative overs allocation for THIS innings (revised by DLS on the
+     server). Null-safe: falls back to 20 when the server hasn't reduced it. */
+  oversLimit?:number;
 }
 interface MatchDef { id:number; dbId?:string; matchNo:number; team1:string; team2:string; venue:string; date:string; status:"scheduled"|"live"|"completed"; }
 interface LiveMatch {
@@ -32,6 +34,9 @@ interface LiveMatch {
   currentInnings:1|2; inn1:InningsState; inn2:InningsState|null;
   phase:"toss"|"xi"|"openers"|"live"|"completed";
   resultDesc?:string;
+  /* True when the SERVER has finalised the match. Once set, the scoring pad is
+     locked — the client never decides completion/result/points itself. */
+  serverCompleted?:boolean;
 }
 interface DismissalModal {
   type:"b"|"c"|"lbw"|"ro"|"st"|"hw"|"cb"|"rh";
@@ -151,6 +156,80 @@ export default function LiveScoringView() {
   const [customNote, setCustomNote] = useState("");
   const [dm,         setDm]         = useState<DismissalModal|null>(null);
 
+  /* Rain / DLS overs-reduction control (live matches only) */
+  const [dlsInn,     setDlsInn]     = useState<1|2>(1);
+  const [dlsOvers,   setDlsOvers]   = useState("");
+  const [dlsBusy,    setDlsBusy]    = useState(false);
+  const [dlsMsg,     setDlsMsg]     = useState<string|null>(null);
+  const [dlsErr,     setDlsErr]     = useState<string|null>(null);
+
+  /* ── Server is the SOLE authority for target / overs-limit / completion /
+     result / points. Pull the authoritative live state and reconcile the
+     client without ever re-deciding those facts locally. ──────────────── */
+  const syncFromServer = async (dbId: string) => {
+    try{
+      const s: any = await getLiveScore(dbId);
+      const revised: Record<number, number|null> = s?.dls?.revisedOvers ?? {};
+      const innByNo = (n:number) => (s.innings ?? []).find((x:any)=>x.number===n);
+      const limitFor = (n:number) => {
+        const rv = revised?.[n];
+        return (typeof rv === "number" && rv > 0) ? rv : 20; // null-safe fallback
+      };
+      const serverDone = s.status === "completed" || s.status === "abandoned";
+      setLive(prev=>{
+        if(!prev) return prev;
+        const i1 = innByNo(1), i2 = innByNo(2);
+        const nextInn1: InningsState = prev.inn1
+          ? { ...prev.inn1, target: i1?.target ?? prev.inn1.target, oversLimit: limitFor(1) }
+          : prev.inn1;
+        const nextInn2: InningsState|null = prev.inn2
+          ? { ...prev.inn2, target: i2?.target ?? prev.inn2.target, oversLimit: limitFor(2) }
+          : prev.inn2;
+        return {
+          ...prev,
+          inn1: nextInn1,
+          inn2: nextInn2,
+          resultDesc: s.resultDesc || prev.resultDesc,
+          serverCompleted: serverDone || prev.serverCompleted,
+          phase: serverDone ? "completed" : prev.phase,
+        };
+      });
+      if(serverDone){
+        setMatches(ms=>ms.map(m=>m.dbId===dbId?{...m,status:"completed"}:m));
+        if(s.resultDesc) setCommentary(c=>[`🏆 ${s.resultDesc}`,...c].slice(0,30));
+      }
+      return { serverDone, resultDesc: s.resultDesc as string|undefined };
+    }catch(e:any){
+      setApiErr("Server se live state sync nahi hua: " + (e?.message ?? "error"));
+      return null;
+    }
+  };
+
+  /* Apply a rain reduction to the selected innings via the shared adminReq. */
+  const applyRainReduction = async () => {
+    if(!currentDbId || dlsBusy) return;
+    const ov = parseInt(dlsOvers, 10);
+    if(!Number.isFinite(ov)){ setDlsErr("Overs now available likhna zaroori hai."); setDlsMsg(null); return; }
+    const battingTeam = dlsInn===1 ? live?.inn1?.battingTeam : live?.inn2?.battingTeam;
+    if(!window.confirm(
+      `Rain reduction apply karein?\n\nInnings ${dlsInn}${battingTeam?` (${battingTeam})`:""} → ${ov} overs now available.\n\n`+
+      `Isse us innings ke revised overs set honge aur (agar 2nd innings hai) DLS revised target dobara compute hoga. Confirm?`
+    )) return;
+    setDlsBusy(true); setDlsErr(null); setDlsMsg(null);
+    try{
+      const res = await applyDlsReduction(currentDbId, { inningsNumber:dlsInn, oversAvailable:ov });
+      const tgtLine = res.revisedTarget != null ? ` · Revised target: ${res.revisedTarget}` : "";
+      setDlsMsg(`✅ Innings ${res.inningsNumber} revised to ${res.revisedOvers} overs${tgtLine}.`);
+      setDlsOvers("");
+      setCommentary(c=>[`🌧️ Rain: Innings ${res.inningsNumber} reduced to ${res.revisedOvers} overs${res.revisedTarget!=null?` (DLS target ${res.revisedTarget})`:""}.`,...c].slice(0,30));
+      // Refresh authoritative state so the pad's overs-limit + target update now.
+      await syncFromServer(currentDbId);
+    }catch(e:any){
+      // Surface the server's validation message verbatim (min 5, can't exceed original, can't go below bowled).
+      setDlsErr(e?.message ?? "DLS reduction apply nahi hua.");
+    }finally{ setDlsBusy(false); }
+  };
+
   // Add match form (venue is free text; teams come from the Teams tab)
   const [showAdd, setShowAdd] = useState(false);
   const [addForm, setAddForm] = useState({ team1:"", team2:"", venue:"", date:"" });
@@ -266,43 +345,25 @@ export default function LiveScoringView() {
     applyBall({ outcome, runs, isExtra, isWide, isNB, isBye, isWicket:false, dismissal:"" });
   };
 
-  /* ── Finish match: result + points table sync ── */
+  /* ── Finish match ──────────────────────────────────────────────────────
+     SERVER is the sole authority: when innings 2 completes, /ball already
+     sets status=completed, decides the "(DLS method)"-aware result AND
+     recomputes the points table server-side. The client MUST NOT compute the
+     result or write status / points — that would double-count and could
+     overwrite the DLS result. We only lock the pad locally and pull the
+     authoritative result text back from the server. */
   const finishMatch = (lv:LiveMatch, finalInn2:InningsState, ballPromise:Promise<boolean>) => {
-    const tgt = finalInn2.target ?? (lv.inn1.totalRuns+1);
-    let winner = ""; let resultDesc = "";
-    if(finalInn2.totalRuns >= tgt){
-      const wkts = 10 - finalInn2.totalWickets;
-      winner = finalInn2.battingTeam;
-      resultDesc = `${winner} won by ${wkts} wicket${wkts===1?"":"s"}`;
-    } else if(finalInn2.totalRuns === tgt-1){
-      resultDesc = "Match tied";
-    } else {
-      const margin = tgt-1-finalInn2.totalRuns;
-      winner = finalInn2.bowlingTeam;
-      resultDesc = `${winner} won by ${margin} run${margin===1?"":"s"}`;
-    }
-
-    setLive({ ...lv, inn2:finalInn2, currentInnings:2, phase:"completed", resultDesc });
+    setLive({ ...lv, inn2:finalInn2, currentInnings:2, phase:"completed" });
     setMatches(ms=>ms.map(m=>m.id===lv.def.id?{...m,status:"completed"}:m));
-    setCommentary(c=>[`🏆 ${resultDesc}!`,...c].slice(0,30));
 
     if(currentDbId){
       const dbId = currentDbId;
       ballPromise.then(async (ok)=>{
         if(!ok){ setApiErr("Aakhri ball server pe save nahi hui — result aur points table server pe record NAHI hue. Match dobara score karna padega."); return; }
-        try{
-          await updateMatchStatus(dbId,{ status:"completed", winner:winner||undefined, resultDesc });
-          if(winner){
-            const loser = winner===lv.def.team1 ? lv.def.team2 : lv.def.team1;
-            await recordMatchResult({ winner, loser, season:5 });
-          }else{
-            // tie → both sides get a point (recorded as no-result for both)
-            await recordMatchResult({ noResult:true, winner:lv.def.team1, loser:lv.def.team2, season:5 });
-          }
-          setApiErr(null);
-        }catch(e:any){
-          setApiErr("Result save nahi hua: " + (e?.message ?? "error"));
-        }
+        setApiErr(null);
+        // Server has already finalised result + points on this ball; pull the
+        // authoritative result text (DLS-aware) and lock the pad.
+        await syncFromServer(dbId);
       });
     }
   };
@@ -310,13 +371,20 @@ export default function LiveScoringView() {
   /* ── Apply one delivery (single pass: state + API + transitions) ── */
   const applyBall = (p:BallParams) => {
     if(!live) return;
+    // Server has finalised this match — the pad is locked; never score past it.
+    if(live.serverCompleted || live.phase==="completed"){
+      setApiErr("Match server pe complete ho chuka hai — aur balls accept nahi ki jaayengi.");
+      return;
+    }
     const cur = live.currentInnings===1 ? live.inn1 : live.inn2;
     if(!cur) return;
     const { outcome, runs, isExtra, isWide, isNB, isBye, isWicket, dismissal } = p;
 
     /* Persist to API — keep the promise so innings/match transitions wait for it.
-       Resolves true only when the ball is actually saved on the server. */
-    let ballPromise: Promise<boolean> = Promise.resolve(true);
+       Resolves with the SERVER's own completion verdict (authoritative). When
+       offline (no dbId) we fall back to the local estimate. */
+    let ballPromise: Promise<{ok:boolean; serverComplete:boolean|null}> =
+      Promise.resolve({ ok:true, serverComplete:null });
     if(currentDbId){
       const strikerName = cur.batScores[cur.strikerIdx]?.name || "";
       const bowlerName  = cur.bowlScores[cur.bowlerIdx]?.name || "";
@@ -328,8 +396,8 @@ export default function LiveScoringView() {
         dismissedBatter: p.dismissedBatter||undefined,
         fielderName: p.fielderName||undefined,
         nonStrikerOut: p.nonStrikerOut ?? false,
-      }).then(()=>{ setApiErr(null); return true; })
-        .catch((e:any)=>{ setApiErr("Ball server pe save nahi hua: " + (e?.message ?? "error")); return false; });
+      }).then(r=>{ setApiErr(null); return { ok:true, serverComplete:r.inningsComplete }; })
+        .catch((e:any)=>{ setApiErr("Ball server pe save nahi hua: " + (e?.message ?? "error")); return { ok:false, serverComplete:null }; });
     }
 
     /* Ball counting: wides & no-balls don't count; byes/leg-byes do (matches server) */
@@ -410,7 +478,11 @@ export default function LiveScoringView() {
     const newTotalWickets = cur.totalWickets + (isWicket?1:0);
     const newTotal        = cur.totalRuns + runs + (isExtra?1:0);
     const tgt             = cur.target;
-    const innComplete     = newTotalWickets>=10 || newOvers>=20 || (!!tgt && newTotal>=tgt);
+    // Overs allocation = server's revised overs for THIS innings (DLS), null-safe → 20.
+    const oversCap        = cur.oversLimit ?? 20;
+    // LOCAL estimate only — used as a fallback when offline. When connected, the
+    // SERVER's `inningsComplete` verdict (via ballPromise) is authoritative.
+    const localInnComplete = newTotalWickets>=10 || newOvers>=oversCap || (!!tgt && newTotal>=tgt);
 
     const updatedInns: InningsState = {
       ...cur,
@@ -436,32 +508,51 @@ export default function LiveScoringView() {
       outcome==="B"   ? `${o}.${b} — Bye, 1 extra.` :
                         `${o}.${b} — ${outcome} run(s) taken.`;
 
-    /* Innings / match transitions */
-    if(live.currentInnings===1){
-      if(innComplete){
-        const inn2 = makeInnings(cur.bowlingTeam, cur.battingTeam, cur.bowlingXI, cur.battingXI, newTotal+1);
-        setLive({ ...live, inn1:updatedInns, inn2, currentInnings:2, phase:"openers" });
-        setOpSel({ striker:0, nonStriker:1, bowler:0 });
-        setCommentary(c=>[`🔚 Innings break — ${cur.battingTeam} ${newTotal}/${newTotalWickets}. Target: ${newTotal+1}.`, ballMsg, ...c].slice(0,30));
-        if(currentDbId){
-          const dbId = currentDbId;
-          ballPromise.then(ok=>{
-            if(!ok){ setApiErr("Aakhri ball server pe save nahi hui, isliye innings-break bhi sync nahi hua. Network check karke match dobara kholo (scoring reset hogi)."); return; }
-            endInnings(dbId).then(()=>setApiErr(null))
-              .catch((e:any)=>setApiErr("Innings-end server pe save nahi hua: " + (e?.message ?? "error")));
-          });
-        }
-        return;
-      }
-      setLive({ ...live, inn1:updatedInns });
-    } else {
-      if(innComplete){
-        finishMatch(live, updatedInns, ballPromise);
-        return;
-      }
-      setLive({ ...live, inn2:updatedInns });
-    }
+    /* Optimistically record the ball into the current innings; the completion
+       DECISION waits for the server's authoritative verdict below. */
+    if(live.currentInnings===1) setLive({ ...live, inn1:updatedInns });
+    else                        setLive({ ...live, inn2:updatedInns });
     setCommentary(c=>[ballMsg,...c].slice(0,30));
+
+    /* Innings / match transitions — driven by the SERVER's completion verdict.
+       Falls back to the local estimate only when offline (no dbId). */
+    const dbId = currentDbId;
+    ballPromise.then(({ok, serverComplete})=>{
+      if(dbId && !ok){
+        setApiErr("Aakhri ball server pe save nahi hui — innings/match transition sync nahi hua. Network check karke match dobara kholo (scoring reset hogi).");
+        return;
+      }
+      const complete = dbId ? (serverComplete ?? localInnComplete) : localInnComplete;
+      if(!complete) return;
+
+      if(live.currentInnings===1){
+        // Server already flipped the match to "innings2"; create innings 2 via
+        // endInnings (returns the authoritative target). Fallback target when offline.
+        const fallbackTarget = newTotal+1;
+        if(dbId){
+          endInnings(dbId).then(r=>{
+            setApiErr(null);
+            const tgt2 = r?.target ?? fallbackTarget;
+            const inn2 = makeInnings(cur.bowlingTeam, cur.battingTeam, cur.bowlingXI, cur.battingXI, tgt2);
+            inn2.oversLimit = cur.oversLimit; // carry current reduced overs; DLS re-apply can change it
+            setLive(prev=>prev?{ ...prev, inn1:updatedInns, inn2, currentInnings:2, phase:"openers" }:prev);
+            setOpSel({ striker:0, nonStriker:1, bowler:0 });
+            setCommentary(c=>[`🔚 Innings break — ${cur.battingTeam} ${newTotal}/${newTotalWickets}. Target: ${tgt2}.`, ...c].slice(0,30));
+            void syncFromServer(dbId); // pull any revised overs/target
+          }).catch((e:any)=>setApiErr("Innings-end server pe save nahi hua: " + (e?.message ?? "error")));
+        }else{
+          const inn2 = makeInnings(cur.bowlingTeam, cur.battingTeam, cur.bowlingXI, cur.battingXI, fallbackTarget);
+          inn2.oversLimit = cur.oversLimit;
+          setLive(prev=>prev?{ ...prev, inn1:updatedInns, inn2, currentInnings:2, phase:"openers" }:prev);
+          setOpSel({ striker:0, nonStriker:1, bowler:0 });
+          setCommentary(c=>[`🔚 Innings break — ${cur.battingTeam} ${newTotal}/${newTotalWickets}. Target: ${fallbackTarget}.`, ...c].slice(0,30));
+        }
+      }else{
+        // Innings 2 complete → server has finalised result + points. Lock the pad
+        // and pull the authoritative (DLS-aware) result text. No client result/points writes.
+        finishMatch(live, updatedInns, Promise.resolve(ok));
+      }
+    });
   };
 
   /* ── Confirm dismissal (single pass through applyBall) ── */
@@ -1103,6 +1194,48 @@ export default function LiveScoringView() {
               ))}
             </div>
           </div>
+
+          {/* Rain / DLS overs reduction — live matches only */}
+          {!isDone&&currentDbId&&(
+            <div style={{ ...CARD, borderColor:"#3B82F640", background:"linear-gradient(135deg,#243356,#1E2A47)" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
+                <span style={{ fontSize:16 }}>🌧️</span>
+                <div style={{ fontSize:10, color:"#93B4F5", fontWeight:800, textTransform:"uppercase", letterSpacing:.5 }}>Rain / DLS — Reduce Overs</div>
+                <span style={PILL("#3B82F6")}>DLS</span>
+              </div>
+              <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"flex-end" }}>
+                <div style={{ minWidth:120 }}>
+                  <div style={{ fontSize:9, color:"#94A3C4", marginBottom:4, fontWeight:700 }}>INNINGS</div>
+                  <select value={dlsInn} onChange={e=>{ setDlsInn(Number(e.target.value) as 1|2); setDlsMsg(null); setDlsErr(null); }}
+                    style={{ ...SELECT, padding:"8px 10px", fontSize:12 }}>
+                    <option value={1}>1st Innings{live.inn1?.battingTeam?` · ${live.inn1.battingTeam}`:""}</option>
+                    <option value={2} disabled={!live.inn2}>2nd Innings{live.inn2?.battingTeam?` · ${live.inn2.battingTeam}`:""}</option>
+                  </select>
+                </div>
+                <div style={{ minWidth:150 }}>
+                  <div style={{ fontSize:9, color:"#94A3C4", marginBottom:4, fontWeight:700 }}>OVERS NOW AVAILABLE</div>
+                  <input value={dlsOvers} onChange={e=>{ setDlsOvers(e.target.value.replace(/[^0-9]/g,"")); setDlsErr(null); }}
+                    inputMode="numeric" placeholder="e.g. 15"
+                    style={{ ...SELECT, padding:"8px 10px", fontSize:12, boxSizing:"border-box" }}/>
+                </div>
+                <button onClick={applyRainReduction} disabled={dlsBusy||!dlsOvers}
+                  style={{ padding:"9px 18px", borderRadius:9, border:"none",
+                    background:dlsBusy||!dlsOvers?"#33436B":"linear-gradient(135deg,#3B82F6,#60A5FA)",
+                    color:"#fff", fontSize:12, fontWeight:800, cursor:dlsBusy?"wait":!dlsOvers?"not-allowed":"pointer", opacity:dlsBusy?0.7:1 }}>
+                  {dlsBusy?"Applying…":"Apply Reduction"}
+                </button>
+              </div>
+              <div style={{ fontSize:10, color:"#7C8AAE", marginTop:8, lineHeight:1.5 }}>
+                ICC rules: minimum 5 overs · cannot exceed original overs · cannot go below overs already bowled. Server will reject invalid values.
+              </div>
+              {dlsMsg&&(
+                <div style={{ marginTop:10, padding:"9px 12px", background:"#10B98112", border:"1px solid #10B98140", borderRadius:8, fontSize:12, color:"#34D399", fontWeight:600 }}>{dlsMsg}</div>
+              )}
+              {dlsErr&&(
+                <div style={{ marginTop:10, padding:"9px 12px", background:"#EF444412", border:"1px solid #EF444440", borderRadius:8, fontSize:12, color:"#F87171", fontWeight:600 }}>⚠️ {dlsErr}</div>
+              )}
+            </div>
+          )}
 
           {/* At crease + Bowler (hidden once completed) */}
           {!isDone&&<div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>

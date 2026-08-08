@@ -100,6 +100,54 @@ describe("aggregateStandings NRR", () => {
     expect(Q.oversFaced).toBe(10);
   });
 
+  it("DLS: reduction DURING innings 1 → side batting first charged its REVISED allocation", () => {
+    // Rain mid innings-1: side1 gets only 15 overs, finishes 130/6 in 15.
+    // Side2 chases full-ish (revised) 15 overs, 110/8 in 15 (not all out).
+    const m = match("D1", "D2", "D2");
+    m.dlsApplied = true;
+    const byMatch = new Map<string, any[]>();
+    byMatch.set(m.id, [
+      inn(m.id, "D1", "D2", 130, 6, 15, 0, { revisedOvers: 15 }),
+      inn(m.id, "D2", "D1", 110, 8, 15, 0, { revisedOvers: 15 }),
+    ]);
+    const table = aggregateStandings([m], byMatch);
+    const D1 = table.find((t) => t.team === "D1")!;
+    // Charged 15 overs (its revised allocation), NOT 20 and NOT actual-if-different.
+    expect(D1.oversFaced).toBe(15);
+    expect(D1.nrr).toBeCloseTo(Math.round((130 / 15 - 110 / 15) * 1000) / 1000, 3);
+  });
+
+  it("DLS: reduction BEFORE innings 2 → chasing side charged its revised quota", () => {
+    // Side1 full 20 → 170/5. Rain in the break: chase cut to 12 overs.
+    // Side2 90/3 in 12 (used full revised quota, innings closed at limit).
+    const m = match("E1", "E2", "E1");
+    m.dlsApplied = true;
+    const byMatch = new Map<string, any[]>();
+    byMatch.set(m.id, [
+      inn(m.id, "E1", "E2", 170, 5, 20, 0),
+      inn(m.id, "E2", "E1", 90, 3, 12, 0, { revisedOvers: 12 }),
+    ]);
+    const table = aggregateStandings([m], byMatch);
+    const E2 = table.find((t) => t.team === "E2")!;
+    expect(E2.oversFaced).toBe(12); // revised quota, not 20
+    expect(E2.nrr).toBeCloseTo(Math.round((90 / 12 - 170 / 20) * 1000) / 1000, 3);
+  });
+
+  it("DLS: all-out in a reduced innings still counts the REVISED allocation, not 20", () => {
+    // Chase reduced to 12 overs; side2 all out for 80 in 9.4 overs.
+    // NRR must charge the full REVISED 12 overs (all-out rule uses allocation).
+    const m = match("F1", "F2", "F1");
+    m.dlsApplied = true;
+    const byMatch = new Map<string, any[]>();
+    byMatch.set(m.id, [
+      inn(m.id, "F1", "F2", 150, 6, 20, 0),
+      inn(m.id, "F2", "F1", 80, 10, 9, 4, { revisedOvers: 12 }),
+    ]);
+    const table = aggregateStandings([m], byMatch);
+    const F2 = table.find((t) => t.team === "F2")!;
+    expect(F2.oversFaced).toBe(12); // revised allocation, NOT 20 and NOT 9.67
+  });
+
   it("tie / no-result splits a point each", () => {
     const m = match("T1", "T2", null); // no winner → no-result/tie
     const byMatch = new Map<string, any[]>();

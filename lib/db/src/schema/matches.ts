@@ -24,6 +24,11 @@ export const matchesTable = pgTable("matches", {
   // DLS: true when the result was decided by the Duckworth–Lewis–Stern method
   // (rain-shortened). Used for the "(DLS method)" tag + NRR revised-overs rule.
   dlsApplied:   boolean("dls_applied").default(false).notNull(),
+  // DLS: revised overs allocation to apply to the SECOND innings, recorded when
+  // rain shortens the chase before innings 2 has been created. When innings 2 is
+  // created (endInnings) it adopts this allocation and its target is computed by
+  // the DLS resource ratio rather than runs+1. NULL = no pre-set reduction.
+  dlsInnings2Overs: integer("dls_innings2_overs"),
   playerOfMatch: varchar("player_of_match", { length: 100 }),
   createdAt:    timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt:    timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),

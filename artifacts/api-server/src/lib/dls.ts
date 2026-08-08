@@ -43,6 +43,7 @@ export async function ensureDlsColumns(): Promise<void> {
     await tx.execute(sql`ALTER TABLE innings ADD COLUMN IF NOT EXISTS revised_overs integer`);
     await tx.execute(sql`ALTER TABLE innings ADD COLUMN IF NOT EXISTS dls_interruptions jsonb NOT NULL DEFAULT '[]'::jsonb`);
     await tx.execute(sql`ALTER TABLE matches ADD COLUMN IF NOT EXISTS dls_applied boolean NOT NULL DEFAULT false`);
+    await tx.execute(sql`ALTER TABLE matches ADD COLUMN IF NOT EXISTS dls_innings2_overs integer`);
   });
 }
 

@@ -12,9 +12,34 @@
 import { db } from "@workspace/db";
 import { matchesTable, inningsTable } from "@workspace/db/schema";
 import { eq, and } from "drizzle-orm";
-import { availableResource, dlsPar, T20_START_RESOURCE, resourcePct } from "./dls";
+import { availableResource, dlsPar, dlsTarget, resourcePct, type Interruption } from "./dls";
 
 type InnRow = typeof inningsTable.$inferSelect;
+
+/** Normalize an innings' stored interruptions to the typed shape. */
+function interruptionsOf(inn: InnRow): Interruption[] {
+  return (inn.dlsInterruptions ?? []) as Interruption[];
+}
+
+/**
+ * Resource (%) AVAILABLE to a chasing innings given its allocation +
+ * interruptions (does NOT deduct resource still unused — that's for par/used).
+ */
+export function inningsResourceAvailable(inn: InnRow): number {
+  return availableResource(inn.revisedOvers ?? inn.originalOvers ?? 20, interruptionsOf(inn));
+}
+
+/**
+ * The DLS revised target for the side batting second, computed from innings 1's
+ * resource used and innings 2's resource available. Returns the runs the chasing
+ * side must REACH (i.e. the "target" to win). Used by both innings-2 creation
+ * and the reduce-overs route so the chase always sees a DLS-correct target.
+ */
+export function computeDlsChaseTarget(inn1: InnRow, inn2: InnRow): number {
+  const r1 = inningsResourceUsed(inn1);
+  const r2 = inningsResourceAvailable(inn2);
+  return dlsTarget({ team1Score: inn1.totalRuns, team1Resource: r1, team2Resource: r2 });
+}
 
 /** Resource (%) actually used by an innings given its allocation/interruptions. */
 export function inningsResourceUsed(inn: InnRow): number {
@@ -63,7 +88,7 @@ export async function decideResultForMatch(matchId: string): Promise<typeof matc
   if (dlsInvolved) {
     // DLS par at the end of innings 2 for the chasing side.
     const r1 = inningsResourceUsed(inn1);
-    const r2Available = availableResource(inn2.revisedOvers ?? inn2.originalOvers ?? 20, (inn2.dlsInterruptions ?? []) as any);
+    const r2Available = inningsResourceAvailable(inn2);
     const oversLeftAtEnd = inn2.totalWickets >= 10
       ? 0
       : Math.max(0, (inn2.revisedOvers ?? 20) - (inn2.overs + inn2.balls / 6));
@@ -138,10 +163,7 @@ export function buildDlsBlock(match: typeof matchesTable.$inferSelect, innings: 
   if (inn1) {
     const r1 = inningsResourceUsed(inn1);
     if (inn2) {
-      const r2Available = availableResource(
-        inn2.revisedOvers ?? inn2.originalOvers ?? 20,
-        (inn2.dlsInterruptions ?? []) as Array<{ oversLeftAtStop: number; wicketsLostAtStop: number; oversLeftAtResume: number }>,
-      );
+      const r2Available = inningsResourceAvailable(inn2);
       target = inn2.target ?? null;
       const allocation = inn2.revisedOvers ?? inn2.originalOvers ?? 20;
       const oversLeftNow = inn2.totalWickets >= 10 ? 0 : Math.max(0, allocation - (inn2.overs + inn2.balls / 6));

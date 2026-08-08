@@ -103,46 +103,26 @@ router.put("/admin/points-table/:team", requireAdmin, async (req, res) => {
   res.json({ success: true, row: newRow });
 });
 
-// POST /api/admin/points-table/result  — add W/L/NR from a completed match
+// POST /api/admin/points-table/result  — DEPRECATED incremental endpoint.
+//
+// The points table is now the exclusive product of the automatic, idempotent
+// recompute (see pointsEngine.recomputePointsTable), which rebuilds every row
+// from completed matches. A manual per-match increment would be silently
+// overwritten by the next auto recompute and could double-count in the interim,
+// so this endpoint no longer mutates counters directly. It instead triggers a
+// full, deterministic recompute for the season — the single source of truth.
 router.post("/admin/points-table/result", requireAdmin, async (req, res) => {
-  const schema = z.object({
-    winner:   z.string().optional(),  // team name that won; omit for NR
-    loser:    z.string().optional(),
-    noResult: z.boolean().default(false),
-    season:   z.number().int().default(5),
+  const schema = z.object({ season: z.number().int().default(5) });
+  const parsed = schema.safeParse(req.body ?? {});
+  const season = parsed.success ? parsed.data.season : 5;
+  const standings = await recomputePointsTable(season);
+  res.json({
+    success: true,
+    deprecated: true,
+    note: "Points table is auto-recomputed from completed matches; this endpoint now just triggers a full recompute.",
+    season,
+    standings,
   });
-  const parsed = schema.safeParse(req.body);
-  if (!parsed.success) return void res.status(400).json({ error: parsed.error.issues[0].message });
-
-  const { winner, loser, noResult: isNR, season } = parsed.data;
-
-  const updateTeam = async (team: string, isWin: boolean, isNR: boolean) => {
-    const [row] = await db.select().from(pointsTableEntries)
-      .where(and(eq(pointsTableEntries.team, team), eq(pointsTableEntries.season, season))).limit(1);
-    if (!row) return;
-
-    const newPlayed   = row.played + 1;
-    const newWon      = isWin ? row.won + 1 : row.won;
-    const newLost     = (!isWin && !isNR) ? row.lost + 1 : row.lost;
-    const newNR       = isNR ? row.noResult + 1 : row.noResult;
-    const newPoints   = newWon * 2 + newNR;
-    const newForm     = [...(row.form as string[]).slice(-4), isNR ? "N" : isWin ? "W" : "L"];
-
-    await db.update(pointsTableEntries).set({
-      played: newPlayed, won: newWon, lost: newLost, noResult: newNR,
-      points: newPoints, form: newForm, updatedAt: new Date(),
-    }).where(eq(pointsTableEntries.id, row.id));
-  };
-
-  if (isNR) {
-    if (winner) await updateTeam(winner, false, true);
-    if (loser)  await updateTeam(loser,  false, true);
-  } else {
-    if (winner) await updateTeam(winner, true,  false);
-    if (loser)  await updateTeam(loser,  false, false);
-  }
-
-  res.json({ success: true });
 });
 
 export default router;
